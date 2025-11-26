@@ -230,16 +230,16 @@
       overflow-y: auto;
     }
 
-    /* показываем рефлексию полностью, в несколько строк */
+    /* показываем рефлексию полностью по тапу */
     .reflection-snippet {
-      white-space: pre-wrap;
-      /* переносим по словам и переносам строк */
-      word-wrap: break-word;
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       color: #e5e7eb;
-      font-size: 12px;
-      line-height: 1.4;
+      cursor: pointer;
+      text-decoration: underline dotted;
     }
-
 
     .reflection-label {
       font-size: 11px;
@@ -682,13 +682,26 @@
 
         const tdRefl = document.createElement('td');
         const dayReflection = reflections[day.key] || '';
+
         if (dayReflection) {
           const label = document.createElement('div');
           label.className = 'reflection-label';
-          label.textContent = 'Текст:';
+          label.textContent = 'Рефлексия:';
+
           const snippet = document.createElement('div');
           snippet.className = 'reflection-snippet';
           snippet.textContent = dayReflection;
+
+          // по тапу показываем полный текст
+          snippet.onclick = () => {
+            alert(
+              'Рефлексия за ' +
+              formatDateDMY(day.ts) +
+              ':\n\n' +
+              dayReflection
+            );
+          };
+
           tdRefl.appendChild(label);
           tdRefl.appendChild(snippet);
         } else {
