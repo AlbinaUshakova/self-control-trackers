@@ -209,6 +209,7 @@
       padding: 6px 8px;
       text-align: left;
       border-bottom: 1px solid #1f2937;
+      vertical-align: top;
     }
 
     th {
@@ -228,14 +229,27 @@
       max-height: 260px;
       overflow-y: auto;
     }
+
+    .reflection-snippet {
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #e5e7eb;
+    }
+
+    .reflection-label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
   </style>
 </head>
 
 <body>
   <h1>EatLog</h1>
   <p class="subtle">
-    Каждый раз, когда начинаешь есть — нажми кнопку. Вверху — статистика за сегодня,
-    внизу — история по дням. Записи можно редактировать (текст и время) и удалять.
+    Твой личный лог приёмов пищи. Отмечай, когда ешь, смотри интервалы и в конце дня делай короткую рефлексию.
   </p>
 
   <div class="card">
@@ -276,8 +290,21 @@
   </div>
 
   <div class="card">
+    <h2>Рефлексия за сегодня</h2>
+    <p class="subtle">
+      Перед сном можешь честно оценить своё питание за день: что было хорошо, где хочется меняться.
+      Эта заметка сохранится в истории по дням.
+    </p>
+    <label for="reflectionToday">Твои мысли о сегодняшнем дне</label>
+    <textarea id="reflectionToday"
+      placeholder="Например: «Ела спокойно, без зажора. Долгие интервалы, много белка. Вечером потянуло на сладкое — в следующий раз хочу заметить раньше»"></textarea>
+    <button id="saveReflectionBtn" class="btn-outline">Сохранить рефлексию ✍️</button>
+    <p class="subtle" id="reflectionStatus"></p>
+  </div>
+
+  <div class="card">
     <h2>История по дням</h2>
-    <p class="subtle">Сводка по всем дням, которые есть в памяти браузера.</p>
+    <p class="subtle">Сводка по всем дням: сколько раз ела, интервалы и твоя рефлексия.</p>
     <div class="history-wrapper">
       <table>
         <thead>
@@ -286,6 +313,7 @@
             <th>Приёмов пищи</th>
             <th>Средний интервал</th>
             <th>Максимальный интервал</th>
+            <th>Рефлексия</th>
           </tr>
         </thead>
         <tbody id="historyBody"></tbody>
@@ -295,6 +323,7 @@
 
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
+    const STORAGE_KEY_REFLECTIONS = 'meal_tracker_reflections_v1';
 
     function loadMeals() {
       try {
@@ -313,7 +342,24 @@
       localStorage.setItem(STORAGE_KEY_MEALS, JSON.stringify(meals));
     }
 
+    function loadReflections() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_REFLECTIONS);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch (e) {
+        console.error('Failed to parse reflections', e);
+        return {};
+      }
+    }
+
+    function saveReflections(reflections) {
+      localStorage.setItem(STORAGE_KEY_REFLECTIONS, JSON.stringify(reflections));
+    }
+
     let meals = loadMeals();
+    let reflections = loadReflections();
 
     const mealNoteEl = document.getElementById('mealNote');
     const addMealBtn = document.getElementById('addMealBtn');
@@ -325,6 +371,10 @@
     const statSinceLastEl = document.getElementById('statSinceLast');
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
+    const reflectionTodayEl = document.getElementById('reflectionToday');
+    const saveReflectionBtn = document.getElementById('saveReflectionBtn');
+    const reflectionStatusEl = document.getElementById('reflectionStatus');
+
     const historyBodyEl = document.getElementById('historyBody');
 
     function isSameDay(ts, refDate) {
@@ -333,6 +383,11 @@
       return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
         d1.getDate() === d2.getDate();
+    }
+
+    function getDayKey(dateOrTs) {
+      const d = dateOrTs instanceof Date ? dateOrTs : new Date(dateOrTs);
+      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
     }
 
     function formatTimeHM(ts) {
@@ -436,6 +491,7 @@
 
       if (todayMeals.length === 0) {
         mealListEl.innerHTML = '<div class="subtle">Сегодня ещё не было ни одного приёма пищи. Когда начнёшь есть — нажми «Я ем сейчас».</div>';
+        lastMealInfoEl.textContent = '';
         return;
       }
 
@@ -553,12 +609,11 @@
 
       const byDayKey = {};
       for (const m of meals) {
-        const d = new Date(m.ts);
-        const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-        if (!byDayKey[key]) {
-          byDayKey[key] = [];
+        const dKey = getDayKey(m.ts);
+        if (!byDayKey[dKey]) {
+          byDayKey[dKey] = [];
         }
-        byDayKey[key].push(m);
+        byDayKey[dKey].push(m);
       }
 
       const result = [];
@@ -599,7 +654,7 @@
       if (stats.length === 0) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 4;
+        td.colSpan = 5;
         td.className = 'subtle';
         td.textContent = 'Пока нет данных. Начни отмечать приёмы пищи — история появится здесь.';
         tr.appendChild(td);
@@ -622,14 +677,66 @@
         const tdMax = document.createElement('td');
         tdMax.textContent = day.count > 1 ? formatInterval(day.maxInterval) : '–';
 
+        const tdRefl = document.createElement('td');
+        const dayReflection = reflections[day.key] || '';
+        if (dayReflection) {
+          const label = document.createElement('div');
+          label.className = 'reflection-label';
+          label.textContent = 'Текст:';
+          const snippet = document.createElement('div');
+          snippet.className = 'reflection-snippet';
+          snippet.textContent = dayReflection;
+          tdRefl.appendChild(label);
+          tdRefl.appendChild(snippet);
+        } else {
+          tdRefl.className = 'subtle';
+          tdRefl.textContent = '—';
+        }
+
         tr.appendChild(tdDate);
         tr.appendChild(tdCount);
         tr.appendChild(tdAvg);
         tr.appendChild(tdMax);
+        tr.appendChild(tdRefl);
 
         historyBodyEl.appendChild(tr);
       }
     }
+
+    function initReflectionToday() {
+      const todayKey = getDayKey(new Date());
+      const existing = reflections[todayKey] || '';
+      reflectionTodayEl.value = existing;
+      if (existing) {
+        reflectionStatusEl.textContent = 'Рефлексия за сегодня сохранена.';
+      } else {
+        reflectionStatusEl.textContent = '';
+      }
+    }
+
+    saveReflectionBtn.addEventListener('click', () => {
+      const todayKey = getDayKey(new Date());
+      const text = (reflectionTodayEl.value || '').trim();
+
+      if (!text) {
+        if (reflections[todayKey]) {
+          if (confirm('Очистить заметку за сегодня?')) {
+            delete reflections[todayKey];
+            saveReflections(reflections);
+            reflectionStatusEl.textContent = 'Заметка за сегодня удалена.';
+            renderHistory();
+          }
+        } else {
+          reflectionStatusEl.textContent = 'Пустую заметку сохранять не нужно.';
+        }
+        return;
+      }
+
+      reflections[todayKey] = text;
+      saveReflections(reflections);
+      reflectionStatusEl.textContent = 'Рефлексия за сегодня сохранена.';
+      renderHistory();
+    });
 
     function tickSinceLast() {
       renderStats();
@@ -657,8 +764,10 @@
       renderHistory();
     });
 
+    // первый запуск
     renderMeals();
     renderStats();
+    initReflectionToday();
     renderHistory();
   </script>
 </body>
