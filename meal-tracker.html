@@ -275,10 +275,6 @@
         <div class="stat-value" id="statAvgInterval">–</div>
       </div>
       <div class="stat-box">
-        <div class="stat-label">Максимальный интервал</div>
-        <div class="stat-value" id="statMaxInterval">–</div>
-      </div>
-      <div class="stat-box">
         <div class="stat-label">Сейчас от последнего</div>
         <div class="stat-value" id="statSinceLast">–</div>
       </div>
@@ -314,9 +310,9 @@
         <thead>
           <tr>
             <th>Дата</th>
+            <th>Интервал сна</th>
             <th>Приёмов пищи</th>
             <th>Средний интервал</th>
-            <th>Максимальный интервал</th>
             <th>Рефлексия</th>
           </tr>
         </thead>
@@ -591,44 +587,31 @@
       }
     }
 
-    function getTodayIntervalsWithCrossDay() {
+    function getTodayIntervalsWithinDay() {
       const todayMeals = getTodayMeals();
-      if (todayMeals.length === 0) return [];
-
-      const allSorted = getAllMealsSorted();
-      const firstToday = todayMeals[0];
-      const firstIndex = allSorted.findIndex(m => m.id === firstToday.id);
+      if (todayMeals.length <= 1) return [];
 
       const intervals = [];
-
-      if (firstIndex > 0) {
-        const prev = allSorted[firstIndex - 1];
-        intervals.push(firstToday.ts - prev.ts);
-      }
-
       for (let i = 1; i < todayMeals.length; i++) {
         intervals.push(todayMeals[i].ts - todayMeals[i - 1].ts);
       }
-
       return intervals;
     }
+
 
     function renderStats() {
       const todayMeals = getTodayMeals();
       const count = todayMeals.length;
       statMealsTodayEl.textContent = count;
 
-      const intervals = getTodayIntervalsWithCrossDay();
+      const intervals = getTodayIntervalsWithinDay();
 
       if (intervals.length === 0) {
         statAvgIntervalEl.textContent = '–';
-        statMaxIntervalEl.textContent = '–';
       } else {
         const sum = intervals.reduce((a, b) => a + b, 0);
         const avg = sum / intervals.length;
-        const max = Math.max(...intervals);
         statAvgIntervalEl.textContent = formatInterval(avg);
-        statMaxIntervalEl.textContent = formatInterval(max);
       }
 
       if (count === 0) {
@@ -641,6 +624,22 @@
         statSinceLastEl.textContent = formatInterval(diff);
       }
     }
+    function getSleepIntervalForDay(dayMeals, allMeals) {
+      const first = dayMeals[0];
+
+      // найти последнюю запись до первого приёма дня
+      let prev = null;
+      for (const m of allMeals) {
+        if (m.ts < first.ts) {
+          if (!prev || m.ts > prev.ts) {
+            prev = m;
+          }
+        }
+      }
+
+      if (!prev) return null;
+      return first.ts - prev.ts;
+    }
 
     function computeDailyStats() {
       if (meals.length === 0) return [];
@@ -648,33 +647,19 @@
       const byDayKey = {};
       for (const m of meals) {
         const dKey = getDayKey(m.ts);
-        if (!byDayKey[dKey]) {
-          byDayKey[dKey] = [];
-        }
+        if (!byDayKey[dKey]) byDayKey[dKey] = [];
         byDayKey[dKey].push(m);
       }
 
+      const allSorted = getAllMealsSorted();
       const result = [];
 
       for (const key in byDayKey) {
         const dayMeals = byDayKey[key].sort((a, b) => a.ts - b.ts);
         const count = dayMeals.length;
 
+        // дневные интервалы (без ночного)
         let intervals = [];
-
-        const first = dayMeals[0];
-        let crossPrev = null;
-        for (const m of meals) {
-          if (m.ts < first.ts) {
-            if (!crossPrev || m.ts > crossPrev.ts) {
-              crossPrev = m;
-            }
-          }
-        }
-        if (crossPrev) {
-          intervals.push(first.ts - crossPrev.ts);
-        }
-
         if (count > 1) {
           for (let i = 1; i < dayMeals.length; i++) {
             intervals.push(dayMeals[i].ts - dayMeals[i - 1].ts);
@@ -682,25 +667,26 @@
         }
 
         let avg = null;
-        let max = null;
         if (intervals.length > 0) {
           const sum = intervals.reduce((a, b) => a + b, 0);
           avg = sum / intervals.length;
-          max = Math.max(...intervals);
         }
+
+        const sleepInterval = getSleepIntervalForDay(dayMeals, allSorted);
 
         result.push({
           key,
           ts: dayMeals[0].ts,
           count,
-          avgInterval: avg,
-          maxInterval: max
+          sleepInterval,
+          avgInterval: avg
         });
       }
 
       result.sort((a, b) => b.ts - a.ts);
       return result;
     }
+
 
     function renderHistory() {
       const stats = computeDailyStats();
@@ -723,14 +709,14 @@
         const tdDate = document.createElement('td');
         tdDate.textContent = formatDateDMY(day.ts);
 
+        const tdSleep = document.createElement('td');
+        tdSleep.textContent = day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
+
         const tdCount = document.createElement('td');
         tdCount.textContent = day.count;
 
         const tdAvg = document.createElement('td');
         tdAvg.textContent = day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
-
-        const tdMax = document.createElement('td');
-        tdMax.textContent = day.maxInterval != null ? formatInterval(day.maxInterval) : '–';
 
         const tdRefl = document.createElement('td');
         const dayReflection = reflections[day.key] || '';
@@ -761,9 +747,10 @@
 
         tr.appendChild(tdDate);
         tr.appendChild(tdCount);
+        tr.appendChild(tdSleep);
         tr.appendChild(tdAvg);
-        tr.appendChild(tdMax);
         tr.appendChild(tdRefl);
+
 
         historyBodyEl.appendChild(tr);
       }
