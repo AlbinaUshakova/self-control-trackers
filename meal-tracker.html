@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>EatLog</title>
+  <title>EatLog — трекер приёмов пищи</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="eatlog-icon.png">
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -230,7 +230,6 @@
       overflow-y: auto;
     }
 
-    /* показываем рефлексию полностью по тапу */
     .reflection-snippet {
       max-width: 260px;
       white-space: nowrap;
@@ -252,7 +251,8 @@
 <body>
   <h1>EatLog</h1>
   <p class="subtle">
-    Твой личный лог приёмов пищи. Отмечай, когда ешь, смотри интервалы и в конце дня делай короткую рефлексию.
+    Твой личный лог приёмов пищи. Отмечай, когда ешь, смотри интервалы (в том числе между днями) и в конце дня делай
+    короткую рефлексию.
   </p>
 
   <div class="card">
@@ -287,7 +287,8 @@
 
   <div class="card">
     <h2>Сегодняшние приёмы пищи</h2>
-    <div class="subtle" style="margin-bottom: 6px;">От ранних к более поздним. Интервал считается от предыдущего приёма.
+    <div class="subtle" style="margin-bottom: 6px;">
+      От ранних к более поздним. Интервал считается от прошлого приёма (даже если он был вчера).
     </div>
     <div class="list" id="mealList"></div>
   </div>
@@ -300,14 +301,14 @@
     </p>
     <label for="reflectionToday">Твои мысли о сегодняшнем дне</label>
     <textarea id="reflectionToday"
-      placeholder="Например: «Ела спокойно, без зажора. Долгие интервалы, много белка. Вечером потянуло на сладкое»"></textarea>
+      placeholder="Например: «Ела спокойно, без зажора. Долгие интервалы, много белка. Вечером потянуло на сладкое — в следующий раз хочу заметить раньше»"></textarea>
     <button id="saveReflectionBtn" class="btn-outline">Сохранить рефлексию ✍️</button>
     <p class="subtle" id="reflectionStatus"></p>
   </div>
 
   <div class="card">
     <h2>История по дням</h2>
-    <p class="subtle">Сводка по всем дням: сколько раз ела, интервалы и твоя рефлексия.</p>
+    <p class="subtle">Сводка по всем дням: сколько раз ела, интервалы (с учётом ночи) и твоя рефлексия.</p>
     <div class="history-wrapper">
       <table>
         <thead>
@@ -419,6 +420,10 @@
       return h + ' ч ' + (m > 0 ? m + ' мин' : '');
     }
 
+    function getAllMealsSorted() {
+      return [...meals].sort((a, b) => a.ts - b.ts);
+    }
+
     function getTodayMeals() {
       const now = new Date();
       return meals
@@ -498,7 +503,17 @@
         return;
       }
 
-      let prevTs = null;
+      const allSorted = getAllMealsSorted();
+      const firstToday = todayMeals[0];
+      const firstIndex = allSorted.findIndex(m => m.id === firstToday.id);
+
+      let globalPrevTs = null;
+      if (firstIndex > 0) {
+        globalPrevTs = allSorted[firstIndex - 1].ts;
+      }
+
+      let prevTs = globalPrevTs;
+
       for (const meal of todayMeals) {
         const row = document.createElement('div');
         row.className = 'meal-row';
@@ -554,7 +569,7 @@
         intervalEl.className = 'meal-interval';
 
         if (prevTs == null) {
-          intervalEl.textContent = 'Первый приём за день';
+          intervalEl.textContent = 'Первый зафиксированный приём (раньше записей нет).';
         } else {
           const diff = meal.ts - prevTs;
           intervalEl.textContent = 'Интервал с прошлого приёма: ' + formatInterval(diff);
@@ -576,19 +591,39 @@
       }
     }
 
+    function getTodayIntervalsWithCrossDay() {
+      const todayMeals = getTodayMeals();
+      if (todayMeals.length === 0) return [];
+
+      const allSorted = getAllMealsSorted();
+      const firstToday = todayMeals[0];
+      const firstIndex = allSorted.findIndex(m => m.id === firstToday.id);
+
+      const intervals = [];
+
+      if (firstIndex > 0) {
+        const prev = allSorted[firstIndex - 1];
+        intervals.push(firstToday.ts - prev.ts);
+      }
+
+      for (let i = 1; i < todayMeals.length; i++) {
+        intervals.push(todayMeals[i].ts - todayMeals[i - 1].ts);
+      }
+
+      return intervals;
+    }
+
     function renderStats() {
       const todayMeals = getTodayMeals();
       const count = todayMeals.length;
       statMealsTodayEl.textContent = count;
 
-      if (count <= 1) {
+      const intervals = getTodayIntervalsWithCrossDay();
+
+      if (intervals.length === 0) {
         statAvgIntervalEl.textContent = '–';
         statMaxIntervalEl.textContent = '–';
       } else {
-        let intervals = [];
-        for (let i = 1; i < todayMeals.length; i++) {
-          intervals.push(todayMeals[i].ts - todayMeals[i - 1].ts);
-        }
         const sum = intervals.reduce((a, b) => a + b, 0);
         const avg = sum / intervals.length;
         const max = Math.max(...intervals);
@@ -620,18 +655,35 @@
       }
 
       const result = [];
+
       for (const key in byDayKey) {
         const dayMeals = byDayKey[key].sort((a, b) => a.ts - b.ts);
         const count = dayMeals.length;
 
-        let avg = null;
-        let max = null;
+        let intervals = [];
+
+        const first = dayMeals[0];
+        let crossPrev = null;
+        for (const m of meals) {
+          if (m.ts < first.ts) {
+            if (!crossPrev || m.ts > crossPrev.ts) {
+              crossPrev = m;
+            }
+          }
+        }
+        if (crossPrev) {
+          intervals.push(first.ts - crossPrev.ts);
+        }
 
         if (count > 1) {
-          const intervals = [];
           for (let i = 1; i < dayMeals.length; i++) {
             intervals.push(dayMeals[i].ts - dayMeals[i - 1].ts);
           }
+        }
+
+        let avg = null;
+        let max = null;
+        if (intervals.length > 0) {
           const sum = intervals.reduce((a, b) => a + b, 0);
           avg = sum / intervals.length;
           max = Math.max(...intervals);
@@ -675,14 +727,13 @@
         tdCount.textContent = day.count;
 
         const tdAvg = document.createElement('td');
-        tdAvg.textContent = day.count > 1 ? formatInterval(day.avgInterval) : '–';
+        tdAvg.textContent = day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
 
         const tdMax = document.createElement('td');
-        tdMax.textContent = day.count > 1 ? formatInterval(day.maxInterval) : '–';
+        tdMax.textContent = day.maxInterval != null ? formatInterval(day.maxInterval) : '–';
 
         const tdRefl = document.createElement('td');
         const dayReflection = reflections[day.key] || '';
-
         if (dayReflection) {
           const label = document.createElement('div');
           label.className = 'reflection-label';
@@ -692,7 +743,6 @@
           snippet.className = 'reflection-snippet';
           snippet.textContent = dayReflection;
 
-          // по тапу показываем полный текст
           snippet.onclick = () => {
             alert(
               'Рефлексия за ' +
