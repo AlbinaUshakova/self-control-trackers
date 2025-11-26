@@ -230,13 +230,16 @@
       overflow-y: auto;
     }
 
+    /* показываем рефлексию полностью, в несколько строк */
     .reflection-snippet {
-      max-width: 260px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: pre-wrap;
+      /* переносим по словам и переносам строк */
+      word-wrap: break-word;
       color: #e5e7eb;
+      font-size: 12px;
+      line-height: 1.4;
     }
+
 
     .reflection-label {
       font-size: 11px;
