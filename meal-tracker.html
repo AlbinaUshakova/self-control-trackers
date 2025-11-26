@@ -310,8 +310,8 @@
         <thead>
           <tr>
             <th>Дата</th>
-            <th>Интервал сна</th>
             <th>Приёмов пищи</th>
+            <th>Интервал сна</th>
             <th>Средний интервал</th>
             <th>Рефлексия</th>
           </tr>
@@ -709,14 +709,16 @@
         const tdDate = document.createElement('td');
         tdDate.textContent = formatDateDMY(day.ts);
 
-        const tdSleep = document.createElement('td');
-        tdSleep.textContent = day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
-
         const tdCount = document.createElement('td');
-        tdCount.textContent = day.count;
+        tdCount.textContent = day.count;  // ← тут именно КОЛ-ВО приёмов
+
+        const tdSleep = document.createElement('td');
+        tdSleep.textContent =
+          day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
 
         const tdAvg = document.createElement('td');
-        tdAvg.textContent = day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
+        tdAvg.textContent =
+          day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
 
         const tdRefl = document.createElement('td');
         const dayReflection = reflections[day.key] || '';
@@ -751,77 +753,76 @@
         tr.appendChild(tdAvg);
         tr.appendChild(tdRefl);
 
-
         historyBodyEl.appendChild(tr);
       }
-    }
 
-    function initReflectionToday() {
-      const todayKey = getDayKey(new Date());
-      const existing = reflections[todayKey] || '';
-      reflectionTodayEl.value = existing;
-      if (existing) {
-        reflectionStatusEl.textContent = 'Рефлексия за сегодня сохранена.';
-      } else {
-        reflectionStatusEl.textContent = '';
-      }
-    }
 
-    saveReflectionBtn.addEventListener('click', () => {
-      const todayKey = getDayKey(new Date());
-      const text = (reflectionTodayEl.value || '').trim();
-
-      if (!text) {
-        if (reflections[todayKey]) {
-          if (confirm('Очистить заметку за сегодня?')) {
-            delete reflections[todayKey];
-            saveReflections(reflections);
-            reflectionStatusEl.textContent = 'Заметка за сегодня удалена.';
-            renderHistory();
-          }
+      function initReflectionToday() {
+        const todayKey = getDayKey(new Date());
+        const existing = reflections[todayKey] || '';
+        reflectionTodayEl.value = existing;
+        if (existing) {
+          reflectionStatusEl.textContent = 'Рефлексия за сегодня сохранена.';
         } else {
-          reflectionStatusEl.textContent = 'Пустую заметку сохранять не нужно.';
+          reflectionStatusEl.textContent = '';
         }
-        return;
       }
 
-      reflections[todayKey] = text;
-      saveReflections(reflections);
-      reflectionStatusEl.textContent = 'Рефлексия за сегодня сохранена.';
-      renderHistory();
-    });
+      saveReflectionBtn.addEventListener('click', () => {
+        const todayKey = getDayKey(new Date());
+        const text = (reflectionTodayEl.value || '').trim();
 
-    function tickSinceLast() {
-      renderStats();
-    }
+        if (!text) {
+          if (reflections[todayKey]) {
+            if (confirm('Очистить заметку за сегодня?')) {
+              delete reflections[todayKey];
+              saveReflections(reflections);
+              reflectionStatusEl.textContent = 'Заметка за сегодня удалена.';
+              renderHistory();
+            }
+          } else {
+            reflectionStatusEl.textContent = 'Пустую заметку сохранять не нужно.';
+          }
+          return;
+        }
 
-    setInterval(tickSinceLast, 60000);
+        reflections[todayKey] = text;
+        saveReflections(reflections);
+        reflectionStatusEl.textContent = 'Рефлексия за сегодня сохранена.';
+        renderHistory();
+      });
 
-    addMealBtn.addEventListener('click', () => {
-      const note = (mealNoteEl.value || '').trim();
-      const now = Date.now();
+      function tickSinceLast() {
+        renderStats();
+      }
 
-      const newMeal = {
-        id: 'm_' + now + '_' + Math.random().toString(36).slice(2, 8),
-        ts: now,
-        note
-      };
+      setInterval(tickSinceLast, 60000);
 
-      meals.push(newMeal);
-      saveMeals(meals);
+      addMealBtn.addEventListener('click', () => {
+        const note = (mealNoteEl.value || '').trim();
+        const now = Date.now();
 
-      mealNoteEl.value = '';
+        const newMeal = {
+          id: 'm_' + now + '_' + Math.random().toString(36).slice(2, 8),
+          ts: now,
+          note
+        };
 
+        meals.push(newMeal);
+        saveMeals(meals);
+
+        mealNoteEl.value = '';
+
+        renderMeals();
+        renderStats();
+        renderHistory();
+      });
+
+      // первый запуск
       renderMeals();
       renderStats();
+      initReflectionToday();
       renderHistory();
-    });
-
-    // первый запуск
-    renderMeals();
-    renderStats();
-    initReflectionToday();
-    renderHistory();
   </script>
 </body>
 
