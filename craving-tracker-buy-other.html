@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Трекер желаний (только «Купить» и «Другое»)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    h2 {
+      font-size: 18px;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    .card {
+      background: #111827;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #9ca3af;
+    }
+    textarea, select {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-right: 6px;
+      margin-top: 4px;
+    }
+    .btn-primary {
+      background: #6366f1;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #4f46e5;
+    }
+    .btn-outline {
+      background: transparent;
+      color: #e5e7eb;
+      border: 1px solid #4b5563;
+    }
+    .btn-outline:hover {
+      background: #111827;
+    }
+    .btn-danger {
+      background: transparent;
+      color: #f87171;
+      border: 1px solid #4b5563;
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+    .btn-danger:hover {
+      background: #111827;
+      border-color: #f87171;
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    .pill-buy { background: rgba(52, 211, 153, 0.16); color: #34d399; }
+    .pill-other { background: rgba(96, 165, 250, 0.16); color: #60a5fa; }
+
+    .pill-status-pending { background: rgba(251, 191, 36, 0.16); color: #fbbf24; }
+    .pill-status-done { background: rgba(52, 211, 153, 0.16); color: #34d399; }
+    .pill-status-resisted { background: rgba(248, 113, 113, 0.16); color: #f87171; }
+
+    .list {
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .urge-row {
+      border-bottom: 1px solid #1f2937;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .urge-row:last-child {
+      border-bottom: none;
+    }
+    .row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .row-main-text {
+      font-weight: 500;
+      word-break: break-word;
+    }
+    .row-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .stat-box {
+      background: #020617;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+    }
+    .stat-label {
+      color: #9ca3af;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .timer {
+      font-size: 32px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.08em;
+    }
+    .subtle {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <h1>Трекер импульсивных желаний</h1>
+  <p class="subtle">Записывай желание → жди час → отметь, выдержала или нет. Типы: только «Купить» и «Другое».</p>
+
+  <!-- Форма создания нового желания -->
+  <div class="card">
+    <h2>Новое желание</h2>
+    <label for="urgeText">Что ты хочешь?</label>
+    <textarea id="urgeText" placeholder="Например: «Купить кроссовки» или «Залипнуть в соцсетях»"></textarea>
+
+    <label for="urgeType">Тип желания</label>
+    <select id="urgeType">
+      <option value="buy">Купить</option>
+      <option value="other">Другое</option>
+    </select>
+
+    <button id="addUrgeBtn" class="btn-primary">Создать запись с таймером на 1 час</button>
+  </div>
+
+  <!-- Текущая активная запись с таймером -->
+  <div class="card" id="currentCard" style="display:none;">
+    <h2>Текущее желание</h2>
+    <div id="currentText" style="margin-bottom: 6px; font-weight: 500;"></div>
+    <div id="currentTypePills" style="margin-bottom: 6px;"></div>
+    <div class="subtle" id="currentDeadlineLabel"></div>
+    <div style="margin-top: 12px; margin-bottom: 8px;">
+      <div class="timer" id="countdown">00:00</div>
+    </div>
+    <div class="subtle" id="currentHint"></div>
+    <div style="margin-top: 10px;">
+      <button id="markDoneBtn" class="btn-outline">✅ Я всё-таки это сделала</button>
+      <button id="markResistedBtn" class="btn-outline">🚫 Я удержалась</button>
+    </div>
+  </div>
+
+  <!-- Статистика -->
+  <div class="card">
+    <h2>Статистика</h2>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">Всего желаний</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Я удержалась</div>
+        <div class="stat-value" id="statResisted">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Я поддалась</div>
+        <div class="stat-value" id="statDone">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">% самоконтроля</div>
+        <div class="stat-value" id="statPercent">0%</div>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-top: 12px;">
+      <div class="stat-box">
+        <span class="badge"><span>🛒</span><span>Покупки</span></span>
+        <div class="stat-value" id="statBuy">0</div>
+      </div>
+      <div class="stat-box">
+        <span class="badge"><span>✨</span><span>Другое</span></span>
+        <div class="stat-value" id="statOther">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Список всех записей -->
+  <div class="card">
+    <h2>Все записи</h2>
+    <div class="subtle" style="margin-bottom: 6px;">Свежие сверху.</div>
+    <div class="list" id="urgeList"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'craving_tracker_urges_v1';
+
+    function loadUrges() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed;
+      } catch (e) {
+        console.error('Failed to parse storage', e);
+        return [];
+      }
+    }
+
+    function saveUrges(urges) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(urges));
+    }
+
+    let urges = loadUrges();
+    let countdownInterval = null;
+
+    const urgeTextEl = document.getElementById('urgeText');
+    const urgeTypeEl = document.getElementById('urgeType');
+    const addUrgeBtn = document.getElementById('addUrgeBtn');
+
+    const currentCardEl = document.getElementById('currentCard');
+    const currentTextEl = document.getElementById('currentText');
+    const currentTypePillsEl = document.getElementById('currentTypePills');
+    const currentDeadlineLabelEl = document.getElementById('currentDeadlineLabel');
+    const countdownEl = document.getElementById('countdown');
+    const currentHintEl = document.getElementById('currentHint');
+    const markDoneBtn = document.getElementById('markDoneBtn');
+    const markResistedBtn = document.getElementById('markResistedBtn');
+
+    const statTotalEl = document.getElementById('statTotal');
+    const statResistedEl = document.getElementById('statResisted');
+    const statDoneEl = document.getElementById('statDone');
+    const statPercentEl = document.getElementById('statPercent');
+    const statBuyEl = document.getElementById('statBuy');
+    const statOtherEl = document.getElementById('statOther');
+
+    const urgeListEl = document.getElementById('urgeList');
+
+    function formatTime(ms) {
+      const totalSec = Math.max(0, Math.floor(ms / 1000));
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    function formatDateTime(ts) {
+      const d = new Date(ts);
+      return d.toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function typeLabel(type) {
+      if (type === 'buy') return 'Купить';
+      // всё остальное считаем как «Другое» (включая старые записи с type === 'eat')
+      return 'Другое';
+    }
+
+    function typeClass(type) {
+      if (type === 'buy') return 'pill pill-buy';
+      return 'pill pill-other';
+    }
+
+    function statusLabel(status) {
+      if (status === 'pending') return 'Жду 1 час';
+      if (status === 'done') return 'Сделала';
+      if (status === 'resisted') return 'Удержалась';
+      return '';
+    }
+
+    function statusClass(status) {
+      if (status === 'pending') return 'pill pill-status-pending';
+      if (status === 'done') return 'pill pill-status-done';
+      if (status === 'resisted') return 'pill pill-status-resisted';
+      return 'pill';
+    }
+
+    function renderStats() {
+      const total = urges.length;
+      const done = urges.filter(u => u.status === 'done').length;
+      const resisted = urges.filter(u => u.status === 'resisted').length;
+
+      const buy = urges.filter(u => u.type === 'buy').length;
+      const other = urges.filter(u => u.type !== 'buy').length;
+
+      statTotalEl.textContent = total;
+      statDoneEl.textContent = done;
+      statResistedEl.textContent = resisted;
+
+      const successful = resisted;
+      const percent = total > 0 ? Math.round((successful / total) * 100) : 0;
+      statPercentEl.textContent = percent + '%';
+
+      statBuyEl.textContent = buy;
+      statOtherEl.textContent = other;
+    }
+
+    function renderList() {
+      const sorted = [...urges].sort((a, b) => b.createdAt - a.createdAt);
+      urgeListEl.innerHTML = '';
+
+      if (sorted.length === 0) {
+        urgeListEl.innerHTML = '<div class="subtle">Пока нет записей. Создай первое желание ✨</div>';
+        return;
+      }
+
+      for (const u of sorted) {
+        const row = document.createElement('div');
+        row.className = 'urge-row';
+
+        const top = document.createElement('div');
+        top.className = 'row-top';
+
+        const main = document.createElement('div');
+        main.className = 'row-main-text';
+        main.textContent = u.text;
+
+        const pills = document.createElement('div');
+        const typeSpan = document.createElement('span');
+        typeSpan.className = typeClass(u.type);
+        typeSpan.textContent = typeLabel(u.type);
+        const statusSpan = document.createElement('span');
+        statusSpan.className = statusClass(u.status);
+        statusSpan.textContent = statusLabel(u.status);
+
+        pills.appendChild(typeSpan);
+        pills.appendChild(statusSpan);
+
+        top.appendChild(main);
+        top.appendChild(pills);
+
+        const meta = document.createElement('div');
+        meta.className = 'row-meta';
+        meta.textContent = 'Создано: ' + formatDateTime(u.createdAt) +
+          ' • Проверка: ' + formatDateTime(u.checkAt);
+
+        const actions = document.createElement('div');
+
+        if (u.status === 'pending') {
+          const btnDone = document.createElement('button');
+          btnDone.className = 'btn-outline';
+          btnDone.textContent = '✅ Сделала';
+          btnDone.onclick = () => updateStatus(u.id, 'done');
+
+          const btnResisted = document.createElement('button');
+          btnResisted.className = 'btn-outline';
+          btnResisted.textContent = '🚫 Удержалась';
+          btnResisted.onclick = () => updateStatus(u.id, 'resisted');
+
+          actions.appendChild(btnDone);
+          actions.appendChild(btnResisted);
+        }
+
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-danger';
+        btnDelete.textContent = '🗑 Удалить';
+        btnDelete.onclick = () => deleteUrge(u.id);
+        actions.appendChild(btnDelete);
+
+        row.appendChild(top);
+        row.appendChild(meta);
+        row.appendChild(actions);
+
+        urgeListEl.appendChild(row);
+      }
+    }
+
+    function getActiveUrge() {
+      const pending = urges.filter(u => u.status === 'pending');
+      if (pending.length === 0) return null;
+      pending.sort((a, b) => a.checkAt - b.checkAt);
+      return pending[0];
+    }
+
+    function startCountdown() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+
+      const active = getActiveUrge();
+      if (!active) {
+        currentCardEl.style.display = 'none';
+        return;
+      }
+
+      currentCardEl.style.display = 'block';
+      currentTextEl.textContent = active.text;
+
+      currentTypePillsEl.innerHTML = '';
+      const typeSpan = document.createElement('span');
+      typeSpan.className = typeClass(active.type);
+      typeSpan.textContent = typeLabel(active.type);
+      currentTypePillsEl.appendChild(typeSpan);
+
+      currentDeadlineLabelEl.textContent =
+        'Проверка в ' + formatDateTime(active.checkAt);
+
+      function updateCountdown() {
+        const now = Date.now();
+        const diff = active.checkAt - now;
+        countdownEl.textContent = formatTime(diff);
+
+        if (diff > 0) {
+          currentHintEl.textContent =
+            'Подожди до конца таймера и потом честно отметь, поддалась ты или нет.';
+        } else {
+          currentHintEl.textContent =
+            'Час прошёл. Самое время честно отметить: сделала или удержалась.';
+        }
+      }
+
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+
+      markDoneBtn.onclick = () => updateStatus(active.id, 'done');
+      markResistedBtn.onclick = () => updateStatus(active.id, 'resisted');
+    }
+
+    function updateStatus(id, status) {
+      urges = urges.map(u =>
+        u.id === id ? { ...u, status } : u
+      );
+      saveUrges(urges);
+      renderStats();
+      renderList();
+      startCountdown();
+    }
+
+    function deleteUrge(id) {
+      const u = urges.find(x => x.id === id);
+      const text = u ? ('«' + (u.text || '').slice(0, 40) + (u.text && u.text.length > 40 ? '…' : '') + '»') : '';
+      if (!confirm('Удалить эту запись ' + text + '?')) return;
+
+      urges = urges.filter(u => u.id !== id);
+      saveUrges(urges);
+      renderStats();
+      renderList();
+      startCountdown();
+    }
+
+    addUrgeBtn.addEventListener('click', () => {
+      const text = (urgeTextEl.value || '').trim();
+      const type = urgeTypeEl.value || 'other';
+
+      if (!text) {
+        alert('Напиши, что именно ты хочешь.');
+        return;
+      }
+
+      const now = Date.now();
+      const oneHour = 60 * 60 * 1000;
+
+      const newUrge = {
+        id: 'u_' + now + '_' + Math.random().toString(36).slice(2, 8),
+        text,
+        type,
+        createdAt: now,
+        checkAt: now + oneHour,
+        status: 'pending'
+      };
+
+      urges.push(newUrge);
+      saveUrges(urges);
+
+      urgeTextEl.value = '';
+      urgeTypeEl.value = type;
+
+      renderStats();
+      renderList();
+      startCountdown();
+    });
+
+    renderStats();
+    renderList();
+    startCountdown();
+  </script>
+</body>
+</html>
