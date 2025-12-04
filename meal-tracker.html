@@ -315,20 +315,23 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      font-size: 12px;
+      /* чуть меньше общий шрифт */
       background: transparent;
     }
 
     th,
     td {
-      padding: 6px 8px;
+      padding: 4px 6px;
+      /* меньше отступы по бокам */
       text-align: left;
       border-bottom: 1px solid #111827;
       vertical-align: top;
     }
 
     th {
-      font-size: 11px;
+      font-size: 10px;
+      /* компактные подписи */
       color: #9ca3af;
       font-weight: 500;
       text-transform: uppercase;
@@ -506,7 +509,7 @@
         <div class="card">
           <h2>Сегодняшние приёмы пищи</h2>
           <div class="subtle" style="margin-bottom: 6px;">
-            От ранних к более поздним. Интервал считается от прошлого приёма (даже если он был вчера).
+            Интервал считается от прошлого приёма (даже если он был вчера).
           </div>
           <div class="list" id="mealList"></div>
         </div>
@@ -555,10 +558,10 @@
               <thead>
                 <tr>
                   <th>Дата</th>
-                  <th>Приёмов пищи</th>
-                  <th>Из них перекусов</th>
-                  <th>Интервал сна</th>
-                  <th>Дневной интервал</th>
+                  <th>Приёмы</th>
+                  <th>Перекусы</th>
+                  <th>Сон</th>
+                  <th>Интервал</th>
                 </tr>
               </thead>
               <tbody id="historyBody"></tbody>
