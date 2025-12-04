@@ -222,7 +222,7 @@
       overflow-y: auto;
     }
 
-    /* Вкладки "Сегодня" / "Статистика" / "Цели" */
+    /* Вкладки */
     .view-tabs {
       display: flex;
       gap: 8px;
@@ -283,6 +283,11 @@
     .day-ok td {
       background: rgba(22, 163, 74, 0.18);
     }
+
+    .day-selected td {
+      box-shadow: inset 0 0 0 1px rgba(248, 250, 252, 0.3);
+      background: rgba(148, 163, 184, 0.15);
+    }
   </style>
 </head>
 
@@ -316,7 +321,7 @@
           <div class="stat-value" id="statMealsToday">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Перекусов 🍪</div>
+          <div class="stat-label">Из них перекусов 🍪</div>
           <div class="stat-value" id="statSnacksToday">0</div>
         </div>
         <div class="stat-box">
@@ -361,7 +366,7 @@
           <div class="stat-value" id="statPeriodMealsPerDay">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Среднее перекусов в день</div>
+          <div class="stat-label">Среднее из них перекусов в день</div>
           <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
         </div>
         <div class="stat-box">
@@ -378,7 +383,8 @@
     <div class="card">
       <h2>Детализация по дням</h2>
       <p class="subtle">
-        Нажми на строку в таблице, чтобы открыть приёмы пищи за этот день и отметить перекусы.
+        Нажми на строку в таблице, чтобы открыть приёмы пищи за этот день, отметить перекусы, а повторный тап — чтобы
+        скрыть детализацию.
       </p>
       <div class="history-wrapper">
         <table>
@@ -386,7 +392,7 @@
             <tr>
               <th>Дата</th>
               <th>Приёмов пищи</th>
-              <th>Перекусов</th>
+              <th>Из них перекусов</th>
               <th>Интервал сна</th>
               <th>Средний интервал</th>
             </tr>
@@ -415,7 +421,7 @@
       </div>
 
       <div class="goal-row">
-        <div class="subtle">Перекусов в день (максимум)</div>
+        <div class="subtle">Из них перекусов в день (максимум)</div>
         <span>
           до <input type="number" id="goalSnacksMax" min="0" step="1" />
         </span>
@@ -887,10 +893,10 @@
       if (goals.minMealsPerDay != null && day.count < goals.minMealsPerDay) return false;
       if (goals.maxMealsPerDay != null && day.count > goals.maxMealsPerDay) return false;
 
-      // Перекусы
+      // Из них перекусов
       if (goals.maxSnacksPerDay != null && (day.snacksCount || 0) > goals.maxSnacksPerDay) return false;
 
-      // Интервал сна (часы → проверка)
+      // Интервал сна (часы)
       if (day.sleepInterval != null) {
         const sleepHours = day.sleepInterval / (60 * 60 * 1000);
         if (goals.minSleepHours != null && sleepHours < goals.minSleepHours) return false;
@@ -899,7 +905,7 @@
         if (goals.minSleepHours != null || goals.maxSleepHours != null) return false;
       }
 
-      // Дневной интервал (средний, в минутах)
+      // Дневной интервал (минуты)
       if (day.avgInterval != null) {
         const dayIntervalMinutes = day.avgInterval / 60000;
         if (goals.minDayIntervalMinutes != null && dayIntervalMinutes < goals.minDayIntervalMinutes) return false;
@@ -978,13 +984,25 @@
       for (const day of stats) {
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
+
+        let rowClass = '';
         if (isDayInTarget(day)) {
-          tr.className = 'day-ok';
+          rowClass = 'day-ok';
+        }
+        if (selectedDayKey === day.key) {
+          rowClass = rowClass ? rowClass + ' day-selected' : 'day-selected';
+        }
+        if (rowClass) {
+          tr.className = rowClass;
         }
 
         tr.onclick = () => {
-          selectedDayKey = day.key;
-          renderDayDetail();
+          if (selectedDayKey === day.key) {
+            selectedDayKey = null;
+          } else {
+            selectedDayKey = day.key;
+          }
+          renderHistory(); // перерисовать, чтобы обновить подсветку
         };
 
         const tdDate = document.createElement('td');
@@ -1013,11 +1031,6 @@
         historyBodyEl.appendChild(tr);
       }
 
-      // если выбранный день уже не в периоде — сброс
-      const statsKeys = stats.map(s => s.key);
-      if (!statsKeys.includes(selectedDayKey)) {
-        selectedDayKey = null;
-      }
       renderDayDetail();
     }
 
@@ -1028,7 +1041,7 @@
         const p = document.createElement('p');
         p.className = 'subtle';
         p.style.marginTop = '10px';
-        p.textContent = 'Выбери день в таблице выше, чтобы посмотреть и отредактировать приёмы пищи.';
+        p.textContent = 'Выбери день в таблице выше, чтобы посмотреть и отредактировать приёмы пищи (или нажми ещё раз, чтобы скрыть).';
         dayDetailEl.appendChild(p);
         return;
       }
@@ -1059,7 +1072,6 @@
       list.style.maxHeight = '220px';
       list.style.marginTop = '6px';
 
-      // найдём глобальный предыдущий приём (для интервала первого за день)
       const firstDay = dayMeals[0];
       const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
       let prevTs = null;
