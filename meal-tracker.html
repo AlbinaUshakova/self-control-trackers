@@ -316,7 +316,7 @@
           <div class="stat-value" id="statMealsToday">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Перекусов</div>
+          <div class="stat-label">Перекусов 🍪</div>
           <div class="stat-value" id="statSnacksToday">0</div>
         </div>
         <div class="stat-box">
@@ -348,8 +348,8 @@
       </p>
       <div class="period-controls">
         <button class="btn-outline period-btn active" data-period="7">7 дней</button>
-        <button class="btn-outline period-btn" data-period="30">30 дней</button>
-        <button class="btn-outline period-btn" data-period="all">Всё время</button>
+        <button class="btn-outline period-btn" data-period="14">14 дней</button>
+        <button class="btn-outline period-btn" data-period="21">21 день</button>
       </div>
       <div class="stats-grid">
         <div class="stat-box">
@@ -509,7 +509,7 @@
     const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
     const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
 
-    let currentPeriod = '7'; // "7" | "30" | "all"
+    let currentPeriod = '7'; // "7" | "14" | "21"
 
     // Цели — элементы
     const goalMealsMinEl = document.getElementById('goalMealsMin');
@@ -856,7 +856,6 @@
 
     function getFilteredDailyStats() {
       const all = computeDailyStats();
-      if (currentPeriod === 'all') return all;
       const days = parseInt(currentPeriod, 10);
       const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
       return all.filter(d => d.ts >= cutoff);
