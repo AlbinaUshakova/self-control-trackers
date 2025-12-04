@@ -231,28 +231,6 @@
       max-height: 260px;
       overflow-y: auto;
     }
-
-    .new-meal-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .new-meal-row label.inline {
-      margin: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #e5e7eb;
-    }
-
-    .new-meal-row input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-    }
   </style>
 </head>
 
@@ -266,14 +244,6 @@
     <h2>Новый приём пищи</h2>
     <label for="mealNote">Что ты ешь? (по желанию)</label>
     <textarea id="mealNote" placeholder="Например: «Овсянка с семечками», «Чипсы», «Чай с печеньем»"></textarea>
-
-    <div class="new-meal-row">
-      <label class="inline">
-        <input type="checkbox" id="isSnackInput">
-        Это перекус
-      </label>
-    </div>
-
     <button id="addMealBtn" class="btn-primary">Я ем сейчас 🍽</button>
     <p class="subtle" id="lastMealInfo"></p>
   </div>
@@ -347,7 +317,6 @@
     let meals = loadMeals();
 
     const mealNoteEl = document.getElementById('mealNote');
-    const isSnackInput = document.getElementById('isSnackInput');
     const addMealBtn = document.getElementById('addMealBtn');
     const mealListEl = document.getElementById('mealList');
 
@@ -514,15 +483,6 @@
         const pill = document.createElement('span');
         pill.className = 'pill';
         pill.textContent = 'Приём пищи';
-
-        if (meal.isSnack) {
-          const snackPill = document.createElement('span');
-          snackPill.className = 'pill';
-          snackPill.style.background = 'rgba(251, 191, 36, 0.15)';
-          snackPill.style.color = '#fde68a';
-          snackPill.textContent = 'перекус';
-          leftWrap.appendChild(snackPill);
-        }
 
         leftWrap.appendChild(timeEl);
         leftWrap.appendChild(pill);
@@ -755,14 +715,13 @@
         id: 'm_' + now + '_' + Math.random().toString(36).slice(2, 8),
         ts: now,
         note,
-        isSnack: !!isSnackInput.checked
+        isSnack: false
       };
 
       meals.push(newMeal);
       saveMeals(meals);
 
       mealNoteEl.value = '';
-      isSnackInput.checked = false;
 
       renderMeals();
       renderStats();
