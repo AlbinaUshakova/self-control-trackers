@@ -163,16 +163,6 @@
       margin-top: 2px;
     }
 
-    .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: rgba(52, 211, 153, 0.16);
-      color: #6ee7b7;
-      margin-left: 6px;
-    }
-
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -324,6 +314,10 @@
         <div class="stat-box">
           <div class="stat-label">Приёмов пищи</div>
           <div class="stat-value" id="statMealsToday">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Перекусов</div>
+          <div class="stat-value" id="statSnacksToday">0</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Средний интервал (днём)</div>
@@ -492,6 +486,7 @@
     const mealListEl = document.getElementById('mealList');
 
     const statMealsTodayEl = document.getElementById('statMealsToday');
+    const statSnacksTodayEl = document.getElementById('statSnacksToday');
     const statAvgIntervalEl = document.getElementById('statAvgInterval');
     const statSinceLastEl = document.getElementById('statSinceLast');
     const lastMealInfoEl = document.getElementById('lastMealInfo');
@@ -691,28 +686,14 @@
         timeEl.className = 'meal-time';
         timeEl.textContent = formatTimeHM(meal.ts);
 
-        const pill = document.createElement('span');
-        pill.className = 'pill';
-        pill.textContent = 'Приём пищи';
-
         leftWrap.appendChild(timeEl);
-        leftWrap.appendChild(pill);
-
-        if (meal.isSnack) {
-          const snackPill = document.createElement('span');
-          snackPill.className = 'pill';
-          snackPill.style.background = 'rgba(251, 191, 36, 0.15)';
-          snackPill.style.color = '#fde68a';
-          snackPill.textContent = 'перекус';
-          leftWrap.appendChild(snackPill);
-        }
 
         const actions = document.createElement('div');
         actions.className = 'actions';
 
         const snackBtn = document.createElement('button');
         snackBtn.className = 'btn-ghost';
-        snackBtn.textContent = meal.isSnack ? '✅ перекус' : 'перекус';
+        snackBtn.textContent = meal.isSnack ? '✅🍪' : '🍪';
         snackBtn.title = 'Отметить как перекус';
         snackBtn.onclick = () => toggleSnack(meal.id);
 
@@ -788,11 +769,8 @@
       const count = todayMeals.length;
       const snacksCount = todayMeals.filter(m => m.isSnack).length;
 
-      if (snacksCount > 0) {
-        statMealsTodayEl.textContent = `${count} (перекусов: ${snacksCount})`;
-      } else {
-        statMealsTodayEl.textContent = String(count);
-      }
+      statMealsTodayEl.textContent = String(count);
+      statSnacksTodayEl.textContent = String(snacksCount);
 
       const intervals = getTodayIntervalsWithinDay();
 
