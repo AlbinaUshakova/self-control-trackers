@@ -20,7 +20,7 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+        radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
       color: #e5e7eb;
       display: flex;
       justify-content: center;
@@ -32,19 +32,10 @@
       width: 100%;
       max-width: 480px;
       margin: 0 auto;
-      border-radius: 32px;
-      padding: 16px 14px 24px;
-      background: radial-gradient(circle at top left,
-          rgba(96, 165, 250, 0.18),
-          transparent 55%),
-        radial-gradient(circle at bottom right,
-          rgba(52, 211, 153, 0.14),
-          transparent 55%),
-        rgba(15, 23, 42, 0.96);
-      box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.75),
-        0 0 0 1px rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(31, 41, 55, 0.9);
+      border-radius: 28px;
+      padding: 14px 14px 20px;
+      background: rgba(15, 23, 42, 0.96);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       display: flex;
@@ -63,22 +54,26 @@
     .app-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .app-logo {
-      width: 28px;
-      height: 28px;
-      border-radius: 10px;
-      background: radial-gradient(circle at 30% 20%, #facc15, #f97316);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 700;
-      color: #020617;
-      box-shadow: 0 4px 12px rgba(248, 250, 252, 0.18);
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      overflow: hidden;
       flex-shrink: 0;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(248, 250, 252, 0.1);
+      background: #020617;
+    }
+
+    .app-logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      object-fit: cover;
+      display: block;
     }
 
     h1 {
@@ -91,9 +86,8 @@
       font-size: 11px;
       padding: 3px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
       color: #9ca3af;
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(31, 41, 55, 0.9);
     }
 
     .subtle {
@@ -104,7 +98,7 @@
 
     /* Вкладки */
     .view-tabs-wrapper {
-      margin: 4px 0 14px;
+      margin: 4px 0 10px;
     }
 
     .view-tabs {
@@ -113,7 +107,6 @@
       padding: 4px;
       border-radius: 999px;
       background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(31, 41, 55, 0.95);
     }
 
     .tab-btn {
@@ -130,19 +123,18 @@
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, #22c55e, #4ade80);
-      color: #022c22;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
+      background: #e5e7eb;
+      color: #020617;
       transform: translateY(-1px);
     }
 
-    /* Контент-область прокручивается */
+    /* Контент-область */
     .app-content {
       flex: 1;
       overflow-y: auto;
       padding-right: 2px;
       padding-bottom: 8px;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     h2 {
@@ -153,17 +145,12 @@
     }
 
     .card {
-      background: radial-gradient(circle at top left,
-          rgba(148, 163, 184, 0.14),
-          transparent 60%),
-        rgba(15, 23, 42, 0.96);
-      border-radius: 18px;
-      padding: 14px 14px 12px;
-      margin-bottom: 12px;
-      box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.75),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: #020617;
+      border-radius: 16px;
+      padding: 12px 12px 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+      border: none;
     }
 
     .card-compact {
@@ -181,9 +168,9 @@
     textarea {
       width: 100%;
       box-sizing: border-box;
-      border-radius: 14px;
+      border-radius: 12px;
       border: 1px solid #1f2937;
-      background: radial-gradient(circle at top, #020617, #020617);
+      background: #020617;
       color: #e5e7eb;
       padding: 9px 11px;
       font-size: 14px;
@@ -191,13 +178,11 @@
       resize: vertical;
       min-height: 52px;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease,
-        background 0.12s ease;
+      transition: border-color 0.12s ease, background 0.12s ease;
     }
 
     textarea:focus {
       border-color: #22c55e;
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.7);
       background: #020617;
     }
 
@@ -214,27 +199,25 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      transition: background 0.15s ease, transform 0.08s ease,
-        box-shadow 0.15s ease, border-color 0.15s ease;
+      transition: background 0.15s ease, transform 0.08s ease;
       white-space: nowrap;
     }
 
     button:active {
       transform: translateY(1px);
-      box-shadow: none;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #22c55e, #4ade80);
+      background: #22c55e;
       color: #022c22;
       font-weight: 600;
       width: 100%;
       justify-content: center;
-      box-shadow: 0 10px 26px rgba(16, 185, 129, 0.55);
+      box-shadow: none;
     }
 
     .btn-primary:hover {
-      background: linear-gradient(135deg, #16a34a, #22c55e);
+      background: #16a34a;
     }
 
     .btn-outline {
@@ -244,43 +227,41 @@
     }
 
     .btn-outline:hover {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.9);
     }
 
     .btn-danger {
       background: transparent;
       color: #fca5a5;
-      border: 1px solid #4b5563;
+      border: none;
       padding: 4px 10px;
       font-size: 12px;
     }
 
     .btn-danger:hover {
-      background: rgba(127, 29, 29, 0.25);
-      border-color: #f87171;
+      background: rgba(127, 29, 29, 0.3);
     }
 
     .btn-ghost {
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.9);
       color: #e5e7eb;
-      border: 1px solid #374151;
+      border: none;
       padding: 4px 10px;
       font-size: 12px;
     }
 
     .btn-ghost:hover {
-      background: rgba(31, 41, 55, 0.95);
+      background: rgba(31, 41, 55, 1);
     }
 
     .list {
       max-height: 360px;
       overflow-y: auto;
-      padding-right: 4px;
-      margin-right: -2px;
+      padding-right: 2px;
     }
 
     .meal-row {
-      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      border-bottom: 1px solid #111827;
       padding: 7px 0;
       font-size: 14px;
     }
@@ -327,20 +308,17 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 8px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .stat-box {
-      background: radial-gradient(circle at top left,
-          rgba(148, 163, 184, 0.2),
-          transparent 70%),
-        #020617;
-      border-radius: 14px;
-      padding: 9px 10px;
+      background: #020617;
+      border-radius: 12px;
+      padding: 8px 9px;
       font-size: 13px;
-      border: 1px solid rgba(31, 41, 55, 0.95);
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.65);
-      min-height: 56px;
+      border: none;
+      box-shadow: none;
+      min-height: 52px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -351,7 +329,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .stat-value {
@@ -363,22 +341,22 @@
       max-height: 260px;
       overflow-y: auto;
       border-radius: 12px;
-      border: 1px solid rgba(31, 41, 55, 0.95);
       margin-top: 4px;
+      background: #020617;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      background: rgba(15, 23, 42, 0.9);
+      background: transparent;
     }
 
     th,
     td {
       padding: 6px 8px;
       text-align: left;
-      border-bottom: 1px solid #1f2937;
+      border-bottom: 1px solid #111827;
       vertical-align: top;
     }
 
@@ -388,7 +366,7 @@
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      background: rgba(15, 23, 42, 0.98);
+      background: #020617;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -403,7 +381,7 @@
     }
 
     tbody tr:hover {
-      background: rgba(31, 41, 55, 0.7);
+      background: #020617;
     }
 
     /* Период */
@@ -411,7 +389,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin: 8px 0 8px;
+      margin: 6px 0 6px;
     }
 
     .period-btn {
@@ -421,15 +399,14 @@
     }
 
     .period-btn.active {
-      background: rgba(248, 250, 252, 0.96);
+      background: #e5e7eb;
       color: #020617;
       border-color: transparent;
-      box-shadow: 0 6px 16px rgba(148, 163, 184, 0.55);
     }
 
     /* Цели */
     .goal-row {
-      margin-bottom: 10px;
+      margin-bottom: 9px;
       font-size: 13px;
     }
 
@@ -449,12 +426,11 @@
       padding: 4px 6px;
       font-size: 13px;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+      transition: border-color 0.12s ease;
     }
 
     input[type="number"]:focus {
       border-color: #22c55e;
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
     }
 
     .day-ok td {
@@ -462,26 +438,21 @@
     }
 
     .day-selected td {
-      box-shadow: inset 0 0 0 1px rgba(248, 250, 252, 0.26);
+      box-shadow: inset 0 0 0 1px rgba(248, 250, 252, 0.22);
       background: rgba(148, 163, 184, 0.18);
     }
 
-    /* Низ приложения */
     .app-footer {
-      margin-top: 6px;
+      margin-top: 4px;
       font-size: 10px;
       text-align: center;
       color: #6b7280;
     }
 
-    .app-footer span {
-      opacity: 0.8;
-    }
-
     @media (max-width: 480px) {
       .app-shell {
-        border-radius: 26px;
-        padding-inline: 14px;
+        border-radius: 24px;
+        padding-inline: 12px;
       }
     }
   </style>
@@ -491,7 +462,9 @@
   <div class="app-shell">
     <header class="app-header">
       <div class="app-title">
-        <div class="app-logo">E</div>
+        <div class="app-logo">
+          <img src="eatlog-icon.png" alt="EatLog" />
+        </div>
         <div>
           <h1>EatLog</h1>
           <div class="subtle" style="margin: 0;">Мягкий контроль питания без жёстких диет</div>
@@ -658,7 +631,7 @@
     </div>
 
     <footer class="app-footer">
-      <span>EatLog · маленький шаг к более осознанному питанию</span>
+      EatLog · маленький шаг к более осознанному питанию
     </footer>
   </div>
 
