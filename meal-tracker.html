@@ -491,7 +491,7 @@
         <div class="card">
           <h2>Статистика за период</h2>
           <p class="subtle">
-            Выбери период и посмотри средние значения и сколько дней попало в твой целевой коридор.
+            Выбери период и посмотри значения и сколько дней попало в твой целевой коридор.
           </p>
           <div class="period-controls">
             <button class="btn-outline period-btn active" data-period="7">7 дней</button>
@@ -524,25 +524,30 @@
 
         <div class="card">
           <h2>Детализация по дням</h2>
-          <p class="subtle">
-            Нажми на строку в таблице, чтобы открыть приёмы пищи за этот день, отметить перекусы, а повторный тап —
-            чтобы скрыть детализацию.
+          <p class="subtle" id="statsHint">
+            Нажми на строку в таблице, чтобы открыть день и его приёмы питания на отдельном экране.
           </p>
-          <div class="history-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Дата</th>
-                  <th>Приёмов пищи</th>
-                  <th>Из них перекусов</th>
-                  <th>Интервал сна</th>
-                  <th>Дневной интервал</th>
-                </tr>
-              </thead>
-              <tbody id="historyBody"></tbody>
-            </table>
+
+          <!-- секция с таблицей дней -->
+          <div id="historyTableSection">
+            <div class="history-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Дата</th>
+                    <th>Приёмов пищи</th>
+                    <th>Из них перекусов</th>
+                    <th>Интервал сна</th>
+                    <th>Дневной интервал</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
           </div>
-          <div id="dayDetail"></div>
+
+          <!-- секция с детализацией выбранного дня (отдельный экран) -->
+          <div id="dayDetailSection" style="display: none;"></div>
         </div>
       </div>
 
@@ -647,7 +652,8 @@
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
     const historyBodyEl = document.getElementById('historyBody');
-    const dayDetailEl = document.getElementById('dayDetail');
+    const historyTableSection = document.getElementById('historyTableSection');
+    const dayDetailSection = document.getElementById('dayDetailSection');
     let selectedDayKey = null;
 
     const tabTodayBtn = document.getElementById('tabToday');
@@ -744,7 +750,7 @@
       renderStats();
       renderPeriodSummary();
       renderHistory();
-      renderDayDetail();
+      if (selectedDayKey) renderDayDetail();
     }
 
     function editMealNote(id) {
@@ -758,7 +764,7 @@
       renderMeals();
       renderHistory();
       renderPeriodSummary();
-      renderDayDetail();
+      if (selectedDayKey) renderDayDetail();
     }
 
     function editMealTime(id) {
@@ -796,7 +802,7 @@
       renderStats();
       renderHistory();
       renderPeriodSummary();
-      renderDayDetail();
+      if (selectedDayKey) renderDayDetail();
     }
 
     function toggleSnack(id) {
@@ -808,7 +814,7 @@
       renderStats();
       renderHistory();
       renderPeriodSummary();
-      renderDayDetail();
+      if (selectedDayKey) renderDayDetail();
     }
 
     function renderMeals() {
@@ -1107,6 +1113,14 @@
       }
     }
 
+    function openDayDetail(dayKey) {
+      selectedDayKey = dayKey;
+      // показываем экран дня, скрываем таблицу
+      historyTableSection.style.display = 'none';
+      dayDetailSection.style.display = '';
+      renderDayDetail();
+    }
+
     function renderHistory() {
       const stats = getFilteredDailyStats();
       historyBodyEl.innerHTML = '';
@@ -1120,7 +1134,8 @@
         tr.appendChild(td);
         historyBodyEl.appendChild(tr);
         selectedDayKey = null;
-        renderDayDetail();
+        dayDetailSection.style.display = 'none';
+        historyTableSection.style.display = '';
         return;
       }
 
@@ -1132,20 +1147,12 @@
         if (isDayInTarget(day)) {
           rowClass = 'day-ok';
         }
-        if (selectedDayKey === day.key) {
-          rowClass = rowClass ? rowClass + ' day-selected' : 'day-selected';
-        }
         if (rowClass) {
           tr.className = rowClass;
         }
 
         tr.onclick = () => {
-          if (selectedDayKey === day.key) {
-            selectedDayKey = null;
-          } else {
-            selectedDayKey = day.key;
-          }
-          renderHistory();
+          openDayDetail(day.key);
         };
 
         const tdDate = document.createElement('td');
@@ -1174,46 +1181,70 @@
         historyBodyEl.appendChild(tr);
       }
 
-      renderDayDetail();
+      // по умолчанию показываем таблицу, экран дня скрыт
+      if (!selectedDayKey) {
+        historyTableSection.style.display = '';
+        dayDetailSection.style.display = 'none';
+      }
     }
 
     function renderDayDetail() {
-      dayDetailEl.innerHTML = '';
+      dayDetailSection.innerHTML = '';
 
       if (!selectedDayKey) {
-        const p = document.createElement('p');
-        p.className = 'subtle';
-        p.style.marginTop = '10px';
-        p.textContent = 'Выбери день в таблице выше, чтобы посмотреть и отредактировать приёмы пищи (или нажми ещё раз, чтобы скрыть).';
-        dayDetailEl.appendChild(p);
+        dayDetailSection.style.display = 'none';
+        historyTableSection.style.display = '';
         return;
       }
+
+      const allStats = computeDailyStats();
+      const dayStats = allStats.find(d => d.key === selectedDayKey) || null;
 
       const allSorted = getAllMealsSorted();
       const dayMeals = allSorted.filter(m => getDayKey(m.ts) === selectedDayKey);
 
-      if (dayMeals.length === 0) {
+      const container = document.createElement('div');
+      container.style.marginTop = '4px';
+
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn-outline';
+      backBtn.textContent = '← Назад к списку дней';
+      backBtn.style.marginBottom = '8px';
+      backBtn.onclick = () => {
+        selectedDayKey = null;
+        dayDetailSection.style.display = 'none';
+        historyTableSection.style.display = '';
+      };
+      container.appendChild(backBtn);
+
+      if (!dayStats || dayMeals.length === 0) {
         const p = document.createElement('p');
         p.className = 'subtle';
-        p.style.marginTop = '10px';
         p.textContent = 'Для этого дня пока нет записей.';
-        dayDetailEl.appendChild(p);
+        container.appendChild(p);
+        dayDetailSection.appendChild(container);
         return;
       }
 
-      const section = document.createElement('div');
-      section.style.marginTop = '12px';
-
       const title = document.createElement('div');
       title.className = 'subtle';
-      const dateLabel = formatDateDMY(dayMeals[0].ts);
-      title.textContent = 'Приёмы пищи за ' + dateLabel + ':';
-      section.appendChild(title);
+      title.style.marginBottom = '4px';
+      title.textContent = 'День: ' + formatDateDMY(dayStats.ts);
+      container.appendChild(title);
+
+      const summary = document.createElement('div');
+      summary.className = 'subtle';
+      summary.style.marginBottom = '8px';
+      summary.textContent =
+        `Приёмов пищи: ${dayStats.count}, из них перекусов: ${dayStats.snacksCount || 0}. ` +
+        `Интервал сна: ${dayStats.sleepInterval != null ? formatInterval(dayStats.sleepInterval) : '–'}, ` +
+        `дневной интервал: ${dayStats.avgInterval != null ? formatInterval(dayStats.avgInterval) : '–'}.`;
+      container.appendChild(summary);
 
       const list = document.createElement('div');
       list.className = 'list';
-      list.style.maxHeight = '220px';
-      list.style.marginTop = '6px';
+      list.style.maxHeight = '260px';
+      list.style.marginTop = '4px';
 
       const firstDay = dayMeals[0];
       const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
@@ -1295,8 +1326,8 @@
         list.appendChild(row);
       }
 
-      section.appendChild(list);
-      dayDetailEl.appendChild(section);
+      container.appendChild(list);
+      dayDetailSection.appendChild(container);
     }
 
     function tickSinceLast() {
@@ -1342,6 +1373,10 @@
         tabTodayBtn.classList.remove('active');
         tabStatsBtn.classList.add('active');
         tabGoalsBtn.classList.remove('active');
+        // при входе в статистику возвращаемся к таблице
+        selectedDayKey = null;
+        historyTableSection.style.display = '';
+        dayDetailSection.style.display = 'none';
       } else {
         viewTodayEl.style.display = 'none';
         viewStatsEl.style.display = 'none';
@@ -1361,6 +1396,9 @@
         periodButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentPeriod = btn.dataset.period;
+        selectedDayKey = null;
+        historyTableSection.style.display = '';
+        dayDetailSection.style.display = 'none';
         renderPeriodSummary();
         renderHistory();
       });
