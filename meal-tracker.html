@@ -322,7 +322,7 @@
     <div class="card">
       <h2>Статистика за период</h2>
       <p class="subtle">
-        Выбери период и посмотри сводку по приёмам пищи и перекусам.
+        Выбери период и посмотри средние значения по дням.
       </p>
       <div class="period-controls">
         <button class="btn-outline period-btn active" data-period="7">7 дней</button>
@@ -335,15 +335,19 @@
           <div class="stat-value" id="statPeriodDays">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Приёмов всего</div>
-          <div class="stat-value" id="statPeriodMeals">0</div>
+          <div class="stat-label">Среднее приёмов в день</div>
+          <div class="stat-value" id="statPeriodMealsPerDay">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Перекусов всего</div>
-          <div class="stat-value" id="statPeriodSnacks">0</div>
+          <div class="stat-label">Среднее перекусов в день</div>
+          <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Ср. дневной интервал</div>
+          <div class="stat-label">Средний интервал сна</div>
+          <div class="stat-value" id="statPeriodSleepInterval">–</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Средний дневной интервал</div>
           <div class="stat-value" id="statPeriodAvgInterval">–</div>
         </div>
       </div>
@@ -413,8 +417,9 @@
     // Статистика за период
     const periodButtons = document.querySelectorAll('.period-btn');
     const statPeriodDaysEl = document.getElementById('statPeriodDays');
-    const statPeriodMealsEl = document.getElementById('statPeriodMeals');
-    const statPeriodSnacksEl = document.getElementById('statPeriodSnacks');
+    const statPeriodMealsPerDayEl = document.getElementById('statPeriodMealsPerDay');
+    const statPeriodSnacksPerDayEl = document.getElementById('statPeriodSnacksPerDay');
+    const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
     const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
 
     let currentPeriod = '7'; // "7" | "30" | "all"
@@ -456,6 +461,14 @@
       const m = totalMin % 60;
       if (h <= 0) return m + ' мин';
       return h + ' ч ' + (m > 0 ? m + ' мин' : '');
+    }
+
+    function formatNumberPerDay(value) {
+      if (!isFinite(value)) return '0';
+      // одна цифра после запятой, но 3.0 покажем как 3
+      const fixed = value.toFixed(1);
+      if (fixed.endsWith('.0')) return fixed.slice(0, -2);
+      return fixed;
     }
 
     function getAllMealsSorted() {
@@ -775,23 +788,41 @@
       const daysCount = stats.length;
       let totalMeals = 0;
       let totalSnacks = 0;
-      const intervals = [];
+      const sleepIntervals = [];
+      const dayAvgIntervals = [];
 
       for (const d of stats) {
         totalMeals += d.count;
         totalSnacks += d.snacksCount || 0;
-        if (d.avgInterval != null) intervals.push(d.avgInterval);
+        if (d.sleepInterval != null) sleepIntervals.push(d.sleepInterval);
+        if (d.avgInterval != null) dayAvgIntervals.push(d.avgInterval);
       }
 
       statPeriodDaysEl.textContent = daysCount;
-      statPeriodMealsEl.textContent = totalMeals;
-      statPeriodSnacksEl.textContent = totalSnacks;
 
-      if (intervals.length === 0) {
+      if (daysCount === 0) {
+        statPeriodMealsPerDayEl.textContent = '0';
+        statPeriodSnacksPerDayEl.textContent = '0';
+      } else {
+        const avgMealsPerDay = totalMeals / daysCount;
+        const avgSnacksPerDay = totalSnacks / daysCount;
+        statPeriodMealsPerDayEl.textContent = formatNumberPerDay(avgMealsPerDay);
+        statPeriodSnacksPerDayEl.textContent = formatNumberPerDay(avgSnacksPerDay);
+      }
+
+      if (sleepIntervals.length === 0) {
+        statPeriodSleepIntervalEl.textContent = '–';
+      } else {
+        const sumSleep = sleepIntervals.reduce((a, b) => a + b, 0);
+        const avgSleep = sumSleep / sleepIntervals.length;
+        statPeriodSleepIntervalEl.textContent = formatInterval(avgSleep);
+      }
+
+      if (dayAvgIntervals.length === 0) {
         statPeriodAvgIntervalEl.textContent = '–';
       } else {
-        const sum = intervals.reduce((a, b) => a + b, 0);
-        const avg = sum / intervals.length;
+        const sum = dayAvgIntervals.reduce((a, b) => a + b, 0);
+        const avg = sum / dayAvgIntervals.length;
         statPeriodAvgIntervalEl.textContent = formatInterval(avg);
       }
     }
