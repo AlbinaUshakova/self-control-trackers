@@ -404,16 +404,42 @@
       background: rgba(22, 163, 74, 0.22);
     }
 
-    .day-selected td {
-      box-shadow: inset 0 0 0 1px rgba(248, 250, 252, 0.22);
-      background: rgba(148, 163, 184, 0.18);
-    }
-
     .app-footer {
       margin-top: 4px;
       font-size: 10px;
       text-align: center;
       color: #6b7280;
+    }
+
+    /* FULLSCREEN DETAIL */
+    #detailScreen {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #020617;
+      z-index: 200;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    #btnDetailBack {
+      background: none;
+      border: none;
+      color: #e5e7eb;
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #detailTitle {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 18px;
     }
 
     @media (max-width: 480px) {
@@ -524,30 +550,20 @@
 
         <div class="card">
           <h2>Детализация по дням</h2>
-          <p class="subtle" id="statsHint">
-            Нажми на строку в таблице, чтобы открыть день и его приёмы питания на отдельном экране.
-          </p>
-
-          <!-- секция с таблицей дней -->
-          <div id="historyTableSection">
-            <div class="history-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Дата</th>
-                    <th>Приёмов пищи</th>
-                    <th>Из них перекусов</th>
-                    <th>Интервал сна</th>
-                    <th>Дневной интервал</th>
-                  </tr>
-                </thead>
-                <tbody id="historyBody"></tbody>
-              </table>
-            </div>
+          <div class="history-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Приёмов пищи</th>
+                  <th>Из них перекусов</th>
+                  <th>Интервал сна</th>
+                  <th>Дневной интервал</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody"></tbody>
+            </table>
           </div>
-
-          <!-- секция с детализацией выбранного дня (отдельный экран) -->
-          <div id="dayDetailSection" style="display: none;"></div>
         </div>
       </div>
 
@@ -601,6 +617,15 @@
     </footer>
   </div>
 
+  <!-- FULLSCREEN ДЕТАЛИЗАЦИЯ ДНЯ -->
+  <div id="detailScreen">
+    <button id="btnDetailBack">
+      ← Назад
+    </button>
+    <h2 id="detailTitle"></h2>
+    <div id="detailContent"></div>
+  </div>
+
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
@@ -652,9 +677,6 @@
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
     const historyBodyEl = document.getElementById('historyBody');
-    const historyTableSection = document.getElementById('historyTableSection');
-    const dayDetailSection = document.getElementById('dayDetailSection');
-    let selectedDayKey = null;
 
     const tabTodayBtn = document.getElementById('tabToday');
     const tabStatsBtn = document.getElementById('tabStats');
@@ -670,8 +692,6 @@
     const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
     const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
 
-    let currentPeriod = '7';
-
     const goalMealsMinEl = document.getElementById('goalMealsMin');
     const goalMealsMaxEl = document.getElementById('goalMealsMax');
     const goalSnacksMaxEl = document.getElementById('goalSnacksMax');
@@ -681,6 +701,14 @@
     const goalDayIntMaxEl = document.getElementById('goalDayIntMax');
     const saveGoalsBtn = document.getElementById('saveGoalsBtn');
     const goalsStatusEl = document.getElementById('goalsStatus');
+
+    const detailScreen = document.getElementById('detailScreen');
+    const btnDetailBack = document.getElementById('btnDetailBack');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailContent = document.getElementById('detailContent');
+    let currentDetailDayKey = null;
+
+    let currentPeriod = '7';
 
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
@@ -750,7 +778,7 @@
       renderStats();
       renderPeriodSummary();
       renderHistory();
-      if (selectedDayKey) renderDayDetail();
+      refreshDetailIfOpen();
     }
 
     function editMealNote(id) {
@@ -764,7 +792,7 @@
       renderMeals();
       renderHistory();
       renderPeriodSummary();
-      if (selectedDayKey) renderDayDetail();
+      refreshDetailIfOpen();
     }
 
     function editMealTime(id) {
@@ -802,7 +830,7 @@
       renderStats();
       renderHistory();
       renderPeriodSummary();
-      if (selectedDayKey) renderDayDetail();
+      refreshDetailIfOpen();
     }
 
     function toggleSnack(id) {
@@ -814,7 +842,7 @@
       renderStats();
       renderHistory();
       renderPeriodSummary();
-      if (selectedDayKey) renderDayDetail();
+      refreshDetailIfOpen();
     }
 
     function renderMeals() {
@@ -1113,14 +1141,6 @@
       }
     }
 
-    function openDayDetail(dayKey) {
-      selectedDayKey = dayKey;
-      // показываем экран дня, скрываем таблицу
-      historyTableSection.style.display = 'none';
-      dayDetailSection.style.display = '';
-      renderDayDetail();
-    }
-
     function renderHistory() {
       const stats = getFilteredDailyStats();
       historyBodyEl.innerHTML = '';
@@ -1133,9 +1153,6 @@
         td.textContent = 'Пока нет данных за выбранный период.';
         tr.appendChild(td);
         historyBodyEl.appendChild(tr);
-        selectedDayKey = null;
-        dayDetailSection.style.display = 'none';
-        historyTableSection.style.display = '';
         return;
       }
 
@@ -1143,17 +1160,11 @@
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
 
-        let rowClass = '';
         if (isDayInTarget(day)) {
-          rowClass = 'day-ok';
-        }
-        if (rowClass) {
-          tr.className = rowClass;
+          tr.className = 'day-ok';
         }
 
-        tr.onclick = () => {
-          openDayDetail(day.key);
-        };
+        tr.onclick = () => openDayDetail(day);
 
         const tdDate = document.createElement('td');
         tdDate.textContent = formatDateDMY(day.ts);
@@ -1180,72 +1191,22 @@
 
         historyBodyEl.appendChild(tr);
       }
-
-      // по умолчанию показываем таблицу, экран дня скрыт
-      if (!selectedDayKey) {
-        historyTableSection.style.display = '';
-        dayDetailSection.style.display = 'none';
-      }
     }
 
-    function renderDayDetail() {
-      dayDetailSection.innerHTML = '';
-
-      if (!selectedDayKey) {
-        dayDetailSection.style.display = 'none';
-        historyTableSection.style.display = '';
-        return;
-      }
-
-      const allStats = computeDailyStats();
-      const dayStats = allStats.find(d => d.key === selectedDayKey) || null;
+    function openDayDetail(day) {
+      currentDetailDayKey = day.key;
+      detailTitle.textContent = formatDateDMY(day.ts);
 
       const allSorted = getAllMealsSorted();
-      const dayMeals = allSorted.filter(m => getDayKey(m.ts) === selectedDayKey);
+      const dayMeals = allSorted.filter(m => getDayKey(m.ts) === day.key);
 
-      const container = document.createElement('div');
-      container.style.marginTop = '4px';
-
-      const backBtn = document.createElement('button');
-      backBtn.className = 'btn-outline';
-      backBtn.textContent = '← Назад к списку дней';
-      backBtn.style.marginBottom = '8px';
-      backBtn.onclick = () => {
-        selectedDayKey = null;
-        dayDetailSection.style.display = 'none';
-        historyTableSection.style.display = '';
-      };
-      container.appendChild(backBtn);
-
-      if (!dayStats || dayMeals.length === 0) {
-        const p = document.createElement('p');
-        p.className = 'subtle';
-        p.textContent = 'Для этого дня пока нет записей.';
-        container.appendChild(p);
-        dayDetailSection.appendChild(container);
+      if (dayMeals.length === 0) {
+        detailContent.innerHTML = '<p class="subtle">Для этого дня пока нет записей.</p>';
+        detailScreen.style.display = 'block';
         return;
       }
 
-      const title = document.createElement('div');
-      title.className = 'subtle';
-      title.style.marginBottom = '4px';
-      title.textContent = 'День: ' + formatDateDMY(dayStats.ts);
-      container.appendChild(title);
-
-      const summary = document.createElement('div');
-      summary.className = 'subtle';
-      summary.style.marginBottom = '8px';
-      summary.textContent =
-        `Приёмов пищи: ${dayStats.count}, из них перекусов: ${dayStats.snacksCount || 0}. ` +
-        `Интервал сна: ${dayStats.sleepInterval != null ? formatInterval(dayStats.sleepInterval) : '–'}, ` +
-        `дневной интервал: ${dayStats.avgInterval != null ? formatInterval(dayStats.avgInterval) : '–'}.`;
-      container.appendChild(summary);
-
-      const list = document.createElement('div');
-      list.className = 'list';
-      list.style.maxHeight = '260px';
-      list.style.marginTop = '4px';
-
+      let html = '';
       const firstDay = dayMeals[0];
       const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
       let prevTs = null;
@@ -1254,81 +1215,60 @@
       }
 
       for (const meal of dayMeals) {
-        const row = document.createElement('div');
-        row.className = 'meal-row';
-
-        const top = document.createElement('div');
-        top.className = 'row-top';
-
-        const leftWrap = document.createElement('div');
-        const timeEl = document.createElement('span');
-        timeEl.className = 'meal-time';
-        timeEl.textContent = formatTimeHM(meal.ts);
-        leftWrap.appendChild(timeEl);
-
-        const actions = document.createElement('div');
-        actions.className = 'actions';
-
-        const snackBtn = document.createElement('button');
-        snackBtn.className = 'btn-ghost';
-        snackBtn.textContent = meal.isSnack ? '🍪' : '🍽';
-        snackBtn.title = meal.isSnack
-          ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
-          : 'Обычный приём пищи (нажми, чтобы отметить как перекус)';
-        snackBtn.onclick = () => toggleSnack(meal.id);
-
-        const editTimeBtn = document.createElement('button');
-        editTimeBtn.className = 'btn-ghost';
-        editTimeBtn.textContent = '⏰';
-        editTimeBtn.title = 'Изменить время';
-        editTimeBtn.onclick = () => editMealTime(meal.id);
-
-        const editBtn = document.createElement('button');
-        editBtn.className = 'btn-ghost';
-        editBtn.textContent = '✏️';
-        editBtn.title = 'Редактировать описание';
-        editBtn.onclick = () => editMealNote(meal.id);
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'btn-danger';
-        delBtn.textContent = '🗑';
-        delBtn.title = 'Удалить приём';
-        delBtn.onclick = () => deleteMeal(meal.id);
-
-        actions.appendChild(snackBtn);
-        actions.appendChild(editTimeBtn);
-        actions.appendChild(editBtn);
-        actions.appendChild(delBtn);
-
-        top.appendChild(leftWrap);
-        top.appendChild(actions);
-
-        const noteEl = document.createElement('div');
-        noteEl.className = 'meal-note';
-        noteEl.textContent = meal.note || '(без описания)';
-
-        const intervalEl = document.createElement('div');
-        intervalEl.className = 'meal-interval';
-
-        if (prevTs == null) {
-          intervalEl.textContent = 'Первый зафиксированный приём (раньше записей нет).';
-        } else {
-          const diff = meal.ts - prevTs;
-          intervalEl.textContent = 'Интервал с прошлого приёма: ' + formatInterval(diff);
-        }
+        const intervalText = prevTs == null
+          ? 'Первый зафиксированный приём (раньше записей нет).'
+          : 'Интервал с прошлого приёма: ' + formatInterval(meal.ts - prevTs);
 
         prevTs = meal.ts;
 
-        row.appendChild(top);
-        row.appendChild(noteEl);
-        row.appendChild(intervalEl);
-
-        list.appendChild(row);
+        html += `
+          <div class="meal-row">
+            <div class="row-top">
+              <div>
+                <span class="meal-time">${formatTimeHM(meal.ts)}</span>
+              </div>
+              <div class="actions">
+                <button class="btn-ghost"
+                  title="${meal.isSnack
+            ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
+            : 'Обычный приём пищи (нажми, чтобы отметить как перекус)'}"
+                  onclick="toggleSnack('${meal.id}')">
+                  ${meal.isSnack ? '🍪' : '🍽'}
+                </button>
+                <button class="btn-ghost" title="Изменить время"
+                  onclick="editMealTime('${meal.id}')">⏰</button>
+                <button class="btn-ghost" title="Редактировать описание"
+                  onclick="editMealNote('${meal.id}')">✏️</button>
+                <button class="btn-danger" title="Удалить приём"
+                  onclick="deleteMeal('${meal.id}')">🗑</button>
+              </div>
+            </div>
+            <div class="meal-note">${meal.note || '(без описания)'}</div>
+            <div class="meal-interval">${intervalText}</div>
+          </div>
+        `;
       }
 
-      container.appendChild(list);
-      dayDetailSection.appendChild(container);
+      detailContent.innerHTML = html;
+      detailScreen.style.display = 'block';
     }
+
+    function refreshDetailIfOpen() {
+      if (!currentDetailDayKey || detailScreen.style.display !== 'block') return;
+      const allStats = computeDailyStats();
+      const day = allStats.find(d => d.key === currentDetailDayKey);
+      if (!day) {
+        detailScreen.style.display = 'none';
+        currentDetailDayKey = null;
+        return;
+      }
+      openDayDetail(day);
+    }
+
+    btnDetailBack.addEventListener('click', () => {
+      detailScreen.style.display = 'none';
+      currentDetailDayKey = null;
+    });
 
     function tickSinceLast() {
       renderStats();
@@ -1356,6 +1296,7 @@
       renderStats();
       renderPeriodSummary();
       renderHistory();
+      refreshDetailIfOpen();
     });
 
     function switchView(view) {
@@ -1373,10 +1314,6 @@
         tabTodayBtn.classList.remove('active');
         tabStatsBtn.classList.add('active');
         tabGoalsBtn.classList.remove('active');
-        // при входе в статистику возвращаемся к таблице
-        selectedDayKey = null;
-        historyTableSection.style.display = '';
-        dayDetailSection.style.display = 'none';
       } else {
         viewTodayEl.style.display = 'none';
         viewStatsEl.style.display = 'none';
@@ -1396,11 +1333,9 @@
         periodButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentPeriod = btn.dataset.period;
-        selectedDayKey = null;
-        historyTableSection.style.display = '';
-        dayDetailSection.style.display = 'none';
         renderPeriodSummary();
         renderHistory();
+        refreshDetailIfOpen();
       });
     });
 
