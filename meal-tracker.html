@@ -222,7 +222,6 @@
       overflow-y: auto;
     }
 
-    /* Вкладки */
     .view-tabs {
       display: flex;
       gap: 8px;
@@ -257,7 +256,6 @@
       color: #020617;
     }
 
-    /* Цели */
     .goal-row {
       margin-bottom: 8px;
       font-size: 13px;
@@ -303,7 +301,7 @@
     <button id="tabGoals" class="tab-btn">Цели</button>
   </div>
 
-  <!-- Вкладка: СЕГОДНЯ -->
+  <!-- СЕГОДНЯ -->
   <div id="view-today">
     <div class="card">
       <h2>Новый приём пищи</h2>
@@ -325,7 +323,7 @@
           <div class="stat-value" id="statSnacksToday">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Средний интервал (днём)</div>
+          <div class="stat-label">Интервал (днём)</div>
           <div class="stat-value" id="statAvgInterval">–</div>
         </div>
         <div class="stat-box">
@@ -344,12 +342,12 @@
     </div>
   </div>
 
-  <!-- Вкладка: СТАТИСТИКА -->
+  <!-- СТАТИСТИКА -->
   <div id="view-stats" style="display: none;">
     <div class="card">
       <h2>Статистика за период</h2>
       <p class="subtle">
-        Выбери период и посмотри средние значения по дням и сколько дней попало в твой коридор.
+        Выбери период и посмотри значения по дням и сколько дней попало в твой коридор.
       </p>
       <div class="period-controls">
         <button class="btn-outline period-btn active" data-period="7">7 дней</button>
@@ -362,19 +360,19 @@
           <div class="stat-value" id="statPeriodDaysInTarget">0 / 0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Среднее приёмов в день</div>
+          <div class="stat-label">Приёмов пищи</div>
           <div class="stat-value" id="statPeriodMealsPerDay">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Среднее из них перекусов в день</div>
+          <div class="stat-label">Из них перекусов</div>
           <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Средний интервал сна</div>
+          <div class="stat-label">Интервал сна</div>
           <div class="stat-value" id="statPeriodSleepInterval">–</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Средний дневной интервал</div>
+          <div class="stat-label">Дневной интервал</div>
           <div class="stat-value" id="statPeriodAvgInterval">–</div>
         </div>
       </div>
@@ -394,7 +392,7 @@
               <th>Приёмов пищи</th>
               <th>Из них перекусов</th>
               <th>Интервал сна</th>
-              <th>Средний интервал</th>
+              <th>Дневной интервал</th>
             </tr>
           </thead>
           <tbody id="historyBody"></tbody>
@@ -404,7 +402,7 @@
     </div>
   </div>
 
-  <!-- Вкладка: ЦЕЛИ -->
+  <!-- ЦЕЛИ -->
   <div id="view-goals" style="display: none;">
     <div class="card">
       <h2>Цели на день</h2>
@@ -502,7 +500,6 @@
     const dayDetailEl = document.getElementById('dayDetail');
     let selectedDayKey = null;
 
-    // Вкладки
     const tabTodayBtn = document.getElementById('tabToday');
     const tabStatsBtn = document.getElementById('tabStats');
     const tabGoalsBtn = document.getElementById('tabGoals');
@@ -510,7 +507,6 @@
     const viewStatsEl = document.getElementById('view-stats');
     const viewGoalsEl = document.getElementById('view-goals');
 
-    // Периодическая статистика
     const periodButtons = document.querySelectorAll('.period-btn');
     const statPeriodDaysInTargetEl = document.getElementById('statPeriodDaysInTarget');
     const statPeriodMealsPerDayEl = document.getElementById('statPeriodMealsPerDay');
@@ -518,9 +514,8 @@
     const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
     const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
 
-    let currentPeriod = '7'; // "7" | "14" | "21"
+    let currentPeriod = '7';
 
-    // Цели — элементы
     const goalMealsMinEl = document.getElementById('goalMealsMin');
     const goalMealsMaxEl = document.getElementById('goalMealsMax');
     const goalSnacksMaxEl = document.getElementById('goalSnacksMax');
@@ -889,14 +884,11 @@
     function isDayInTarget(day) {
       if (!hasAnyGoal()) return false;
 
-      // Приёмы пищи
       if (goals.minMealsPerDay != null && day.count < goals.minMealsPerDay) return false;
       if (goals.maxMealsPerDay != null && day.count > goals.maxMealsPerDay) return false;
 
-      // Из них перекусов
       if (goals.maxSnacksPerDay != null && (day.snacksCount || 0) > goals.maxSnacksPerDay) return false;
 
-      // Интервал сна (часы)
       if (day.sleepInterval != null) {
         const sleepHours = day.sleepInterval / (60 * 60 * 1000);
         if (goals.minSleepHours != null && sleepHours < goals.minSleepHours) return false;
@@ -905,7 +897,6 @@
         if (goals.minSleepHours != null || goals.maxSleepHours != null) return false;
       }
 
-      // Дневной интервал (минуты)
       if (day.avgInterval != null) {
         const dayIntervalMinutes = day.avgInterval / 60000;
         if (goals.minDayIntervalMinutes != null && dayIntervalMinutes < goals.minDayIntervalMinutes) return false;
@@ -1002,7 +993,7 @@
           } else {
             selectedDayKey = day.key;
           }
-          renderHistory(); // перерисовать, чтобы обновить подсветку
+          renderHistory();
         };
 
         const tdDate = document.createElement('td');
@@ -1267,7 +1258,6 @@
       }, 3000);
     });
 
-    // первый запуск
     loadGoalsIntoUI();
     renderMeals();
     renderStats();
