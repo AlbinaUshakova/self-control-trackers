@@ -378,7 +378,7 @@
     <div class="card">
       <h2>Детализация по дням</h2>
       <p class="subtle">
-        Строки, которые попадают во все заданные цели, подсвечиваются зелёным.
+        Нажми на строку в таблице, чтобы открыть приёмы пищи за этот день и отметить перекусы.
       </p>
       <div class="history-wrapper">
         <table>
@@ -394,6 +394,7 @@
           <tbody id="historyBody"></tbody>
         </table>
       </div>
+      <div id="dayDetail"></div>
     </div>
   </div>
 
@@ -492,6 +493,8 @@
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
     const historyBodyEl = document.getElementById('historyBody');
+    const dayDetailEl = document.getElementById('dayDetail');
+    let selectedDayKey = null;
 
     // Вкладки
     const tabTodayBtn = document.getElementById('tabToday');
@@ -590,6 +593,7 @@
       renderStats();
       renderPeriodSummary();
       renderHistory();
+      renderDayDetail();
     }
 
     function editMealNote(id) {
@@ -603,6 +607,7 @@
       renderMeals();
       renderHistory();
       renderPeriodSummary();
+      renderDayDetail();
     }
 
     function editMealTime(id) {
@@ -640,6 +645,7 @@
       renderStats();
       renderHistory();
       renderPeriodSummary();
+      renderDayDetail();
     }
 
     function toggleSnack(id) {
@@ -651,6 +657,7 @@
       renderStats();
       renderHistory();
       renderPeriodSummary();
+      renderDayDetail();
     }
 
     function renderMeals() {
@@ -963,14 +970,22 @@
         td.textContent = 'Пока нет данных за выбранный период.';
         tr.appendChild(td);
         historyBodyEl.appendChild(tr);
+        selectedDayKey = null;
+        renderDayDetail();
         return;
       }
 
       for (const day of stats) {
         const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
         if (isDayInTarget(day)) {
           tr.className = 'day-ok';
         }
+
+        tr.onclick = () => {
+          selectedDayKey = day.key;
+          renderDayDetail();
+        };
 
         const tdDate = document.createElement('td');
         tdDate.textContent = formatDateDMY(day.ts);
@@ -997,6 +1012,134 @@
 
         historyBodyEl.appendChild(tr);
       }
+
+      // если выбранный день уже не в периоде — сброс
+      const statsKeys = stats.map(s => s.key);
+      if (!statsKeys.includes(selectedDayKey)) {
+        selectedDayKey = null;
+      }
+      renderDayDetail();
+    }
+
+    function renderDayDetail() {
+      dayDetailEl.innerHTML = '';
+
+      if (!selectedDayKey) {
+        const p = document.createElement('p');
+        p.className = 'subtle';
+        p.style.marginTop = '10px';
+        p.textContent = 'Выбери день в таблице выше, чтобы посмотреть и отредактировать приёмы пищи.';
+        dayDetailEl.appendChild(p);
+        return;
+      }
+
+      const allSorted = getAllMealsSorted();
+      const dayMeals = allSorted.filter(m => getDayKey(m.ts) === selectedDayKey);
+
+      if (dayMeals.length === 0) {
+        const p = document.createElement('p');
+        p.className = 'subtle';
+        p.style.marginTop = '10px';
+        p.textContent = 'Для этого дня пока нет записей.';
+        dayDetailEl.appendChild(p);
+        return;
+      }
+
+      const section = document.createElement('div');
+      section.style.marginTop = '12px';
+
+      const title = document.createElement('div');
+      title.className = 'subtle';
+      const dateLabel = formatDateDMY(dayMeals[0].ts);
+      title.textContent = 'Приёмы пищи за ' + dateLabel + ':';
+      section.appendChild(title);
+
+      const list = document.createElement('div');
+      list.className = 'list';
+      list.style.maxHeight = '220px';
+      list.style.marginTop = '6px';
+
+      // найдём глобальный предыдущий приём (для интервала первого за день)
+      const firstDay = dayMeals[0];
+      const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
+      let prevTs = null;
+      if (firstIndex > 0) {
+        prevTs = allSorted[firstIndex - 1].ts;
+      }
+
+      for (const meal of dayMeals) {
+        const row = document.createElement('div');
+        row.className = 'meal-row';
+
+        const top = document.createElement('div');
+        top.className = 'row-top';
+
+        const leftWrap = document.createElement('div');
+        const timeEl = document.createElement('span');
+        timeEl.className = 'meal-time';
+        timeEl.textContent = formatTimeHM(meal.ts);
+        leftWrap.appendChild(timeEl);
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const snackBtn = document.createElement('button');
+        snackBtn.className = 'btn-ghost';
+        snackBtn.textContent = meal.isSnack ? '✅🍪' : '🍪';
+        snackBtn.title = 'Отметить как перекус';
+        snackBtn.onclick = () => toggleSnack(meal.id);
+
+        const editTimeBtn = document.createElement('button');
+        editTimeBtn.className = 'btn-ghost';
+        editTimeBtn.textContent = '⏰';
+        editTimeBtn.title = 'Изменить время';
+        editTimeBtn.onclick = () => editMealTime(meal.id);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn-ghost';
+        editBtn.textContent = '✏️';
+        editBtn.title = 'Редактировать описание';
+        editBtn.onclick = () => editMealNote(meal.id);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn-danger';
+        delBtn.textContent = '🗑';
+        delBtn.title = 'Удалить приём';
+        delBtn.onclick = () => deleteMeal(meal.id);
+
+        actions.appendChild(snackBtn);
+        actions.appendChild(editTimeBtn);
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        top.appendChild(leftWrap);
+        top.appendChild(actions);
+
+        const noteEl = document.createElement('div');
+        noteEl.className = 'meal-note';
+        noteEl.textContent = meal.note || '(без описания)';
+
+        const intervalEl = document.createElement('div');
+        intervalEl.className = 'meal-interval';
+
+        if (prevTs == null) {
+          intervalEl.textContent = 'Первый зафиксированный приём (раньше записей нет).';
+        } else {
+          const diff = meal.ts - prevTs;
+          intervalEl.textContent = 'Интервал с прошлого приёма: ' + formatInterval(diff);
+        }
+
+        prevTs = meal.ts;
+
+        row.appendChild(top);
+        row.appendChild(noteEl);
+        row.appendChild(intervalEl);
+
+        list.appendChild(row);
+      }
+
+      section.appendChild(list);
+      dayDetailEl.appendChild(section);
     }
 
     function tickSinceLast() {
