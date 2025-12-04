@@ -231,66 +231,143 @@
       max-height: 260px;
       overflow-y: auto;
     }
+
+    /* Вкладки "Сегодня" / "Статистика" */
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0 16px;
+    }
+
+    .tab-btn {
+      flex: 0 0 auto;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: #e5e7eb;
+      color: #020617;
+    }
+
+    .period-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 8px;
+    }
+
+    .period-btn.active {
+      background: #e5e7eb;
+      color: #020617;
+    }
   </style>
 </head>
 
 <body>
   <h1>EatLog</h1>
   <p class="subtle">
-    Твой личный лог приёмов пищи. Отмечай, когда ешь, смотри дневные интервалы и интервал сна.
+    Твой личный лог приёмов пищи. На одной вкладке — сегодня, на другой — статистика за период.
   </p>
 
-  <div class="card">
-    <h2>Новый приём пищи</h2>
-    <label for="mealNote">Что ты ешь? (по желанию)</label>
-    <textarea id="mealNote" placeholder="Например: «Овсянка с семечками», «Чипсы», «Чай с печеньем»"></textarea>
-    <button id="addMealBtn" class="btn-primary">Я ем сейчас 🍽</button>
-    <p class="subtle" id="lastMealInfo"></p>
+  <div class="view-tabs">
+    <button id="tabToday" class="tab-btn active">Сегодня</button>
+    <button id="tabStats" class="tab-btn">Статистика</button>
   </div>
 
-  <div class="card">
-    <h2>Статистика за сегодня</h2>
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="stat-label">Приёмов пищи</div>
-        <div class="stat-value" id="statMealsToday">0</div>
+  <!-- Вкладка: СЕГОДНЯ -->
+  <div id="view-today">
+    <div class="card">
+      <h2>Новый приём пищи</h2>
+      <label for="mealNote">Что ты ешь? (по желанию)</label>
+      <textarea id="mealNote" placeholder="Например: «Овсянка с семечками», «Чипсы», «Чай с печеньем»"></textarea>
+      <button id="addMealBtn" class="btn-primary">Я ем сейчас 🍽</button>
+      <p class="subtle" id="lastMealInfo"></p>
+    </div>
+
+    <div class="card">
+      <h2>Статистика за сегодня</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Приёмов пищи</div>
+          <div class="stat-value" id="statMealsToday">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Средний интервал (днём)</div>
+          <div class="stat-value" id="statAvgInterval">–</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Сейчас от последнего</div>
+          <div class="stat-value" id="statSinceLast">–</div>
+        </div>
       </div>
-      <div class="stat-box">
-        <div class="stat-label">Средний интервал (днём)</div>
-        <div class="stat-value" id="statAvgInterval">–</div>
+    </div>
+
+    <div class="card">
+      <h2>Сегодняшние приёмы пищи</h2>
+      <div class="subtle" style="margin-bottom: 6px;">
+        От ранних к более поздним. Интервал считается от прошлого приёма (даже если он был вчера).
       </div>
-      <div class="stat-box">
-        <div class="stat-label">Сейчас от последнего</div>
-        <div class="stat-value" id="statSinceLast">–</div>
-      </div>
+      <div class="list" id="mealList"></div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>Сегодняшние приёмы пищи</h2>
-    <div class="subtle" style="margin-bottom: 6px;">
-      От ранних к более поздним. Интервал считается от прошлого приёма (даже если он был вчера).
+  <!-- Вкладка: СТАТИСТИКА -->
+  <div id="view-stats" style="display: none;">
+    <div class="card">
+      <h2>Статистика за период</h2>
+      <p class="subtle">
+        Выбери период и посмотри сводку по приёмам пищи и перекусам.
+      </p>
+      <div class="period-controls">
+        <button class="btn-outline period-btn active" data-period="7">7 дней</button>
+        <button class="btn-outline period-btn" data-period="30">30 дней</button>
+        <button class="btn-outline period-btn" data-period="all">Всё время</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Дней с записями</div>
+          <div class="stat-value" id="statPeriodDays">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Приёмов всего</div>
+          <div class="stat-value" id="statPeriodMeals">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Перекусов всего</div>
+          <div class="stat-value" id="statPeriodSnacks">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Ср. дневной интервал</div>
+          <div class="stat-value" id="statPeriodAvgInterval">–</div>
+        </div>
+      </div>
     </div>
-    <div class="list" id="mealList"></div>
-  </div>
 
-  <div class="card">
-    <h2>История по дням</h2>
-    <p class="subtle">Сводка по всем дням: сколько раз ела, сколько перекусов, интервал сна и средний дневной интервал.
-    </p>
-    <div class="history-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Дата</th>
-            <th>Приёмов пищи</th>
-            <th>Перекусов</th>
-            <th>Интервал сна</th>
-            <th>Средний интервал</th>
-          </tr>
-        </thead>
-        <tbody id="historyBody"></tbody>
-      </table>
+    <div class="card">
+      <h2>Детализация по дням</h2>
+      <p class="subtle">
+        Для каждого дня: сколько раз ела, сколько перекусов, интервал сна и средний дневной интервал.
+      </p>
+      <div class="history-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>Приёмов пищи</th>
+              <th>Перекусов</th>
+              <th>Интервал сна</th>
+              <th>Средний интервал</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -326,6 +403,21 @@
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
     const historyBodyEl = document.getElementById('historyBody');
+
+    // Вкладки
+    const tabTodayBtn = document.getElementById('tabToday');
+    const tabStatsBtn = document.getElementById('tabStats');
+    const viewTodayEl = document.getElementById('view-today');
+    const viewStatsEl = document.getElementById('view-stats');
+
+    // Статистика за период
+    const periodButtons = document.querySelectorAll('.period-btn');
+    const statPeriodDaysEl = document.getElementById('statPeriodDays');
+    const statPeriodMealsEl = document.getElementById('statPeriodMeals');
+    const statPeriodSnacksEl = document.getElementById('statPeriodSnacks');
+    const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
+
+    let currentPeriod = '7'; // "7" | "30" | "all"
 
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
@@ -386,6 +478,7 @@
       saveMeals(meals);
       renderMeals();
       renderStats();
+      renderPeriodSummary();
       renderHistory();
     }
 
@@ -399,6 +492,7 @@
       saveMeals(meals);
       renderMeals();
       renderHistory();
+      renderPeriodSummary();
     }
 
     function editMealTime(id) {
@@ -435,6 +529,7 @@
       renderMeals();
       renderStats();
       renderHistory();
+      renderPeriodSummary();
     }
 
     function toggleSnack(id) {
@@ -445,6 +540,7 @@
       renderMeals();
       renderStats();
       renderHistory();
+      renderPeriodSummary();
     }
 
     function renderMeals() {
@@ -486,6 +582,15 @@
 
         leftWrap.appendChild(timeEl);
         leftWrap.appendChild(pill);
+
+        if (meal.isSnack) {
+          const snackPill = document.createElement('span');
+          snackPill.className = 'pill';
+          snackPill.style.background = 'rgba(251, 191, 36, 0.15)';
+          snackPill.style.color = '#fde68a';
+          snackPill.textContent = 'перекус';
+          leftWrap.appendChild(snackPill);
+        }
 
         const actions = document.createElement('div');
         actions.className = 'actions';
@@ -656,8 +761,43 @@
       return result;
     }
 
+    function getFilteredDailyStats() {
+      const all = computeDailyStats();
+      if (currentPeriod === 'all') return all;
+      const days = parseInt(currentPeriod, 10);
+      const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+      return all.filter(d => d.ts >= cutoff);
+    }
+
+    function renderPeriodSummary() {
+      const stats = getFilteredDailyStats();
+
+      const daysCount = stats.length;
+      let totalMeals = 0;
+      let totalSnacks = 0;
+      const intervals = [];
+
+      for (const d of stats) {
+        totalMeals += d.count;
+        totalSnacks += d.snacksCount || 0;
+        if (d.avgInterval != null) intervals.push(d.avgInterval);
+      }
+
+      statPeriodDaysEl.textContent = daysCount;
+      statPeriodMealsEl.textContent = totalMeals;
+      statPeriodSnacksEl.textContent = totalSnacks;
+
+      if (intervals.length === 0) {
+        statPeriodAvgIntervalEl.textContent = '–';
+      } else {
+        const sum = intervals.reduce((a, b) => a + b, 0);
+        const avg = sum / intervals.length;
+        statPeriodAvgIntervalEl.textContent = formatInterval(avg);
+      }
+    }
+
     function renderHistory() {
-      const stats = computeDailyStats();
+      const stats = getFilteredDailyStats();
       historyBodyEl.innerHTML = '';
 
       if (stats.length === 0) {
@@ -665,7 +805,7 @@
         const td = document.createElement('td');
         td.colSpan = 5;
         td.className = 'subtle';
-        td.textContent = 'Пока нет данных. Начни отмечать приёмы пищи — история появится здесь.';
+        td.textContent = 'Пока нет данных за выбранный период.';
         tr.appendChild(td);
         historyBodyEl.appendChild(tr);
         return;
@@ -725,12 +865,41 @@
 
       renderMeals();
       renderStats();
+      renderPeriodSummary();
       renderHistory();
+    });
+
+    function switchView(view) {
+      if (view === 'today') {
+        viewTodayEl.style.display = '';
+        viewStatsEl.style.display = 'none';
+        tabTodayBtn.classList.add('active');
+        tabStatsBtn.classList.remove('active');
+      } else {
+        viewTodayEl.style.display = 'none';
+        viewStatsEl.style.display = '';
+        tabTodayBtn.classList.remove('active');
+        tabStatsBtn.classList.add('active');
+      }
+    }
+
+    tabTodayBtn.addEventListener('click', () => switchView('today'));
+    tabStatsBtn.addEventListener('click', () => switchView('stats'));
+
+    periodButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        periodButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPeriod = btn.dataset.period;
+        renderPeriodSummary();
+        renderHistory();
+      });
     });
 
     // первый запуск
     renderMeals();
     renderStats();
+    renderPeriodSummary();
     renderHistory();
   </script>
 </body>
