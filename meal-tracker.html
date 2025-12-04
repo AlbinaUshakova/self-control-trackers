@@ -232,7 +232,7 @@
       overflow-y: auto;
     }
 
-    /* Вкладки "Сегодня" / "Статистика" */
+    /* Вкладки "Сегодня" / "Статистика" / "Цели" */
     .view-tabs {
       display: flex;
       gap: 8px;
@@ -266,18 +266,46 @@
       background: #e5e7eb;
       color: #020617;
     }
+
+    /* Цели */
+    .goal-row {
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .goal-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 4px 6px;
+      font-size: 13px;
+    }
+
+    .day-ok td {
+      background: rgba(22, 163, 74, 0.18);
+    }
   </style>
 </head>
 
 <body>
   <h1>EatLog</h1>
   <p class="subtle">
-    Твой личный лог приёмов пищи. На одной вкладке — сегодня, на другой — статистика за период.
+    Твой личный лог приёмов пищи. «Сегодня» — для записи, «Статистика» — для обзора, «Цели» — для коридора.
   </p>
 
   <div class="view-tabs">
     <button id="tabToday" class="tab-btn active">Сегодня</button>
     <button id="tabStats" class="tab-btn">Статистика</button>
+    <button id="tabGoals" class="tab-btn">Цели</button>
   </div>
 
   <!-- Вкладка: СЕГОДНЯ -->
@@ -322,7 +350,7 @@
     <div class="card">
       <h2>Статистика за период</h2>
       <p class="subtle">
-        Выбери период и посмотри средние значения по дням.
+        Выбери период и посмотри средние значения по дням и сколько дней попало в твой коридор.
       </p>
       <div class="period-controls">
         <button class="btn-outline period-btn active" data-period="7">7 дней</button>
@@ -331,8 +359,8 @@
       </div>
       <div class="stats-grid">
         <div class="stat-box">
-          <div class="stat-label">Дней с записями</div>
-          <div class="stat-value" id="statPeriodDays">0</div>
+          <div class="stat-label">Дней в цели</div>
+          <div class="stat-value" id="statPeriodDaysInTarget">0 / 0</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Среднее приёмов в день</div>
@@ -356,7 +384,7 @@
     <div class="card">
       <h2>Детализация по дням</h2>
       <p class="subtle">
-        Для каждого дня: сколько раз ела, сколько перекусов, интервал сна и средний дневной интервал.
+        Строки, которые попадают во все заданные цели, подсвечиваются зелёным.
       </p>
       <div class="history-wrapper">
         <table>
@@ -375,8 +403,53 @@
     </div>
   </div>
 
+  <!-- Вкладка: ЦЕЛИ -->
+  <div id="view-goals" style="display: none;">
+    <div class="card">
+      <h2>Цели на день</h2>
+      <p class="subtle">
+        Эти цели используются, чтобы подсвечивать дни зелёным и считать, сколько дней ты была в своём коридоре.
+      </p>
+
+      <div class="goal-row">
+        <div class="subtle">Приёмов пищи в день</div>
+        <span>
+          от <input type="number" id="goalMealsMin" min="0" step="1" />
+          до <input type="number" id="goalMealsMax" min="0" step="1" />
+        </span>
+      </div>
+
+      <div class="goal-row">
+        <div class="subtle">Перекусов в день (максимум)</div>
+        <span>
+          до <input type="number" id="goalSnacksMax" min="0" step="1" />
+        </span>
+      </div>
+
+      <div class="goal-row">
+        <div class="subtle">Интервал сна (часы, между последним приёмом вчера и первым сегодня)</div>
+        <span>
+          от <input type="number" id="goalSleepMin" min="0" step="0.5" />
+          до <input type="number" id="goalSleepMax" min="0" step="0.5" />
+        </span>
+      </div>
+
+      <div class="goal-row">
+        <div class="subtle">Дневной интервал между приёмами (часы, в среднем за день)</div>
+        <span>
+          от <input type="number" id="goalDayIntMin" min="0" step="0.25" />
+          до <input type="number" id="goalDayIntMax" min="0" step="0.25" />
+        </span>
+      </div>
+
+      <button id="saveGoalsBtn" class="btn-outline">Сохранить цели ✅</button>
+      <p class="subtle" id="goalsStatus"></p>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
+    const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
 
     function loadMeals() {
       try {
@@ -395,7 +468,24 @@
       localStorage.setItem(STORAGE_KEY_MEALS, JSON.stringify(meals));
     }
 
+    function loadGoals() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_GOALS);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch (e) {
+        console.error('Failed to parse goals', e);
+        return {};
+      }
+    }
+
+    function saveGoals(goals) {
+      localStorage.setItem(STORAGE_KEY_GOALS, JSON.stringify(goals));
+    }
+
     let meals = loadMeals();
+    let goals = loadGoals();
 
     const mealNoteEl = document.getElementById('mealNote');
     const addMealBtn = document.getElementById('addMealBtn');
@@ -411,18 +501,31 @@
     // Вкладки
     const tabTodayBtn = document.getElementById('tabToday');
     const tabStatsBtn = document.getElementById('tabStats');
+    const tabGoalsBtn = document.getElementById('tabGoals');
     const viewTodayEl = document.getElementById('view-today');
     const viewStatsEl = document.getElementById('view-stats');
+    const viewGoalsEl = document.getElementById('view-goals');
 
-    // Статистика за период
+    // Периодическая статистика
     const periodButtons = document.querySelectorAll('.period-btn');
-    const statPeriodDaysEl = document.getElementById('statPeriodDays');
+    const statPeriodDaysInTargetEl = document.getElementById('statPeriodDaysInTarget');
     const statPeriodMealsPerDayEl = document.getElementById('statPeriodMealsPerDay');
     const statPeriodSnacksPerDayEl = document.getElementById('statPeriodSnacksPerDay');
     const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
     const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
 
     let currentPeriod = '7'; // "7" | "30" | "all"
+
+    // Цели — элементы
+    const goalMealsMinEl = document.getElementById('goalMealsMin');
+    const goalMealsMaxEl = document.getElementById('goalMealsMax');
+    const goalSnacksMaxEl = document.getElementById('goalSnacksMax');
+    const goalSleepMinEl = document.getElementById('goalSleepMin');
+    const goalSleepMaxEl = document.getElementById('goalSleepMax');
+    const goalDayIntMinEl = document.getElementById('goalDayIntMin');
+    const goalDayIntMaxEl = document.getElementById('goalDayIntMax');
+    const saveGoalsBtn = document.getElementById('saveGoalsBtn');
+    const goalsStatusEl = document.getElementById('goalsStatus');
 
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
@@ -465,7 +568,6 @@
 
     function formatNumberPerDay(value) {
       if (!isFinite(value)) return '0';
-      // одна цифра после запятой, но 3.0 покажем как 3
       const fixed = value.toFixed(1);
       if (fixed.endsWith('.0')) return fixed.slice(0, -2);
       return fixed;
@@ -782,6 +884,49 @@
       return all.filter(d => d.ts >= cutoff);
     }
 
+    function hasAnyGoal() {
+      return (
+        goals.minMealsPerDay != null ||
+        goals.maxMealsPerDay != null ||
+        goals.maxSnacksPerDay != null ||
+        goals.minSleepHours != null ||
+        goals.maxSleepHours != null ||
+        goals.minDayIntervalMinutes != null ||
+        goals.maxDayIntervalMinutes != null
+      );
+    }
+
+    function isDayInTarget(day) {
+      if (!hasAnyGoal()) return false;
+
+      // Приёмы пищи
+      if (goals.minMealsPerDay != null && day.count < goals.minMealsPerDay) return false;
+      if (goals.maxMealsPerDay != null && day.count > goals.maxMealsPerDay) return false;
+
+      // Перекусы
+      if (goals.maxSnacksPerDay != null && (day.snacksCount || 0) > goals.maxSnacksPerDay) return false;
+
+      // Интервал сна (часы → проверка)
+      if (day.sleepInterval != null) {
+        const sleepHours = day.sleepInterval / (60 * 60 * 1000);
+        if (goals.minSleepHours != null && sleepHours < goals.minSleepHours) return false;
+        if (goals.maxSleepHours != null && sleepHours > goals.maxSleepHours) return false;
+      } else {
+        if (goals.minSleepHours != null || goals.maxSleepHours != null) return false;
+      }
+
+      // Дневной интервал (средний, в минутах)
+      if (day.avgInterval != null) {
+        const dayIntervalMinutes = day.avgInterval / 60000;
+        if (goals.minDayIntervalMinutes != null && dayIntervalMinutes < goals.minDayIntervalMinutes) return false;
+        if (goals.maxDayIntervalMinutes != null && dayIntervalMinutes > goals.maxDayIntervalMinutes) return false;
+      } else {
+        if (goals.minDayIntervalMinutes != null || goals.maxDayIntervalMinutes != null) return false;
+      }
+
+      return true;
+    }
+
     function renderPeriodSummary() {
       const stats = getFilteredDailyStats();
 
@@ -790,15 +935,17 @@
       let totalSnacks = 0;
       const sleepIntervals = [];
       const dayAvgIntervals = [];
+      let daysInTarget = 0;
 
       for (const d of stats) {
         totalMeals += d.count;
         totalSnacks += d.snacksCount || 0;
         if (d.sleepInterval != null) sleepIntervals.push(d.sleepInterval);
         if (d.avgInterval != null) dayAvgIntervals.push(d.avgInterval);
+        if (isDayInTarget(d)) daysInTarget++;
       }
 
-      statPeriodDaysEl.textContent = daysCount;
+      statPeriodDaysInTargetEl.textContent = `${daysInTarget} / ${daysCount}`;
 
       if (daysCount === 0) {
         statPeriodMealsPerDayEl.textContent = '0';
@@ -844,6 +991,9 @@
 
       for (const day of stats) {
         const tr = document.createElement('tr');
+        if (isDayInTarget(day)) {
+          tr.className = 'day-ok';
+        }
 
         const tdDate = document.createElement('td');
         tdDate.textContent = formatDateDMY(day.ts);
@@ -904,18 +1054,30 @@
       if (view === 'today') {
         viewTodayEl.style.display = '';
         viewStatsEl.style.display = 'none';
+        viewGoalsEl.style.display = 'none';
         tabTodayBtn.classList.add('active');
         tabStatsBtn.classList.remove('active');
-      } else {
+        tabGoalsBtn.classList.remove('active');
+      } else if (view === 'stats') {
         viewTodayEl.style.display = 'none';
         viewStatsEl.style.display = '';
+        viewGoalsEl.style.display = 'none';
         tabTodayBtn.classList.remove('active');
         tabStatsBtn.classList.add('active');
+        tabGoalsBtn.classList.remove('active');
+      } else {
+        viewTodayEl.style.display = 'none';
+        viewStatsEl.style.display = 'none';
+        viewGoalsEl.style.display = '';
+        tabTodayBtn.classList.remove('active');
+        tabStatsBtn.classList.remove('active');
+        tabGoalsBtn.classList.add('active');
       }
     }
 
     tabTodayBtn.addEventListener('click', () => switchView('today'));
     tabStatsBtn.addEventListener('click', () => switchView('stats'));
+    tabGoalsBtn.addEventListener('click', () => switchView('goals'));
 
     periodButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -927,7 +1089,54 @@
       });
     });
 
+    function loadGoalsIntoUI() {
+      if (goals.minMealsPerDay != null) goalMealsMinEl.value = goals.minMealsPerDay;
+      if (goals.maxMealsPerDay != null) goalMealsMaxEl.value = goals.maxMealsPerDay;
+      if (goals.maxSnacksPerDay != null) goalSnacksMaxEl.value = goals.maxSnacksPerDay;
+      if (goals.minSleepHours != null) goalSleepMinEl.value = goals.minSleepHours;
+      if (goals.maxSleepHours != null) goalSleepMaxEl.value = goals.maxSleepHours;
+      if (goals.minDayIntervalMinutes != null) goalDayIntMinEl.value = goals.minDayIntervalMinutes / 60;
+      if (goals.maxDayIntervalMinutes != null) goalDayIntMaxEl.value = goals.maxDayIntervalMinutes / 60;
+    }
+
+    saveGoalsBtn.addEventListener('click', () => {
+      function numOrNull(el) {
+        const v = el.value.trim();
+        if (!v) return null;
+        const n = Number(v.replace(',', '.'));
+        return isNaN(n) ? null : n;
+      }
+
+      const minMeals = numOrNull(goalMealsMinEl);
+      const maxMeals = numOrNull(goalMealsMaxEl);
+      const maxSnacks = numOrNull(goalSnacksMaxEl);
+      const minSleepHours = numOrNull(goalSleepMinEl);
+      const maxSleepHours = numOrNull(goalSleepMaxEl);
+      const minDayIntHours = numOrNull(goalDayIntMinEl);
+      const maxDayIntHours = numOrNull(goalDayIntMaxEl);
+
+      goals = {
+        minMealsPerDay: minMeals != null ? minMeals : null,
+        maxMealsPerDay: maxMeals != null ? maxMeals : null,
+        maxSnacksPerDay: maxSnacks != null ? maxSnacks : null,
+        minSleepHours: minSleepHours != null ? minSleepHours : null,
+        maxSleepHours: maxSleepHours != null ? maxSleepHours : null,
+        minDayIntervalMinutes: minDayIntHours != null ? minDayIntHours * 60 : null,
+        maxDayIntervalMinutes: maxDayIntHours != null ? maxDayIntHours * 60 : null
+      };
+
+      saveGoals(goals);
+      goalsStatusEl.textContent = 'Цели сохранены. Зелёная подсветка и счётчик дней обновлены.';
+      renderPeriodSummary();
+      renderHistory();
+
+      setTimeout(() => {
+        goalsStatusEl.textContent = '';
+      }, 3000);
+    });
+
     // первый запуск
+    loadGoalsIntoUI();
     renderMeals();
     renderStats();
     renderPeriodSummary();
