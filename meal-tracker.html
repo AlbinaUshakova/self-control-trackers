@@ -352,30 +352,36 @@
       vertical-align: middle;
     }
 
-    /* ширины столбцов */
+    /* более удобные ширины столбцов */
     th:nth-child(1),
     td:nth-child(1) {
-      width: 18%;
+      /* дата — меньше, места ей много не нужно */
+      width: 14%;
     }
 
     th:nth-child(2),
     td:nth-child(2) {
-      width: 18%;
+      width: 17%;
     }
 
     th:nth-child(3),
     td:nth-child(3) {
-      width: 18%;
+      /* перекусы — шире, чтобы влезла "ПЕРЕКУСЫ" */
+      width: 22%;
     }
 
     th:nth-child(4),
     td:nth-child(4) {
       width: 23%;
+      white-space: nowrap;
+      /* не переносим "13 ч 58 мин" */
     }
 
     th:nth-child(5),
     td:nth-child(5) {
-      width: 23%;
+      width: 24%;
+      white-space: nowrap;
+      /* и тут тоже всё в одну строку */
     }
 
     th {
