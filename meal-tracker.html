@@ -317,69 +317,64 @@
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      /* фиксированная сетка, чтобы столбцы были равномерными */
-      font-size: 12px;
+      /* фиксированная сетка */
+      font-size: 11px;
+      /* чуть меньше общий шрифт */
       background: transparent;
     }
 
     th,
     td {
-      padding: 4px 6px;
-      text-align: left;
+      padding: 3px 4px;
       border-bottom: 1px solid #111827;
       vertical-align: top;
     }
 
-    /* одинаковые по ширине столбики, чтобы всё влезало на экран */
+    /* Уже дата и счётчики, больше места под интервалы */
     th:nth-child(1),
     td:nth-child(1) {
-      width: 18%;
+      width: 16%;
     }
 
     th:nth-child(2),
     td:nth-child(2) {
-      width: 17%;
+      width: 16%;
     }
 
     th:nth-child(3),
     td:nth-child(3) {
-      width: 17%;
+      width: 16%;
     }
 
     th:nth-child(4),
     td:nth-child(4) {
-      width: 24%;
+      width: 26%;
     }
 
     th:nth-child(5),
     td:nth-child(5) {
-      width: 24%;
+      width: 26%;
     }
 
     th {
-      font-size: 10px;
+      font-size: 9px;
+      /* заголовки поменьше */
       color: #9ca3af;
       font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       background: #020617;
       position: sticky;
       top: 0;
       z-index: 1;
       text-align: center;
-      /* <-- новое: заголовки по центру */
       white-space: normal;
-      /* <-- разрешаем перенос */
+      /* разрешаем перенос */
       line-height: 1.2;
-      /* <-- более плотный текст */
     }
 
     td {
-      padding: 4px 6px;
       text-align: left;
-      /* <-- строки остаются по левому краю */
-      border-bottom: 1px solid #111827;
-      vertical-align: top;
     }
 
     tr:last-child td {
@@ -528,11 +523,11 @@
           <h2>Статистика за сегодня</h2>
           <div class="stats-grid">
             <div class="stat-box">
-              <div class="stat-label">Приёмов пищи</div>
+              <div class="stat-label">Приёмов пищи всего</div>
               <div class="stat-value" id="statMealsToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусы 🍪</div>
+              <div class="stat-label">Из них перекусов 🍪</div>
               <div class="stat-value" id="statSnacksToday">0</div>
             </div>
             <div class="stat-box">
@@ -567,11 +562,11 @@
           </div>
           <div class="stats-grid">
             <div class="stat-box">
-              <div class="stat-label">Приёмов пищи</div>
+              <div class="stat-label">Приёмов пищи всего</div>
               <div class="stat-value" id="statPeriodMealsPerDay">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусы 🍪</div>
+              <div class="stat-label">Из них перекусов 🍪</div>
               <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
             </div>
             <div class="stat-box">
@@ -771,8 +766,8 @@
       const d = new Date(ts);
       return d.toLocaleDateString('ru-RU', {
         day: '2-digit',
-        month: '2-digit',
-        year: '2-digit'
+        month: '2-digit'
+        // год убрали, чтобы сэкономить место
       });
     }
 
