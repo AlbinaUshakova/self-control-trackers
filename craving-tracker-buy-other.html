@@ -3,78 +3,186 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Трекер желаний (только «Купить» и «Другое»)</title>
+  <title>EatLog — трекер приёмов пищи</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="apple-touch-icon" href="eatlog-icon.png">
   <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       margin: 0;
-      padding: 16px;
-      background: #0f172a;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
       color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 16px 12px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      border-radius: 28px;
+      padding: 14px 14px 20px;
+      background: rgba(15, 23, 42, 0.96);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     h1 {
-      font-size: 24px;
-      margin-bottom: 4px;
+      font-size: 22px;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .subtle {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 4px 2px 10px;
+    }
+
+    /* Вкладки */
+    .view-tabs-wrapper {
+      margin: 4px 0 10px;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+    }
+
+    .tab-btn.active {
+      background: #e5e7eb;
+      color: #020617;
+      transform: translateY(-1px);
+    }
+
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 2px;
+      padding-bottom: 8px;
+      margin-top: 2px;
     }
 
     h2 {
-      font-size: 18px;
-      margin-top: 24px;
-      margin-bottom: 8px;
+      font-size: 17px;
+      margin-top: 0;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
     }
 
     .card {
-      background: #111827;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+      background: #020617;
+      border-radius: 16px;
+      padding: 12px 12px 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+      border: none;
+    }
+
+    .card-compact {
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
 
     label {
       display: block;
-      font-size: 14px;
+      font-size: 13px;
       margin-bottom: 4px;
       color: #9ca3af;
     }
 
-    textarea,
-    select {
+    textarea {
       width: 100%;
       box-sizing: border-box;
-      border-radius: 8px;
-      border: 1px solid #374151;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
       background: #020617;
       color: #e5e7eb;
-      padding: 8px 10px;
+      padding: 9px 11px;
       font-size: 14px;
       margin-bottom: 10px;
+      resize: vertical;
+      min-height: 52px;
+      outline: none;
+      transition: border-color 0.12s ease, background 0.12s ease;
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 60px;
+    textarea:focus {
+      border-color: #22c55e;
+      background: #020617;
     }
 
     button {
       border-radius: 999px;
       border: none;
-      padding: 8px 14px;
+      padding: 9px 16px;
       font-size: 14px;
       cursor: pointer;
       margin-right: 6px;
       margin-top: 4px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: background 0.15s ease, transform 0.08s ease;
+      white-space: nowrap;
+    }
+
+    button:active {
+      transform: translateY(1px);
     }
 
     .btn-primary {
-      background: #6366f1;
-      color: white;
+      background: #22c55e;
+      color: #022c22;
+      font-weight: 600;
+      width: 100%;
+      justify-content: center;
+      box-shadow: none;
     }
 
     .btn-primary:hover {
-      background: #4f46e5;
+      background: #16a34a;
     }
 
     .btn-outline {
@@ -84,503 +192,1145 @@
     }
 
     .btn-outline:hover {
-      background: #111827;
+      background: rgba(15, 23, 42, 0.9);
     }
 
     .btn-danger {
       background: transparent;
-      color: #f87171;
-      border: 1px solid #4b5563;
+      color: #fca5a5;
+      border: none;
+      padding: 4px 10px;
       font-size: 12px;
-      padding: 6px 10px;
     }
 
     .btn-danger:hover {
-      background: #111827;
-      border-color: #f87171;
+      background: rgba(127, 29, 29, 0.3);
     }
 
-    .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      border: none;
+      padding: 4px 10px;
       font-size: 12px;
-      margin-right: 4px;
     }
 
-    .pill-buy {
-      background: rgba(52, 211, 153, 0.16);
-      color: #34d399;
-    }
-
-    .pill-other {
-      background: rgba(96, 165, 250, 0.16);
-      color: #60a5fa;
-    }
-
-    .pill-status-pending {
-      background: rgba(251, 191, 36, 0.16);
-      color: #fbbf24;
-    }
-
-    .pill-status-done {
-      background: rgba(52, 211, 153, 0.16);
-      color: #34d399;
-    }
-
-    .pill-status-resisted {
-      background: rgba(248, 113, 113, 0.16);
-      color: #f87171;
+    .btn-ghost:hover {
+      background: rgba(31, 41, 55, 1);
     }
 
     .list {
-      max-height: 320px;
+      max-height: 360px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 2px;
     }
 
-    .urge-row {
-      border-bottom: 1px solid #1f2937;
-      padding: 8px 0;
+    .meal-row {
+      border-bottom: 1px solid #111827;
+      padding: 7px 0;
       font-size: 14px;
     }
 
-    .urge-row:last-child {
+    .meal-row:last-child {
       border-bottom: none;
     }
 
     .row-top {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       gap: 8px;
       margin-bottom: 4px;
     }
 
-    .row-main-text {
-      font-weight: 500;
-      word-break: break-word;
+    .actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .row-meta {
+    .meal-time {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      font-size: 14px;
+    }
+
+    .meal-note {
+      color: #e5e7eb;
+      word-break: break-word;
+      font-size: 13px;
+    }
+
+    .meal-interval {
       font-size: 12px;
       color: #9ca3af;
-      margin-bottom: 4px;
+      margin-top: 2px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .stat-box {
       background: #020617;
-      border-radius: 10px;
-      padding: 10px;
+      border-radius: 12px;
+      padding: 8px 9px;
       font-size: 13px;
+      border: none;
+      box-shadow: none;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
 
     .stat-label {
       color: #9ca3af;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       margin-bottom: 2px;
+      text-align: center;
     }
 
     .stat-value {
       font-size: 18px;
       font-weight: 600;
+      text-align: center;
     }
 
-    .timer {
-      font-size: 32px;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.08em;
+    .history-wrapper {
+      max-height: 260px;
+      overflow-y: auto;
+      border-radius: 12px;
+      margin-top: 4px;
+      background: #020617;
     }
 
-    .subtle {
+    /* ТАБЛИЦА СТАТИСТИКИ */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
       font-size: 12px;
-      color: #9ca3af;
+      background: transparent;
     }
 
-    .badge {
+    th,
+    td {
+      padding: 8px 4px;
+      border-bottom: 1px solid #111827;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    /* ширины столбцов */
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 18%;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 18%;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 18%;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      width: 23%;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 23%;
+    }
+
+    th {
+      font-size: 9px;
+      color: #9ca3af;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #020617;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      white-space: normal;
+      line-height: 1.2;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: background 0.12s ease;
+    }
+
+    tbody tr:hover {
+      background: #020617;
+    }
+
+    /* Период */
+    .period-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 6px;
+    }
+
+    .period-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+
+    .period-btn.active {
+      background: #e5e7eb;
+      color: #020617;
+      border-color: transparent;
+    }
+
+    .goal-row {
+      margin-bottom: 9px;
+      font-size: 13px;
+    }
+
+    .goal-row span {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(148, 163, 184, 0.18);
-      font-size: 11px;
+      flex-wrap: wrap;
+    }
+
+    input[type="number"] {
+      width: 72px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
       color: #e5e7eb;
+      padding: 4px 6px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.12s ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: #22c55e;
+    }
+
+    .day-ok td {
+      background: rgba(22, 163, 74, 0.22);
+    }
+
+    .app-footer {
+      margin-top: 4px;
+      font-size: 10px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    /* FULLSCREEN DETAIL */
+    #detailScreen {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #020617;
+      z-index: 200;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    #btnDetailBack {
+      background: none;
+      border: none;
+      color: #e5e7eb;
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #detailTitle {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    @media (max-width: 480px) {
+      .app-shell {
+        border-radius: 24px;
+        padding-inline: 12px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <h1>Трекер импульсивных желаний</h1>
-  <p class="subtle">Записывай желание → жди час → отметь, выдержала или нет. Типы: только «Купить» и «Другое».</p>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <h1>EatLog</h1>
+      </div>
+    </header>
 
-  <!-- Форма создания нового желания -->
-  <div class="card">
-    <h2>Новое желание</h2>
-    <label for="urgeText">Что ты хочешь?</label>
-    <textarea id="urgeText" placeholder="Например: «Купить кроссовки» или «Залипнуть в соцсетях»"></textarea>
+    <div class="view-tabs-wrapper">
+      <div class="view-tabs">
+        <button id="tabToday" class="tab-btn active">Сегодня</button>
+        <button id="tabStats" class="tab-btn">Статистика</button>
+        <button id="tabGoals" class="tab-btn">Цели</button>
+      </div>
+    </div>
 
-    <label for="urgeType">Тип желания</label>
-    <select id="urgeType">
-      <option value="buy">Купить</option>
-      <option value="other">Другое</option>
-    </select>
+    <div class="app-content">
+      <!-- СЕГОДНЯ -->
+      <div id="view-today">
+        <div class="card">
+          <h2>Новый приём пищи</h2>
+          <label for="mealNote">Что ты ешь? (по желанию)</label>
+          <textarea id="mealNote" placeholder="Например: «Овсянка с семечками», «Чипсы», «Чай с печеньем»"></textarea>
+          <button id="addMealBtn" class="btn-primary">
+            <span>Я ем сейчас</span>
+            <span>🍽 🍪</span>
+          </button>
+          <p class="subtle" id="lastMealInfo"></p>
+        </div>
 
-    <button id="addUrgeBtn" class="btn-primary">Создать запись с таймером на 1 час</button>
+        <div class="card card-compact">
+          <h2>Статистика за сегодня</h2>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Приёмов пищи</div>
+              <div class="stat-value" id="statMealsToday">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Из них перекусы 🍪</div>
+              <div class="stat-value" id="statSnacksToday">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Дневной интервал</div>
+              <div class="stat-value" id="statAvgInterval">–</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Сейчас от последнего</div>
+              <div class="stat-value" id="statSinceLast">–</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Сегодняшние приёмы пищи</h2>
+          <div class="list" id="mealList"></div>
+        </div>
+      </div>
+
+      <!-- СТАТИСТИКА -->
+      <div id="view-stats" style="display:none;">
+        <div class="card">
+          <h2>Статистика за период</h2>
+          <div class="period-controls">
+            <button class="btn-outline period-btn" data-period="3">3 дня</button>
+            <button class="btn-outline period-btn active" data-period="7">7 дней</button>
+            <button class="btn-outline period-btn" data-period="14">14 дней</button>
+            <button class="btn-outline period-btn" data-period="21">21 день</button>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Приёмов пищи</div>
+              <div class="stat-value" id="statPeriodMealsPerDay">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Из них перекусы 🍪</div>
+              <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Интервал сна</div>
+              <div class="stat-value" id="statPeriodSleepInterval">–</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Дневной интервал</div>
+              <div class="stat-value" id="statPeriodAvgInterval">–</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Детализация по дням</h2>
+          <div class="history-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Приёмы<br>пищи</th>
+                  <th>Перекусы 🍪</th>
+                  <th>Интервал<br>сна</th>
+                  <th>Дневной<br>интервал</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ЦЕЛИ -->
+      <div id="view-goals" style="display:none;">
+        <div class="card">
+          <h2>Цели на день</h2>
+          <p class="subtle">
+            Дни, когда ты достигла этих целей, в статистике будут подсвечиваться зелёным.
+          </p>
+
+          <div class="goal-row">
+            <div class="subtle">Приёмов пищи в день</div>
+            <span>
+              от <input type="number" id="goalMealsMin" min="0" step="1" />
+              до <input type="number" id="goalMealsMax" min="0" step="1" />
+            </span>
+          </div>
+
+          <div class="goal-row">
+            <div class="subtle">Из них перекусов 🍪 в день (максимум)</div>
+            <span>
+              до <input type="number" id="goalSnacksMax" min="0" step="1" />
+            </span>
+          </div>
+
+          <div class="goal-row">
+            <div class="subtle">Интервал сна (часы, между последним приёмом пищи вчера и первым сегодня)</div>
+            <span>
+              от <input type="number" id="goalSleepMin" min="0" step="0.5" />
+              до <input type="number" id="goalSleepMax" min="0" step="0.5" />
+            </span>
+          </div>
+
+          <div class="goal-row">
+            <div class="subtle">Дневной интервал между приёмами пищи (часы, в среднем за день)</div>
+            <span>
+              от <input type="number" id="goalDayIntMin" min="0" step="0.25" />
+              до <input type="number" id="goalDayIntMax" min="0" step="0.25" />
+            </span>
+          </div>
+
+          <button id="saveGoalsBtn" class="btn-outline">Сохранить цели ✅</button>
+          <p class="subtle" id="goalsStatus"></p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      EatLog · маленький шаг к более осознанному питанию
+    </footer>
   </div>
 
-  <!-- Текущая активная запись с таймером -->
-  <div class="card" id="currentCard" style="display:none;">
-    <h2>Текущее желание</h2>
-    <div id="currentText" style="margin-bottom: 6px; font-weight: 500;"></div>
-    <div id="currentTypePills" style="margin-bottom: 6px;"></div>
-    <div class="subtle" id="currentDeadlineLabel"></div>
-    <div style="margin-top: 12px; margin-bottom: 8px;">
-      <div class="timer" id="countdown">00:00</div>
-    </div>
-    <div class="subtle" id="currentHint"></div>
-    <div style="margin-top: 10px;">
-      <button id="markDoneBtn" class="btn-outline">✅ Я всё-таки это сделала</button>
-      <button id="markResistedBtn" class="btn-outline">🚫 Я удержалась</button>
-    </div>
-  </div>
-
-  <!-- Статистика -->
-  <div class="card">
-    <h2>Статистика</h2>
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="stat-label">Всего желаний</div>
-        <div class="stat-value" id="statTotal">0</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Я удержалась</div>
-        <div class="stat-value" id="statResisted">0</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Я поддалась</div>
-        <div class="stat-value" id="statDone">0</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">% самоконтроля</div>
-        <div class="stat-value" id="statPercent">0%</div>
-      </div>
-    </div>
-
-    <div class="stats-grid" style="margin-top: 12px;">
-      <div class="stat-box">
-        <span class="badge"><span>🛒</span><span>Покупки</span></span>
-        <div class="stat-value" id="statBuy">0</div>
-      </div>
-      <div class="stat-box">
-        <span class="badge"><span>✨</span><span>Другое</span></span>
-        <div class="stat-value" id="statOther">0</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Список всех записей -->
-  <div class="card">
-    <h2>Все записи</h2>
-    <div class="subtle" style="margin-bottom: 6px;">Свежие сверху.</div>
-    <div class="list" id="urgeList"></div>
+  <!-- FULLSCREEN ДЕТАЛИЗАЦИЯ ДНЯ -->
+  <div id="detailScreen">
+    <button id="btnDetailBack">← Назад</button>
+    <h2 id="detailTitle"></h2>
+    <div id="detailContent"></div>
   </div>
 
   <script>
-    const STORAGE_KEY = 'craving_tracker_urges_v1';
+    const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
+    const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
 
-    function loadUrges() {
+    function loadMeals() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY_MEALS);
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
         return parsed;
-      } catch (e) {
-        console.error('Failed to parse storage', e);
+      } catch {
         return [];
       }
     }
 
-    function saveUrges(urges) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(urges));
+    function saveMeals(meals) {
+      localStorage.setItem(STORAGE_KEY_MEALS, JSON.stringify(meals));
     }
 
-    let urges = loadUrges();
-    let countdownInterval = null;
-
-    const urgeTextEl = document.getElementById('urgeText');
-    const urgeTypeEl = document.getElementById('urgeType');
-    const addUrgeBtn = document.getElementById('addUrgeBtn');
-
-    const currentCardEl = document.getElementById('currentCard');
-    const currentTextEl = document.getElementById('currentText');
-    const currentTypePillsEl = document.getElementById('currentTypePills');
-    const currentDeadlineLabelEl = document.getElementById('currentDeadlineLabel');
-    const countdownEl = document.getElementById('countdown');
-    const currentHintEl = document.getElementById('currentHint');
-    const markDoneBtn = document.getElementById('markDoneBtn');
-    const markResistedBtn = document.getElementById('markResistedBtn');
-
-    const statTotalEl = document.getElementById('statTotal');
-    const statResistedEl = document.getElementById('statResisted');
-    const statDoneEl = document.getElementById('statDone');
-    const statPercentEl = document.getElementById('statPercent');
-    const statBuyEl = document.getElementById('statBuy');
-    const statOtherEl = document.getElementById('statOther');
-
-    const urgeListEl = document.getElementById('urgeList');
-
-    function formatTime(ms) {
-      const totalSec = Math.max(0, Math.floor(ms / 1000));
-      const m = Math.floor(totalSec / 60);
-      const s = totalSec % 60;
-      return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    function loadGoals() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_GOALS);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
     }
 
-    function formatDateTime(ts) {
+    function saveGoals(goals) {
+      localStorage.setItem(STORAGE_KEY_GOALS, JSON.stringify(goals));
+    }
+
+    let meals = loadMeals();
+    let goals = loadGoals();
+
+    const mealNoteEl = document.getElementById('mealNote');
+    const addMealBtn = document.getElementById('addMealBtn');
+    const mealListEl = document.getElementById('mealList');
+
+    const statMealsTodayEl = document.getElementById('statMealsToday');
+    const statSnacksTodayEl = document.getElementById('statSnacksToday');
+    const statAvgIntervalEl = document.getElementById('statAvgInterval');
+    const statSinceLastEl = document.getElementById('statSinceLast');
+    const lastMealInfoEl = document.getElementById('lastMealInfo');
+
+    const historyBodyEl = document.getElementById('historyBody');
+
+    const tabTodayBtn = document.getElementById('tabToday');
+    const tabStatsBtn = document.getElementById('tabStats');
+    const tabGoalsBtn = document.getElementById('tabGoals');
+    const viewTodayEl = document.getElementById('view-today');
+    const viewStatsEl = document.getElementById('view-stats');
+    const viewGoalsEl = document.getElementById('view-goals');
+
+    const periodButtons = document.querySelectorAll('.period-btn');
+    const statPeriodMealsPerDayEl = document.getElementById('statPeriodMealsPerDay');
+    const statPeriodSnacksPerDayEl = document.getElementById('statPeriodSnacksPerDay');
+    const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
+    const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
+
+    const goalMealsMinEl = document.getElementById('goalMealsMin');
+    const goalMealsMaxEl = document.getElementById('goalMealsMax');
+    const goalSnacksMaxEl = document.getElementById('goalSnacksMax');
+    const goalSleepMinEl = document.getElementById('goalSleepMin');
+    const goalSleepMaxEl = document.getElementById('goalSleepMax');
+    const goalDayIntMinEl = document.getElementById('goalDayIntMin');
+    const goalDayIntMaxEl = document.getElementById('goalDayIntMax');
+    const saveGoalsBtn = document.getElementById('saveGoalsBtn');
+    const goalsStatusEl = document.getElementById('goalsStatus');
+
+    const detailScreen = document.getElementById('detailScreen');
+    const btnDetailBack = document.getElementById('btnDetailBack');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailContent = document.getElementById('detailContent');
+    let currentDetailDayKey = null;
+
+    let currentPeriod = '7';
+
+    function isSameDay(ts, refDate) {
+      const d1 = new Date(ts);
+      const d2 = new Date(refDate);
+      return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+    }
+
+    function getDayKey(dateOrTs) {
+      const d = dateOrTs instanceof Date ? dateOrTs : new Date(dateOrTs);
+      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+
+    function formatTimeHM(ts) {
       const d = new Date(ts);
-      return d.toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
     }
 
-    function typeLabel(type) {
-      if (type === 'buy') return 'Купить';
-      // всё остальное считаем как «Другое» (включая старые записи с type === 'eat')
-      return 'Другое';
+    function formatDateDM(ts) {
+      const d = new Date(ts);
+      return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
     }
 
-    function typeClass(type) {
-      if (type === 'buy') return 'pill pill-buy';
-      return 'pill pill-other';
+    function formatInterval(ms) {
+      if (ms == null || isNaN(ms)) return '–';
+      const totalMin = Math.floor(ms / 60000);
+      const h = Math.floor(totalMin / 60);
+      const m = totalMin % 60;
+      if (h <= 0) return m + ' мин';
+      return h + ' ч ' + (m > 0 ? m + ' мин' : '');
     }
 
-    function statusLabel(status) {
-      if (status === 'pending') return 'Жду 1 час';
-      if (status === 'done') return 'Сделала';
-      if (status === 'resisted') return 'Удержалась';
-      return '';
+    function formatNumberPerDay(value) {
+      if (!isFinite(value)) return '0';
+      const fixed = value.toFixed(1);
+      return fixed.endsWith('.0') ? fixed.slice(0, -2) : fixed;
     }
 
-    function statusClass(status) {
-      if (status === 'pending') return 'pill pill-status-pending';
-      if (status === 'done') return 'pill pill-status-done';
-      if (status === 'resisted') return 'pill pill-status-resisted';
-      return 'pill';
+    function getAllMealsSorted() {
+      return [...meals].sort((a, b) => a.ts - b.ts);
     }
 
-    function renderStats() {
-      const total = urges.length;
-      const done = urges.filter(u => u.status === 'done').length;
-      const resisted = urges.filter(u => u.status === 'resisted').length;
-
-      const buy = urges.filter(u => u.type === 'buy').length;
-      const other = urges.filter(u => u.type !== 'buy').length;
-
-      statTotalEl.textContent = total;
-      statDoneEl.textContent = done;
-      statResistedEl.textContent = resisted;
-
-      const successful = resisted;
-      const percent = total > 0 ? Math.round((successful / total) * 100) : 0;
-      statPercentEl.textContent = percent + '%';
-
-      statBuyEl.textContent = buy;
-      statOtherEl.textContent = other;
+    function getTodayMeals() {
+      const now = new Date();
+      return meals.filter(m => isSameDay(m.ts, now)).sort((a, b) => a.ts - b.ts);
     }
 
-    function renderList() {
-      const sorted = [...urges].sort((a, b) => b.createdAt - a.createdAt);
-      urgeListEl.innerHTML = '';
+    function deleteMeal(id) {
+      const entry = meals.find(m => m.id === id);
+      const txt = entry ? ('«' + (entry.note || '').slice(0, 30) + (entry.note && entry.note.length > 30 ? '…' : '') + '»') : '';
+      if (!confirm('Удалить приём пищи ' + txt + '?')) return;
+      meals = meals.filter(m => m.id !== id);
+      saveMeals(meals);
+      renderMeals();
+      renderStats();
+      renderPeriodSummary();
+      renderHistory();
+      refreshDetailIfOpen();
+    }
 
-      if (sorted.length === 0) {
-        urgeListEl.innerHTML = '<div class="subtle">Пока нет записей. Создай первое желание ✨</div>';
+    function editMealNote(id) {
+      const entry = meals.find(m => m.id === id);
+      if (!entry) return;
+      const currentNote = entry.note || '';
+      const updated = prompt('Изменить описание приёма пищи:', currentNote);
+      if (updated === null) return;
+      entry.note = updated.trim();
+      saveMeals(meals);
+      renderMeals();
+      renderHistory();
+      renderPeriodSummary();
+      refreshDetailIfOpen();
+    }
+
+    function editMealTime(id) {
+      const entry = meals.find(m => m.id === id);
+      if (!entry) return;
+      const d = new Date(entry.ts);
+      const currentHH = String(d.getHours()).padStart(2, '0');
+      const currentMM = String(d.getMinutes()).padStart(2, '0');
+      const input = prompt('Новое время (формат ЧЧ:ММ, 24 часа):', currentHH + ':' + currentMM);
+      if (input === null) return;
+
+      const match = /^([0-9]{1,2}):([0-9]{2})$/.exec(input.trim());
+      if (!match) {
+        alert('Неверный формат. Введи, например: 08:30 или 22:05');
         return;
       }
 
-      for (const u of sorted) {
+      let hh = parseInt(match[1], 10);
+      let mm = parseInt(match[2], 10);
+      if (hh < 0 || hh > 23 || mm < 0 || mm > 59) {
+        alert('Часы должны быть 0–23, минуты 0–59.');
+        return;
+      }
+
+      const newDate = new Date(entry.ts);
+      newDate.setHours(hh, mm, 0, 0);
+      entry.ts = newDate.getTime();
+
+      saveMeals(meals);
+      renderMeals();
+      renderStats();
+      renderHistory();
+      renderPeriodSummary();
+      refreshDetailIfOpen();
+    }
+
+    function toggleSnack(id) {
+      const entry = meals.find(m => m.id === id);
+      if (!entry) return;
+      entry.isSnack = !entry.isSnack;
+      saveMeals(meals);
+      renderMeals();
+      renderStats();
+      renderHistory();
+      renderPeriodSummary();
+      refreshDetailIfOpen();
+    }
+
+    function renderMeals() {
+      const todayMeals = getTodayMeals();
+      mealListEl.innerHTML = '';
+
+      if (todayMeals.length === 0) {
+        mealListEl.innerHTML = '<div class="subtle">Сегодня ещё не было ни одного приёма пищи. Когда начнёшь есть — нажми «Я ем сейчас».</div>';
+        lastMealInfoEl.textContent = '';
+        return;
+      }
+
+      const allSorted = getAllMealsSorted();
+      const firstToday = todayMeals[0];
+      const firstIndex = allSorted.findIndex(m => m.id === firstToday.id);
+
+      let prevTs = firstIndex > 0 ? allSorted[firstIndex - 1].ts : null;
+
+      for (const meal of todayMeals) {
         const row = document.createElement('div');
-        row.className = 'urge-row';
+        row.className = 'meal-row';
 
         const top = document.createElement('div');
         top.className = 'row-top';
 
-        const main = document.createElement('div');
-        main.className = 'row-main-text';
-        main.textContent = u.text;
-
-        const pills = document.createElement('div');
-        const typeSpan = document.createElement('span');
-        typeSpan.className = typeClass(u.type);
-        typeSpan.textContent = typeLabel(u.type);
-        const statusSpan = document.createElement('span');
-        statusSpan.className = statusClass(u.status);
-        statusSpan.textContent = statusLabel(u.status);
-
-        pills.appendChild(typeSpan);
-        pills.appendChild(statusSpan);
-
-        top.appendChild(main);
-        top.appendChild(pills);
-
-        const meta = document.createElement('div');
-        meta.className = 'row-meta';
-        meta.textContent = 'Создано: ' + formatDateTime(u.createdAt) +
-          ' • Проверка: ' + formatDateTime(u.checkAt);
+        const leftWrap = document.createElement('div');
+        const timeEl = document.createElement('span');
+        timeEl.className = 'meal-time';
+        timeEl.textContent = formatTimeHM(meal.ts);
+        leftWrap.appendChild(timeEl);
 
         const actions = document.createElement('div');
+        actions.className = 'actions';
 
-        if (u.status === 'pending') {
-          const btnDone = document.createElement('button');
-          btnDone.className = 'btn-outline';
-          btnDone.textContent = '✅ Сделала';
-          btnDone.onclick = () => updateStatus(u.id, 'done');
+        const snackBtn = document.createElement('button');
+        snackBtn.className = 'btn-ghost';
+        snackBtn.textContent = meal.isSnack ? '🍪' : '🍽';
+        snackBtn.title = meal.isSnack
+          ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
+          : 'Обычный приём пищи (нажми, чтобы отметить как перекус)';
+        snackBtn.onclick = () => toggleSnack(meal.id);
 
-          const btnResisted = document.createElement('button');
-          btnResisted.className = 'btn-outline';
-          btnResisted.textContent = '🚫 Удержалась';
-          btnResisted.onclick = () => updateStatus(u.id, 'resisted');
+        const editTimeBtn = document.createElement('button');
+        editTimeBtn.className = 'btn-ghost';
+        editTimeBtn.textContent = '⏰';
+        editTimeBtn.title = 'Изменить время';
+        editTimeBtn.onclick = () => editMealTime(meal.id);
 
-          actions.appendChild(btnDone);
-          actions.appendChild(btnResisted);
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn-ghost';
+        editBtn.textContent = '✏️';
+        editBtn.title = 'Редактировать описание';
+        editBtn.onclick = () => editMealNote(meal.id);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn-danger';
+        delBtn.textContent = '🗑';
+        delBtn.title = 'Удалить приём';
+        delBtn.onclick = () => deleteMeal(meal.id);
+
+        actions.append(snackBtn, editTimeBtn, editBtn, delBtn);
+        top.append(leftWrap, actions);
+
+        const noteEl = document.createElement('div');
+        noteEl.className = 'meal-note';
+        noteEl.textContent = meal.note || '(без описания)';
+
+        const intervalEl = document.createElement('div');
+        intervalEl.className = 'meal-interval';
+        intervalEl.textContent = prevTs == null
+          ? 'Первый зафиксированный приём (раньше записей нет).'
+          : 'Интервал с прошлого приёма: ' + formatInterval(meal.ts - prevTs);
+        prevTs = meal.ts;
+
+        row.append(top, noteEl, intervalEl);
+        mealListEl.appendChild(row);
+      }
+
+      lastMealInfoEl.textContent = 'Последний приём: ' + formatTimeHM(todayMeals[todayMeals.length - 1].ts);
+    }
+
+    function getTodayIntervalsWithinDay() {
+      const todayMeals = getTodayMeals();
+      if (todayMeals.length <= 1) return [];
+      const intervals = [];
+      for (let i = 1; i < todayMeals.length; i++) {
+        intervals.push(todayMeals[i].ts - todayMeals[i - 1].ts);
+      }
+      return intervals;
+    }
+
+    function renderStats() {
+      const todayMeals = getTodayMeals();
+      const count = todayMeals.length;
+      const snacksCount = todayMeals.filter(m => m.isSnack).length;
+
+      statMealsTodayEl.textContent = String(count);
+      statSnacksTodayEl.textContent = String(snacksCount);
+
+      const intervals = getTodayIntervalsWithinDay();
+      if (intervals.length === 0) {
+        statAvgIntervalEl.textContent = '–';
+      } else {
+        const sum = intervals.reduce((a, b) => a + b, 0);
+        const avg = sum / intervals.length;
+        statAvgIntervalEl.textContent = formatInterval(avg);
+      }
+
+      if (count === 0) {
+        statSinceLastEl.textContent = '–';
+        lastMealInfoEl.textContent = '';
+      } else {
+        const last = todayMeals[todayMeals.length - 1];
+        const diff = Date.now() - last.ts;
+        statSinceLastEl.textContent = formatInterval(diff);
+      }
+    }
+
+    function getSleepIntervalForDay(dayMeals, allMeals) {
+      const first = dayMeals[0];
+      let prev = null;
+      for (const m of allMeals) {
+        if (m.ts < first.ts) {
+          if (!prev || m.ts > prev.ts) prev = m;
+        }
+      }
+      if (!prev) return null;
+      return first.ts - prev.ts;
+    }
+
+    function computeDailyStats() {
+      if (meals.length === 0) return [];
+      const byDayKey = {};
+      for (const m of meals) {
+        const dKey = getDayKey(m.ts);
+        if (!byDayKey[dKey]) byDayKey[dKey] = [];
+        byDayKey[dKey].push(m);
+      }
+
+      const allSorted = getAllMealsSorted();
+      const result = [];
+
+      for (const key in byDayKey) {
+        const dayMeals = byDayKey[key].sort((a, b) => a.ts - b.ts);
+        const count = dayMeals.length;
+        const snacksCount = dayMeals.filter(m => m.isSnack).length;
+
+        const intervals = [];
+        if (count > 1) {
+          for (let i = 1; i < dayMeals.length; i++) {
+            intervals.push(dayMeals[i].ts - dayMeals[i - 1].ts);
+          }
         }
 
-        const btnDelete = document.createElement('button');
-        btnDelete.className = 'btn-danger';
-        btnDelete.textContent = '🗑 Удалить';
-        btnDelete.onclick = () => deleteUrge(u.id);
-        actions.appendChild(btnDelete);
-
-        row.appendChild(top);
-        row.appendChild(meta);
-        row.appendChild(actions);
-
-        urgeListEl.appendChild(row);
-      }
-    }
-
-    function getActiveUrge() {
-      const pending = urges.filter(u => u.status === 'pending');
-      if (pending.length === 0) return null;
-      pending.sort((a, b) => a.checkAt - b.checkAt);
-      return pending[0];
-    }
-
-    function startCountdown() {
-      if (countdownInterval) {
-        clearInterval(countdownInterval);
-        countdownInterval = null;
-      }
-
-      const active = getActiveUrge();
-      if (!active) {
-        currentCardEl.style.display = 'none';
-        return;
-      }
-
-      currentCardEl.style.display = 'block';
-      currentTextEl.textContent = active.text;
-
-      currentTypePillsEl.innerHTML = '';
-      const typeSpan = document.createElement('span');
-      typeSpan.className = typeClass(active.type);
-      typeSpan.textContent = typeLabel(active.type);
-      currentTypePillsEl.appendChild(typeSpan);
-
-      currentDeadlineLabelEl.textContent =
-        'Проверка в ' + formatDateTime(active.checkAt);
-
-      function updateCountdown() {
-        const now = Date.now();
-        const diff = active.checkAt - now;
-        countdownEl.textContent = formatTime(diff);
-
-        if (diff > 0) {
-          currentHintEl.textContent =
-            'Подожди до конца таймера и потом честно отметь, поддалась ты или нет.';
-        } else {
-          currentHintEl.textContent =
-            'Час прошёл. Самое время честно отметить: сделала или удержалась.';
+        let avg = null;
+        if (intervals.length > 0) {
+          avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
         }
+
+        const sleepInterval = getSleepIntervalForDay(dayMeals, allSorted);
+
+        result.push({
+          key,
+          ts: dayMeals[0].ts,
+          count,
+          snacksCount,
+          sleepInterval,
+          avgInterval: avg
+        });
       }
 
-      updateCountdown();
-      countdownInterval = setInterval(updateCountdown, 1000);
-
-      markDoneBtn.onclick = () => updateStatus(active.id, 'done');
-      markResistedBtn.onclick = () => updateStatus(active.id, 'resisted');
+      result.sort((a, b) => b.ts - a.ts);
+      return result;
     }
 
-    function updateStatus(id, status) {
-      urges = urges.map(u =>
-        u.id === id ? { ...u, status } : u
+    function getFilteredDailyStats() {
+      const all = computeDailyStats();
+      const days = parseInt(currentPeriod, 10);
+      const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+      return all.filter(d => d.ts >= cutoff);
+    }
+
+    function hasAnyGoal() {
+      return (
+        goals.minMealsPerDay != null ||
+        goals.maxMealsPerDay != null ||
+        goals.maxSnacksPerDay != null ||
+        goals.minSleepHours != null ||
+        goals.maxSleepHours != null ||
+        goals.minDayIntervalMinutes != null ||
+        goals.maxDayIntervalMinutes != null
       );
-      saveUrges(urges);
-      renderStats();
-      renderList();
-      startCountdown();
     }
 
-    function deleteUrge(id) {
-      const u = urges.find(x => x.id === id);
-      const text = u ? ('«' + (u.text || '').slice(0, 40) + (u.text && u.text.length > 40 ? '…' : '') + '»') : '';
-      if (!confirm('Удалить эту запись ' + text + '?')) return;
+    function isDayInTarget(day) {
+      if (!hasAnyGoal()) return false;
 
-      urges = urges.filter(u => u.id !== id);
-      saveUrges(urges);
-      renderStats();
-      renderList();
-      startCountdown();
+      if (goals.minMealsPerDay != null && day.count < goals.minMealsPerDay) return false;
+      if (goals.maxMealsPerDay != null && day.count > goals.maxMealsPerDay) return false;
+
+      if (goals.maxSnacksPerDay != null && (day.snacksCount || 0) > goals.maxSnacksPerDay) return false;
+
+      if (day.sleepInterval != null) {
+        const sleepHours = day.sleepInterval / (60 * 60 * 1000);
+        if (goals.minSleepHours != null && sleepHours < goals.minSleepHours) return false;
+        if (goals.maxSleepHours != null && sleepHours > goals.maxSleepHours) return false;
+      } else if (goals.minSleepHours != null || goals.maxSleepHours != null) {
+        return false;
+      }
+
+      if (day.avgInterval != null) {
+        const dayIntervalMinutes = day.avgInterval / 60000;
+        if (goals.minDayIntervalMinutes != null && dayIntervalMinutes < goals.minDayIntervalMinutes) return false;
+        if (goals.maxDayIntervalMinutes != null && dayIntervalMinutes > goals.maxDayIntervalMinutes) return false;
+      } else if (goals.minDayIntervalMinutes != null || goals.maxDayIntervalMinutes != null) {
+        return false;
+      }
+
+      return true;
     }
 
-    addUrgeBtn.addEventListener('click', () => {
-      const text = (urgeTextEl.value || '').trim();
-      const type = urgeTypeEl.value || 'other';
+    function renderPeriodSummary() {
+      const stats = getFilteredDailyStats();
 
-      if (!text) {
-        alert('Напиши, что именно ты хочешь.');
+      const daysCount = stats.length;
+      let totalMeals = 0;
+      let totalSnacks = 0;
+      const sleepIntervals = [];
+      const dayAvgIntervals = [];
+
+      for (const d of stats) {
+        totalMeals += d.count;
+        totalSnacks += d.snacksCount || 0;
+        if (d.sleepInterval != null) sleepIntervals.push(d.sleepInterval);
+        if (d.avgInterval != null) dayAvgIntervals.push(d.avgInterval);
+      }
+
+      if (daysCount === 0) {
+        statPeriodMealsPerDayEl.textContent = '0';
+        statPeriodSnacksPerDayEl.textContent = '0';
+      } else {
+        statPeriodMealsPerDayEl.textContent = formatNumberPerDay(totalMeals / daysCount);
+        statPeriodSnacksPerDayEl.textContent = formatNumberPerDay(totalSnacks / daysCount);
+      }
+
+      if (sleepIntervals.length === 0) {
+        statPeriodSleepIntervalEl.textContent = '–';
+      } else {
+        const avgSleep = sleepIntervals.reduce((a, b) => a + b, 0) / sleepIntervals.length;
+        statPeriodSleepIntervalEl.textContent = formatInterval(avgSleep);
+      }
+
+      if (dayAvgIntervals.length === 0) {
+        statPeriodAvgIntervalEl.textContent = '–';
+      } else {
+        const avg = dayAvgIntervals.reduce((a, b) => a + b, 0) / dayAvgIntervals.length;
+        statPeriodAvgIntervalEl.textContent = formatInterval(avg);
+      }
+    }
+
+    function renderHistory() {
+      const stats = getFilteredDailyStats();
+      historyBodyEl.innerHTML = '';
+
+      if (stats.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.className = 'subtle';
+        td.textContent = 'Пока нет данных за выбранный период.';
+        tr.appendChild(td);
+        historyBodyEl.appendChild(tr);
         return;
       }
 
-      const now = Date.now();
-      const oneHour = 60 * 60 * 1000;
+      for (const day of stats) {
+        const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
+        if (isDayInTarget(day)) tr.className = 'day-ok';
 
-      const newUrge = {
-        id: 'u_' + now + '_' + Math.random().toString(36).slice(2, 8),
-        text,
-        type,
-        createdAt: now,
-        checkAt: now + oneHour,
-        status: 'pending'
-      };
+        tr.onclick = () => openDayDetail(day);
 
-      urges.push(newUrge);
-      saveUrges(urges);
+        const tdDate = document.createElement('td');
+        tdDate.textContent = formatDateDM(day.ts);
 
-      urgeTextEl.value = '';
-      urgeTypeEl.value = type;
+        const tdCount = document.createElement('td');
+        tdCount.textContent = day.count;
 
-      renderStats();
-      renderList();
-      startCountdown();
+        const tdSnacks = document.createElement('td');
+        tdSnacks.textContent = day.snacksCount || 0;
+
+        const tdSleep = document.createElement('td');
+        tdSleep.textContent = day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
+
+        const tdAvg = document.createElement('td');
+        tdAvg.textContent = day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
+
+        tr.append(tdDate, tdCount, tdSnacks, tdSleep, tdAvg);
+        historyBodyEl.appendChild(tr);
+      }
+    }
+
+    function openDayDetail(day) {
+      currentDetailDayKey = day.key;
+      detailTitle.textContent = formatDateDM(day.ts);
+
+      const allSorted = getAllMealsSorted();
+      const dayMeals = allSorted.filter(m => getDayKey(m.ts) === day.key);
+
+      if (dayMeals.length === 0) {
+        detailContent.innerHTML = '<p class="subtle">Для этого дня пока нет записей.</p>';
+        detailScreen.style.display = 'block';
+        return;
+      }
+
+      let html = '';
+      const firstDay = dayMeals[0];
+      const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
+      let prevTs = firstIndex > 0 ? allSorted[firstIndex - 1].ts : null;
+
+      for (const meal of dayMeals) {
+        const intervalText = prevTs == null
+          ? 'Первый зафиксированный приём (раньше записей нет).'
+          : 'Интервал с прошлого приёма: ' + formatInterval(meal.ts - prevTs);
+        prevTs = meal.ts;
+
+        html += `
+          <div class="meal-row">
+            <div class="row-top">
+              <div><span class="meal-time">${formatTimeHM(meal.ts)}</span></div>
+              <div class="actions">
+                <button class="btn-ghost"
+                  title="${meal.isSnack
+            ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
+            : 'Обычный приём пищи (нажми, чтобы отметить как перекус)'}"
+                  onclick="toggleSnack('${meal.id}')">
+                  ${meal.isSnack ? '🍪' : '🍽'}
+                </button>
+                <button class="btn-ghost" title="Изменить время"
+                  onclick="editMealTime('${meal.id}')">⏰</button>
+                <button class="btn-ghost" title="Редактировать описание"
+                  onclick="editMealNote('${meal.id}')">✏️</button>
+                <button class="btn-danger" title="Удалить приём"
+                  onclick="deleteMeal('${meal.id}')">🗑</button>
+              </div>
+            </div>
+            <div class="meal-note">${meal.note || '(без описания)'}</div>
+            <div class="meal-interval">${intervalText}</div>
+          </div>
+        `;
+      }
+
+      detailContent.innerHTML = html;
+      detailScreen.style.display = 'block';
+    }
+
+    function refreshDetailIfOpen() {
+      if (!currentDetailDayKey || detailScreen.style.display !== 'block') return;
+      const allStats = computeDailyStats();
+      const day = allStats.find(d => d.key === currentDetailDayKey);
+      if (!day) {
+        detailScreen.style.display = 'none';
+        currentDetailDayKey = null;
+        return;
+      }
+      openDayDetail(day);
+    }
+
+    btnDetailBack.addEventListener('click', () => {
+      detailScreen.style.display = 'none';
+      currentDetailDayKey = null;
     });
 
+    function tickSinceLast() {
+      renderStats();
+    }
+    setInterval(tickSinceLast, 60000);
+
+    addMealBtn.addEventListener('click', () => {
+      const note = (mealNoteEl.value || '').trim();
+      const now = Date.now();
+      const newMeal = {
+        id: 'm_' + now + '_' + Math.random().toString(36).slice(2, 8),
+        ts: now,
+        note,
+        isSnack: false
+      };
+      meals.push(newMeal);
+      saveMeals(meals);
+      mealNoteEl.value = '';
+      renderMeals();
+      renderStats();
+      renderPeriodSummary();
+      renderHistory();
+      refreshDetailIfOpen();
+    });
+
+    function switchView(view) {
+      if (view === 'today') {
+        viewTodayEl.style.display = '';
+        viewStatsEl.style.display = 'none';
+        viewGoalsEl.style.display = 'none';
+        tabTodayBtn.classList.add('active');
+        tabStatsBtn.classList.remove('active');
+        tabGoalsBtn.classList.remove('active');
+      } else if (view === 'stats') {
+        viewTodayEl.style.display = 'none';
+        viewStatsEl.style.display = '';
+        viewGoalsEl.style.display = 'none';
+        tabTodayBtn.classList.remove('active');
+        tabStatsBtn.classList.add('active');
+        tabGoalsBtn.classList.remove('active');
+      } else {
+        viewTodayEl.style.display = 'none';
+        viewStatsEl.style.display = 'none';
+        viewGoalsEl.style.display = '';
+        tabTodayBtn.classList.remove('active');
+        tabStatsBtn.classList.remove('active');
+        tabGoalsBtn.classList.add('active');
+      }
+    }
+
+    tabTodayBtn.addEventListener('click', () => switchView('today'));
+    tabStatsBtn.addEventListener('click', () => switchView('stats'));
+    tabGoalsBtn.addEventListener('click', () => switchView('goals'));
+
+    periodButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        periodButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPeriod = btn.dataset.period;
+        renderPeriodSummary();
+        renderHistory();
+        refreshDetailIfOpen();
+      });
+    });
+
+    function loadGoalsIntoUI() {
+      if (goals.minMealsPerDay != null) goalMealsMinEl.value = goals.minMealsPerDay;
+      if (goals.maxMealsPerDay != null) goalMealsMaxEl.value = goals.maxMealsPerDay;
+      if (goals.maxSnacksPerDay != null) goalSnacksMaxEl.value = goals.maxSnacksPerDay;
+      if (goals.minSleepHours != null) goalSleepMinEl.value = goals.minSleepHours;
+      if (goals.maxSleepHours != null) goalSleepMaxEl.value = goals.maxSleepHours;
+      if (goals.minDayIntervalMinutes != null) goalDayIntMinEl.value = goals.minDayIntervalMinutes / 60;
+      if (goals.maxDayIntervalMinutes != null) goalDayIntMaxEl.value = goals.maxDayIntervalMinutes / 60;
+    }
+
+    saveGoalsBtn.addEventListener('click', () => {
+      function numOrNull(el) {
+        const v = el.value.trim();
+        if (!v) return null;
+        const n = Number(v.replace(',', '.'));
+        return isNaN(n) ? null : n;
+      }
+
+      const minMeals = numOrNull(goalMealsMinEl);
+      const maxMeals = numOrNull(goalMealsMaxEl);
+      const maxSnacks = numOrNull(goalSnacksMaxEl);
+      const minSleepHours = numOrNull(goalSleepMinEl);
+      const maxSleepHours = numOrNull(goalSleepMaxEl);
+      const minDayIntHours = numOrNull(goalDayIntMinEl);
+      const maxDayIntHours = numOrNull(goalDayIntMaxEl);
+
+      goals = {
+        minMealsPerDay: minMeals ?? null,
+        maxMealsPerDay: maxMeals ?? null,
+        maxSnacksPerDay: maxSnacks ?? null,
+        minSleepHours: minSleepHours ?? null,
+        maxSleepHours: maxSleepHours ?? null,
+        minDayIntervalMinutes: minDayIntHours != null ? minDayIntHours * 60 : null,
+        maxDayIntervalMinutes: maxDayIntHours != null ? maxDayIntHours * 60 : null
+      };
+
+      saveGoals(goals);
+      goalsStatusEl.textContent = 'Цели сохранены. Зелёная подсветка и статистика обновлены.';
+      renderPeriodSummary();
+      renderHistory();
+
+      setTimeout(() => { goalsStatusEl.textContent = ''; }, 3000);
+    });
+
+    loadGoalsIntoUI();
+    renderMeals();
     renderStats();
-    renderList();
-    startCountdown();
+    renderPeriodSummary();
+    renderHistory();
   </script>
 </body>
 
