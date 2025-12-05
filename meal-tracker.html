@@ -325,9 +325,13 @@
 
     th,
     td {
-      padding: 3px 4px;
+      padding: 10px 6px;
+      /* более высокие строки */
+      text-align: center;
+      /* выравнивание по центру */
       border-bottom: 1px solid #111827;
-      vertical-align: top;
+      vertical-align: middle;
+      /* красивое центрирование по вертикали */
     }
 
     /* Уже дата и счётчики, больше места под интервалы */
@@ -523,7 +527,7 @@
           <h2>Статистика за сегодня</h2>
           <div class="stats-grid">
             <div class="stat-box">
-              <div class="stat-label">Приёмов пищи всего</div>
+              <div class="stat-label">Приёмов пищи</div>
               <div class="stat-value" id="statMealsToday">0</div>
             </div>
             <div class="stat-box">
@@ -543,9 +547,6 @@
 
         <div class="card">
           <h2>Сегодняшние приёмы пищи</h2>
-          <div class="subtle" style="margin-bottom: 6px;">
-            Интервал считается от прошлого приёма (даже если он был вчера).
-          </div>
           <div class="list" id="mealList"></div>
         </div>
       </div>
@@ -562,7 +563,7 @@
           </div>
           <div class="stats-grid">
             <div class="stat-box">
-              <div class="stat-label">Приёмов пищи всего</div>
+              <div class="stat-label">Приёмов пищи</div>
               <div class="stat-value" id="statPeriodMealsPerDay">0</div>
             </div>
             <div class="stat-box">
