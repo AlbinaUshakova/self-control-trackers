@@ -604,9 +604,9 @@
                 <tr>
                   <th>Дата</th>
                   <th>Приёмы пищи</th>
-                  <th>Перекусы 🍪</th>
-                  <th>Интервал сна</th>
-                  <th>Дневной интервал</th>
+                  <th>Перекусы<br>🍪</th>
+                  <th>Интервал<br>сна</th>
+                  <th>Дневной<br>интервал</th>
                 </tr>
               </thead>
               <tbody id="historyBody"></tbody>
@@ -1014,7 +1014,6 @@
       statSnacksTodayEl.textContent = String(snacksCount);
 
       const intervals = getTodayIntervalsWithinDay();
-
       if (intervals.length === 0) {
         statAvgIntervalEl.textContent = '–';
       } else {
@@ -1023,15 +1022,21 @@
         statAvgIntervalEl.textContent = formatInterval(avg);
       }
 
-      if (count === 0) {
+      // 🔽 Новая логика для "Сейчас от последнего"
+      const allSorted = getAllMealsSorted();
+
+      if (allSorted.length === 0) {
+        // Вообще ещё ни одного приёма не было
         statSinceLastEl.textContent = '–';
         lastMealInfoEl.textContent = '';
-      } else {
-        const last = todayMeals[todayMeals.length - 1];
-        const now = Date.now();
-        const diff = now - last.ts;
-        statSinceLastEl.textContent = formatInterval(diff);
+        return;
       }
+
+      // Берём самый последний приём (вчера/сегодня — не важно)
+      const last = allSorted[allSorted.length - 1];
+      const diff = Date.now() - last.ts;
+      statSinceLastEl.textContent = formatInterval(diff);
+      lastMealInfoEl.textContent = 'Последний приём: ' + formatTimeHM(last.ts);
     }
 
     function getSleepIntervalForDay(dayMeals, allMeals) {
