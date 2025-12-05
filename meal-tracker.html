@@ -276,6 +276,8 @@
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 8px;
       margin-top: 6px;
+      justify-items: center;
+      /* добавили */
     }
 
     .stat-box {
@@ -289,6 +291,20 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    }
+
+    /* Центровка всех подписей и чисел в блоках статистики */
+    #view-today .card-compact,
+    #view-today .card-compact .stats-grid,
+    #view-today .card-compact .stat-box,
+    #view-today .card-compact .stat-label,
+    #view-today .card-compact .stat-value,
+    #view-stats .card,
+    #view-stats .stats-grid,
+    #view-stats .stat-box,
+    #view-stats .stat-label,
+    #view-stats .stat-value {
+      text-align: center;
     }
 
     .stat-label {
@@ -310,6 +326,15 @@
       border-radius: 12px;
       margin-top: 4px;
       background: #020617;
+    }
+
+    .history-wrapper table {
+      text-align: center;
+    }
+
+    .history-wrapper th,
+    .history-wrapper td {
+      text-align: center;
     }
 
     /* ТАБЛИЦА СТАТИСТИКИ */
@@ -490,6 +515,32 @@
         padding-inline: 12px;
       }
     }
+
+    /* Вернуть заголовки влево */
+    #view-today h2,
+    #view-stats h2,
+    #view-goals h2 {
+      text-align: left !important;
+    }
+
+    /* Вернуть подписи над textarea и списками влево */
+    .card label,
+    .card .subtle {
+      text-align: left !important;
+    }
+
+    /* Центровка остаётся только для блоков статистики */
+    .stat-box,
+    .stat-label,
+    .stat-value {
+      text-align: center !important;
+    }
+
+    /* Таблица — тоже по центру */
+    .history-wrapper th,
+    .history-wrapper td {
+      text-align: center !important;
+    }
   </style>
 </head>
 
@@ -531,7 +582,7 @@
               <div class="stat-value" id="statMealsToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусов 🍪</div>
+              <div class="stat-label">Из них перекусов</div>
               <div class="stat-value" id="statSnacksToday">0</div>
             </div>
             <div class="stat-box">
@@ -567,7 +618,7 @@
               <div class="stat-value" id="statPeriodMealsPerDay">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусов 🍪</div>
+              <div class="stat-label">Из них перекусов</div>
               <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
             </div>
             <div class="stat-box">
