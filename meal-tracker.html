@@ -529,10 +529,10 @@
       <div id="view-today">
         <div class="card">
           <h2>Новый приём пищи</h2>
-          <textarea id="mealNote" placeholder="Например: «Овсянка с семечками», «Чипсы», «Чай с печеньем»"></textarea>
+          <textarea id="mealNote" placeholder="Например: Овсянка с семечками, Чипсы, Чай с печеньем"></textarea>
           <button id="addMealBtn" class="btn-primary">
             <span>Я ем сейчас</span>
-            <span>🍽 🍪</span>
+            <span>🍽 или 🍪</span>
           </button>
           <p class="subtle" id="lastMealInfo"></p>
         </div>
@@ -545,15 +545,15 @@
               <div class="stat-value" id="statMealsToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусы</div>
+              <div class="stat-label">Из них перекусов</div>
               <div class="stat-value" id="statSnacksToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Дневной интервал</div>
+              <div class="stat-label">Дневной <br> интервал</div>
               <div class="stat-value" id="statAvgInterval">–</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Сейчас от последнего</div>
+              <div class="stat-label">Сейчас от <br> последнего</div>
               <div class="stat-value" id="statSinceLast">–</div>
             </div>
           </div>
@@ -603,7 +603,7 @@
                 <tr>
                   <th>Дата</th>
                   <th>Приёмы пищи</th>
-                  <th>Перекусы<br>🍪</th>
+                  <th>Перекусы</th>
                   <th>Интервал<br>сна</th>
                   <th>Дневной<br>интервал</th>
                 </tr>
@@ -619,7 +619,7 @@
         <div class="card">
           <h2>Цели на день</h2>
           <p class="subtle">
-            Дни, когда ты достигла этих целей, в статистике будут подсвечиваться зелёным.
+            Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.
           </p>
 
           <div class="goal-row">
@@ -631,7 +631,7 @@
           </div>
 
           <div class="goal-row">
-            <div class="subtle">Из них перекусов 🍪 в день (максимум)</div>
+            <div class="subtle">Из них перекусов в день (максимум)</div>
             <span>
               до <input type="number" id="goalSnacksMax" min="0" step="1" />
             </span>
@@ -899,7 +899,7 @@
       mealListEl.innerHTML = '';
 
       if (todayMeals.length === 0) {
-        mealListEl.innerHTML = '<div class="subtle">Сегодня ещё не было ни одного приёма пищи. Когда начнёшь есть — нажми «Я ем сейчас».</div>';
+        mealListEl.innerHTML = '<div class="subtle">Сегодня ещё не было приёмов пищи. Когда начнёшь есть — нажми «Я ем сейчас». Если приём пищи - перекус, нажми на 🍽 - она измениться на 🍪.</div>';
         lastMealInfoEl.textContent = '';
         return;
       }
