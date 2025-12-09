@@ -611,6 +611,11 @@
               <tbody id="historyBody"></tbody>
             </table>
           </div>
+
+          <!-- КНОПКА ВЫГРУЗКИ CSV -->
+          <button id="exportMealsBtn" class="btn-outline" style="margin-top: 8px; width: 100%;">
+            ⬇️ Выгрузить все данные (CSV)
+          </button>
         </div>
       </div>
 
@@ -724,6 +729,7 @@
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
     const historyBodyEl = document.getElementById('historyBody');
+    const exportMealsBtn = document.getElementById('exportMealsBtn');
 
     const tabTodayBtn = document.getElementById('tabToday');
     const tabStatsBtn = document.getElementById('tabStats');
@@ -1109,6 +1115,63 @@
       return all.filter(d => d.ts >= cutoff);
     }
 
+    // ВЫГРУЗКА ВСЕХ ПРИЁМОВ ПИЩИ В CSV
+    function exportMealsCsv() {
+      const all = getAllMealsSorted();
+      if (!all.length) {
+        alert('Пока нет ни одного приёма пищи для выгрузки.');
+        return;
+      }
+
+      function escapeCsvField(value) {
+        if (value == null) return '';
+        const str = String(value);
+        if (/[;"\n]/.test(str)) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      }
+
+      const headers = ['day_key', 'date', 'time', 'type', 'note'];
+      const lines = [headers.join(';')];
+
+      for (const m of all) {
+        const d = new Date(m.ts);
+        const dayKey = getDayKey(m.ts);
+        const dateStr = d.toLocaleDateString('ru-RU', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+        const timeStr = d.toLocaleTimeString('ru-RU', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        const typeStr = m.isSnack ? 'перекус' : 'основной приём';
+        const noteStr = m.note || '';
+
+        lines.push([
+          escapeCsvField(dayKey),
+          escapeCsvField(dateStr),
+          escapeCsvField(timeStr),
+          escapeCsvField(typeStr),
+          escapeCsvField(noteStr)
+        ].join(';'));
+      }
+
+      const csv = lines.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'eatlog_meals_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
     function hasAnyGoal() {
       return (
         goals.minMealsPerDay != null ||
@@ -1434,6 +1497,11 @@
         goalsStatusEl.textContent = '';
       }, 3000);
     });
+
+    // обработчик на выгрузку CSV
+    if (exportMealsBtn) {
+      exportMealsBtn.addEventListener('click', exportMealsCsv);
+    }
 
     loadGoalsIntoUI();
     renderMeals();
