@@ -570,10 +570,10 @@
         <div class="card">
           <h2>Статистика за период</h2>
           <div class="period-controls">
-            <button class="btn-outline period-btn" data-period="3">3 дня</button>
             <button class="btn-outline period-btn active" data-period="7">7 дней</button>
             <button class="btn-outline period-btn" data-period="14">14 дней</button>
             <button class="btn-outline period-btn" data-period="21">21 день</button>
+            <button class="btn-outline period-btn active" data-period="all">All</button>
           </div>
           <div class="stats-grid">
             <div class="stat-box">
@@ -760,7 +760,7 @@
     const detailContent = document.getElementById('detailContent');
     let currentDetailDayKey = null;
 
-    let currentPeriod = '7';
+    let currentPeriod = 'all';
 
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
@@ -1110,7 +1110,13 @@
 
     function getFilteredDailyStats() {
       const all = computeDailyStats();
+
+      // весь период
+      if (currentPeriod === 'all') return all;
+
       const days = parseInt(currentPeriod, 10);
+      if (!isFinite(days) || days <= 0) return all;
+
       const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
       return all.filter(d => d.ts >= cutoff);
     }
