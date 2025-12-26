@@ -5,7 +5,20 @@
   <meta charset="UTF-8" />
   <title>EatLog — трекер приёмов пищи</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="apple-touch-icon" href="eatlog-icon.png">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#020617" />
+
+  <!-- iOS (Add to Home Screen) -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <style>
     :root {
       color-scheme: dark;
@@ -26,24 +39,31 @@
       align-items: stretch;
       padding: 16px 12px;
       text-align: left;
-      /* всё по левому краю по умолчанию */
     }
 
-    /* на всякий случай закрепим выравнивание слева
-       для основных текстовых контейнеров */
+    /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
     h1,
     h2,
     p,
     label,
     .subtle,
     .card,
+    .card *,
     .stats-grid,
+    .stats-grid *,
     .history-wrapper,
+    .history-wrapper *,
     .period-controls,
+    .period-controls *,
     .list,
+    .list *,
     .meal-row,
-    .goal-row {
-      text-align: left;
+    .meal-row *,
+    .goal-row,
+    .goal-row *,
+    table,
+    table * {
+      text-align: left !important;
     }
 
     .app-shell {
@@ -182,7 +202,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      /* центруем только содержимое кнопок */
       gap: 4px;
       transition: background 0.15s ease, transform 0.08s ease;
       white-space: nowrap;
@@ -307,7 +326,6 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      /* всё внутри слева */
     }
 
     .stat-label {
@@ -345,34 +363,38 @@
       padding: 8px 4px;
       border-bottom: 1px solid #111827;
       vertical-align: middle;
-      text-align: left;
-      /* отмена центрирования */
     }
 
-    /* ширины столбцов */
+    /* более удобные ширины столбцов */
     th:nth-child(1),
     td:nth-child(1) {
-      width: 18%;
+      /* дата — меньше, места ей много не нужно */
+      width: 14%;
     }
 
     th:nth-child(2),
     td:nth-child(2) {
-      width: 18%;
+      width: 17%;
     }
 
     th:nth-child(3),
     td:nth-child(3) {
-      width: 18%;
+      /* перекусы — шире, чтобы влезла "ПЕРЕКУСЫ" */
+      width: 22%;
     }
 
     th:nth-child(4),
     td:nth-child(4) {
       width: 23%;
+      white-space: nowrap;
+      /* не переносим "13 ч 58 мин" */
     }
 
     th:nth-child(5),
     td:nth-child(5) {
-      width: 23%;
+      width: 24%;
+      white-space: nowrap;
+      /* и тут тоже всё в одну строку */
     }
 
     th {
@@ -456,7 +478,6 @@
     .app-footer {
       margin-top: 4px;
       font-size: 10px;
-      text-align: left;
       color: #6b7280;
     }
 
@@ -521,11 +542,10 @@
       <div id="view-today">
         <div class="card">
           <h2>Новый приём пищи</h2>
-          <label for="mealNote">Что ты ешь? (по желанию)</label>
-          <textarea id="mealNote" placeholder="Например: «Овсянка с семечками», «Чипсы», «Чай с печеньем»"></textarea>
+          <textarea id="mealNote" placeholder="Например: Овсянка с семечками, Чипсы, Чай с печеньем"></textarea>
           <button id="addMealBtn" class="btn-primary">
             <span>Я ем сейчас</span>
-            <span>🍽 🍪</span>
+            <span>🍽 или 🍪</span>
           </button>
           <p class="subtle" id="lastMealInfo"></p>
         </div>
@@ -538,15 +558,15 @@
               <div class="stat-value" id="statMealsToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусы</div>
+              <div class="stat-label">Из них перекусов</div>
               <div class="stat-value" id="statSnacksToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Дневной интервал</div>
+              <div class="stat-label">Дневной <br> интервал</div>
               <div class="stat-value" id="statAvgInterval">–</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Сейчас от последнего</div>
+              <div class="stat-label">Сейчас от <br> последнего</div>
               <div class="stat-value" id="statSinceLast">–</div>
             </div>
           </div>
@@ -559,14 +579,14 @@
       </div>
 
       <!-- СТАТИСТИКА -->
-      <div id="view-stats" style="display:none;">
+      <div id="view-stats" style="display: none;">
         <div class="card">
           <h2>Статистика за период</h2>
           <div class="period-controls">
-            <button class="btn-outline period-btn" data-period="3">3 дня</button>
             <button class="btn-outline period-btn active" data-period="7">7 дней</button>
             <button class="btn-outline period-btn" data-period="14">14 дней</button>
             <button class="btn-outline period-btn" data-period="21">21 день</button>
+            <button class="btn-outline period-btn active" data-period="all">All</button>
           </div>
           <div class="stats-grid">
             <div class="stat-box">
@@ -574,7 +594,7 @@
               <div class="stat-value" id="statPeriodMealsPerDay">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">Из них перекусы</div>
+              <div class="stat-label">Из них перекусов</div>
               <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
             </div>
             <div class="stat-box">
@@ -595,8 +615,8 @@
               <thead>
                 <tr>
                   <th>Дата</th>
-                  <th>Приёмы<br>пищи</th>
-                  <th>Перекусы 🍪</th>
+                  <th>Приёмы пищи</th>
+                  <th>Перекусы</th>
                   <th>Интервал<br>сна</th>
                   <th>Дневной<br>интервал</th>
                 </tr>
@@ -604,15 +624,20 @@
               <tbody id="historyBody"></tbody>
             </table>
           </div>
+
+          <!-- КНОПКА ВЫГРУЗКИ CSV -->
+          <button id="exportMealsBtn" class="btn-outline" style="margin-top: 8px; width: 100%;">
+            ⬇️ Выгрузить все данные (CSV)
+          </button>
         </div>
       </div>
 
       <!-- ЦЕЛИ -->
-      <div id="view-goals" style="display:none;">
+      <div id="view-goals" style="display: none;">
         <div class="card">
           <h2>Цели на день</h2>
           <p class="subtle">
-            Дни, когда ты достигла этих целей, в статистике будут подсвечиваться зелёным.
+            Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.
           </p>
 
           <div class="goal-row">
@@ -624,7 +649,7 @@
           </div>
 
           <div class="goal-row">
-            <div class="subtle">Из них перекусов 🍪 в день (максимум)</div>
+            <div class="subtle">Из них перекусов в день (максимум)</div>
             <span>
               до <input type="number" id="goalSnacksMax" min="0" step="1" />
             </span>
@@ -659,10 +684,21 @@
 
   <!-- FULLSCREEN ДЕТАЛИЗАЦИЯ ДНЯ -->
   <div id="detailScreen">
-    <button id="btnDetailBack">← Назад</button>
+    <button id="btnDetailBack">
+      ← Назад
+    </button>
     <h2 id="detailTitle"></h2>
     <div id="detailContent"></div>
   </div>
+
+  <script>
+    // Service Worker (offline) — works only over https or http://localhost (not file://)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => { });
+      });
+    }
+  </script>
 
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
@@ -675,7 +711,8 @@
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
         return parsed;
-      } catch {
+      } catch (e) {
+        console.error('Failed to parse meals', e);
         return [];
       }
     }
@@ -690,7 +727,8 @@
         if (!raw) return {};
         const parsed = JSON.parse(raw);
         return parsed && typeof parsed === 'object' ? parsed : {};
-      } catch {
+      } catch (e) {
+        console.error('Failed to parse goals', e);
         return {};
       }
     }
@@ -713,6 +751,7 @@
     const lastMealInfoEl = document.getElementById('lastMealInfo');
 
     const historyBodyEl = document.getElementById('historyBody');
+    const exportMealsBtn = document.getElementById('exportMealsBtn');
 
     const tabTodayBtn = document.getElementById('tabToday');
     const tabStatsBtn = document.getElementById('tabStats');
@@ -743,7 +782,7 @@
     const detailContent = document.getElementById('detailContent');
     let currentDetailDayKey = null;
 
-    let currentPeriod = '7';
+    let currentPeriod = 'all';
 
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
@@ -760,27 +799,38 @@
 
     function formatTimeHM(ts) {
       const d = new Date(ts);
-      return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      return d.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     }
 
-    function formatDateDM(ts) {
+    function formatDateDMY(ts) {
       const d = new Date(ts);
-      return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+      return d.toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit'
+        // год убрали, чтобы сэкономить место
+      });
     }
 
     function formatInterval(ms) {
       if (ms == null || isNaN(ms)) return '–';
+
       const totalMin = Math.floor(ms / 60000);
       const h = Math.floor(totalMin / 60);
       const m = totalMin % 60;
-      if (h <= 0) return m + ' мин';
-      return h + ' ч ' + (m > 0 ? m + ' мин' : '');
+
+      if (h > 0 && m > 0) return `${h} ч ${m} м`;
+      if (h > 0) return `${h} ч`;
+      return `${m} м`;
     }
 
     function formatNumberPerDay(value) {
       if (!isFinite(value)) return '0';
       const fixed = value.toFixed(1);
-      return fixed.endsWith('.0') ? fixed.slice(0, -2) : fixed;
+      if (fixed.endsWith('.0')) return fixed.slice(0, -2);
+      return fixed;
     }
 
     function getAllMealsSorted() {
@@ -789,13 +839,16 @@
 
     function getTodayMeals() {
       const now = new Date();
-      return meals.filter(m => isSameDay(m.ts, now)).sort((a, b) => a.ts - b.ts);
+      return meals
+        .filter(m => isSameDay(m.ts, now))
+        .sort((a, b) => a.ts - b.ts);
     }
 
     function deleteMeal(id) {
       const entry = meals.find(m => m.id === id);
       const txt = entry ? ('«' + (entry.note || '').slice(0, 30) + (entry.note && entry.note.length > 30 ? '…' : '') + '»') : '';
       if (!confirm('Удалить приём пищи ' + txt + '?')) return;
+
       meals = meals.filter(m => m.id !== id);
       saveMeals(meals);
       renderMeals();
@@ -825,10 +878,13 @@
       const d = new Date(entry.ts);
       const currentHH = String(d.getHours()).padStart(2, '0');
       const currentMM = String(d.getMinutes()).padStart(2, '0');
-      const input = prompt('Новое время (формат ЧЧ:ММ, 24 часа):', currentHH + ':' + currentMM);
+      const current = currentHH + ':' + currentMM;
+
+      const input = prompt('Новое время (формат ЧЧ:ММ, 24 часа):', current);
       if (input === null) return;
 
-      const match = /^([0-9]{1,2}):([0-9]{2})$/.exec(input.trim());
+      const trimmed = input.trim();
+      const match = /^([0-9]{1,2}):([0-9]{2})$/.exec(trimmed);
       if (!match) {
         alert('Неверный формат. Введи, например: 08:30 или 22:05');
         return;
@@ -836,6 +892,7 @@
 
       let hh = parseInt(match[1], 10);
       let mm = parseInt(match[2], 10);
+
       if (hh < 0 || hh > 23 || mm < 0 || mm > 59) {
         alert('Часы должны быть 0–23, минуты 0–59.');
         return;
@@ -870,7 +927,7 @@
       mealListEl.innerHTML = '';
 
       if (todayMeals.length === 0) {
-        mealListEl.innerHTML = '<div class="subtle">Сегодня ещё не было ни одного приёма пищи. Когда начнёшь есть — нажми «Я ем сейчас».</div>';
+        mealListEl.innerHTML = '<div class="subtle">Сегодня ещё не было приёмов пищи. Когда начнёшь есть — нажми «Я ем сейчас». Если приём пищи - перекус, нажми на 🍽 - она измениться на 🍪.</div>';
         lastMealInfoEl.textContent = '';
         return;
       }
@@ -879,7 +936,12 @@
       const firstToday = todayMeals[0];
       const firstIndex = allSorted.findIndex(m => m.id === firstToday.id);
 
-      let prevTs = firstIndex > 0 ? allSorted[firstIndex - 1].ts : null;
+      let globalPrevTs = null;
+      if (firstIndex > 0) {
+        globalPrevTs = allSorted[firstIndex - 1].ts;
+      }
+
+      let prevTs = globalPrevTs;
 
       for (const meal of todayMeals) {
         const row = document.createElement('div');
@@ -892,6 +954,7 @@
         const timeEl = document.createElement('span');
         timeEl.className = 'meal-time';
         timeEl.textContent = formatTimeHM(meal.ts);
+
         leftWrap.appendChild(timeEl);
 
         const actions = document.createElement('div');
@@ -923,8 +986,13 @@
         delBtn.title = 'Удалить приём';
         delBtn.onclick = () => deleteMeal(meal.id);
 
-        actions.append(snackBtn, editTimeBtn, editBtn, delBtn);
-        top.append(leftWrap, actions);
+        actions.appendChild(snackBtn);
+        actions.appendChild(editTimeBtn);
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        top.appendChild(leftWrap);
+        top.appendChild(actions);
 
         const noteEl = document.createElement('div');
         noteEl.className = 'meal-note';
@@ -932,21 +1000,34 @@
 
         const intervalEl = document.createElement('div');
         intervalEl.className = 'meal-interval';
-        intervalEl.textContent = prevTs == null
-          ? 'Первый зафиксированный приём (раньше записей нет).'
-          : 'Интервал с прошлого приёма: ' + formatInterval(meal.ts - prevTs);
+
+        if (prevTs == null) {
+          intervalEl.textContent = 'Первый зафиксированный приём (раньше записей нет).';
+        } else {
+          const diff = meal.ts - prevTs;
+          intervalEl.textContent = 'Интервал с прошлого приёма: ' + formatInterval(diff);
+        }
+
         prevTs = meal.ts;
 
-        row.append(top, noteEl, intervalEl);
+        row.appendChild(top);
+        row.appendChild(noteEl);
+        row.appendChild(intervalEl);
+
         mealListEl.appendChild(row);
       }
 
-      lastMealInfoEl.textContent = 'Последний приём: ' + formatTimeHM(todayMeals[todayMeals.length - 1].ts);
+      if (todayMeals.length > 0) {
+        lastMealInfoEl.textContent = 'Последний приём: ' + formatTimeHM(todayMeals[todayMeals.length - 1].ts);
+      } else {
+        lastMealInfoEl.textContent = '';
+      }
     }
 
     function getTodayIntervalsWithinDay() {
       const todayMeals = getTodayMeals();
       if (todayMeals.length <= 1) return [];
+
       const intervals = [];
       for (let i = 1; i < todayMeals.length; i++) {
         intervals.push(todayMeals[i].ts - todayMeals[i - 1].ts);
@@ -971,14 +1052,21 @@
         statAvgIntervalEl.textContent = formatInterval(avg);
       }
 
-      if (count === 0) {
+      // 🔽 Новая логика для "Сейчас от последнего"
+      const allSorted = getAllMealsSorted();
+
+      if (allSorted.length === 0) {
+        // Вообще ещё ни одного приёма не было
         statSinceLastEl.textContent = '–';
         lastMealInfoEl.textContent = '';
-      } else {
-        const last = todayMeals[todayMeals.length - 1];
-        const diff = Date.now() - last.ts;
-        statSinceLastEl.textContent = formatInterval(diff);
+        return;
       }
+
+      // Берём самый последний приём (вчера/сегодня — не важно)
+      const last = allSorted[allSorted.length - 1];
+      const diff = Date.now() - last.ts;
+      statSinceLastEl.textContent = formatInterval(diff);
+      lastMealInfoEl.textContent = 'Последний приём: ' + formatTimeHM(last.ts);
     }
 
     function getSleepIntervalForDay(dayMeals, allMeals) {
@@ -986,7 +1074,9 @@
       let prev = null;
       for (const m of allMeals) {
         if (m.ts < first.ts) {
-          if (!prev || m.ts > prev.ts) prev = m;
+          if (!prev || m.ts > prev.ts) {
+            prev = m;
+          }
         }
       }
       if (!prev) return null;
@@ -995,6 +1085,7 @@
 
     function computeDailyStats() {
       if (meals.length === 0) return [];
+
       const byDayKey = {};
       for (const m of meals) {
         const dKey = getDayKey(m.ts);
@@ -1010,7 +1101,7 @@
         const count = dayMeals.length;
         const snacksCount = dayMeals.filter(m => m.isSnack).length;
 
-        const intervals = [];
+        let intervals = [];
         if (count > 1) {
           for (let i = 1; i < dayMeals.length; i++) {
             intervals.push(dayMeals[i].ts - dayMeals[i - 1].ts);
@@ -1019,7 +1110,8 @@
 
         let avg = null;
         if (intervals.length > 0) {
-          avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+          const sum = intervals.reduce((a, b) => a + b, 0);
+          avg = sum / intervals.length;
         }
 
         const sleepInterval = getSleepIntervalForDay(dayMeals, allSorted);
@@ -1040,9 +1132,72 @@
 
     function getFilteredDailyStats() {
       const all = computeDailyStats();
+
+      // весь период
+      if (currentPeriod === 'all') return all;
+
       const days = parseInt(currentPeriod, 10);
+      if (!isFinite(days) || days <= 0) return all;
+
       const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
       return all.filter(d => d.ts >= cutoff);
+    }
+
+    // ВЫГРУЗКА ВСЕХ ПРИЁМОВ ПИЩИ В CSV
+    function exportMealsCsv() {
+      const all = getAllMealsSorted();
+      if (!all.length) {
+        alert('Пока нет ни одного приёма пищи для выгрузки.');
+        return;
+      }
+
+      function escapeCsvField(value) {
+        if (value == null) return '';
+        const str = String(value);
+        if (/[;"\n]/.test(str)) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      }
+
+      const headers = ['day_key', 'date', 'time', 'type', 'note'];
+      const lines = [headers.join(';')];
+
+      for (const m of all) {
+        const d = new Date(m.ts);
+        const dayKey = getDayKey(m.ts);
+        const dateStr = d.toLocaleDateString('ru-RU', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+        const timeStr = d.toLocaleTimeString('ru-RU', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        const typeStr = m.isSnack ? 'перекус' : 'основной приём';
+        const noteStr = m.note || '';
+
+        lines.push([
+          escapeCsvField(dayKey),
+          escapeCsvField(dateStr),
+          escapeCsvField(timeStr),
+          escapeCsvField(typeStr),
+          escapeCsvField(noteStr)
+        ].join(';'));
+      }
+
+      const csv = lines.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'eatlog_meals_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
     function hasAnyGoal() {
@@ -1069,16 +1224,16 @@
         const sleepHours = day.sleepInterval / (60 * 60 * 1000);
         if (goals.minSleepHours != null && sleepHours < goals.minSleepHours) return false;
         if (goals.maxSleepHours != null && sleepHours > goals.maxSleepHours) return false;
-      } else if (goals.minSleepHours != null || goals.maxSleepHours != null) {
-        return false;
+      } else {
+        if (goals.minSleepHours != null || goals.maxSleepHours != null) return false;
       }
 
       if (day.avgInterval != null) {
         const dayIntervalMinutes = day.avgInterval / 60000;
         if (goals.minDayIntervalMinutes != null && dayIntervalMinutes < goals.minDayIntervalMinutes) return false;
         if (goals.maxDayIntervalMinutes != null && dayIntervalMinutes > goals.maxDayIntervalMinutes) return false;
-      } else if (goals.minDayIntervalMinutes != null || goals.maxDayIntervalMinutes != null) {
-        return false;
+      } else {
+        if (goals.minDayIntervalMinutes != null || goals.maxDayIntervalMinutes != null) return false;
       }
 
       return true;
@@ -1104,21 +1259,25 @@
         statPeriodMealsPerDayEl.textContent = '0';
         statPeriodSnacksPerDayEl.textContent = '0';
       } else {
-        statPeriodMealsPerDayEl.textContent = formatNumberPerDay(totalMeals / daysCount);
-        statPeriodSnacksPerDayEl.textContent = formatNumberPerDay(totalSnacks / daysCount);
+        const avgMealsPerDay = totalMeals / daysCount;
+        const avgSnacksPerDay = totalSnacks / daysCount;
+        statPeriodMealsPerDayEl.textContent = formatNumberPerDay(avgMealsPerDay);
+        statPeriodSnacksPerDayEl.textContent = formatNumberPerDay(avgSnacksPerDay);
       }
 
       if (sleepIntervals.length === 0) {
         statPeriodSleepIntervalEl.textContent = '–';
       } else {
-        const avgSleep = sleepIntervals.reduce((a, b) => a + b, 0) / sleepIntervals.length;
+        const sumSleep = sleepIntervals.reduce((a, b) => a + b, 0);
+        const avgSleep = sumSleep / sleepIntervals.length;
         statPeriodSleepIntervalEl.textContent = formatInterval(avgSleep);
       }
 
       if (dayAvgIntervals.length === 0) {
         statPeriodAvgIntervalEl.textContent = '–';
       } else {
-        const avg = dayAvgIntervals.reduce((a, b) => a + b, 0) / dayAvgIntervals.length;
+        const sum = dayAvgIntervals.reduce((a, b) => a + b, 0);
+        const avg = sum / dayAvgIntervals.length;
         statPeriodAvgIntervalEl.textContent = formatInterval(avg);
       }
     }
@@ -1141,12 +1300,15 @@
       for (const day of stats) {
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
-        if (isDayInTarget(day)) tr.className = 'day-ok';
+
+        if (isDayInTarget(day)) {
+          tr.className = 'day-ok';
+        }
 
         tr.onclick = () => openDayDetail(day);
 
         const tdDate = document.createElement('td');
-        tdDate.textContent = formatDateDM(day.ts);
+        tdDate.textContent = formatDateDMY(day.ts);
 
         const tdCount = document.createElement('td');
         tdCount.textContent = day.count;
@@ -1155,19 +1317,26 @@
         tdSnacks.textContent = day.snacksCount || 0;
 
         const tdSleep = document.createElement('td');
-        tdSleep.textContent = day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
+        tdSleep.textContent =
+          day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
 
         const tdAvg = document.createElement('td');
-        tdAvg.textContent = day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
+        tdAvg.textContent =
+          day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
 
-        tr.append(tdDate, tdCount, tdSnacks, tdSleep, tdAvg);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdCount);
+        tr.appendChild(tdSnacks);
+        tr.appendChild(tdSleep);
+        tr.appendChild(tdAvg);
+
         historyBodyEl.appendChild(tr);
       }
     }
 
     function openDayDetail(day) {
       currentDetailDayKey = day.key;
-      detailTitle.textContent = formatDateDM(day.ts);
+      detailTitle.textContent = formatDateDMY(day.ts);
 
       const allSorted = getAllMealsSorted();
       const dayMeals = allSorted.filter(m => getDayKey(m.ts) === day.key);
@@ -1181,18 +1350,24 @@
       let html = '';
       const firstDay = dayMeals[0];
       const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
-      let prevTs = firstIndex > 0 ? allSorted[firstIndex - 1].ts : null;
+      let prevTs = null;
+      if (firstIndex > 0) {
+        prevTs = allSorted[firstIndex - 1].ts;
+      }
 
       for (const meal of dayMeals) {
         const intervalText = prevTs == null
           ? 'Первый зафиксированный приём (раньше записей нет).'
           : 'Интервал с прошлого приёма: ' + formatInterval(meal.ts - prevTs);
+
         prevTs = meal.ts;
 
         html += `
           <div class="meal-row">
             <div class="row-top">
-              <div><span class="meal-time">${formatTimeHM(meal.ts)}</span></div>
+              <div>
+                <span class="meal-time">${formatTimeHM(meal.ts)}</span>
+              </div>
               <div class="actions">
                 <button class="btn-ghost"
                   title="${meal.isSnack
@@ -1239,20 +1414,25 @@
     function tickSinceLast() {
       renderStats();
     }
+
     setInterval(tickSinceLast, 60000);
 
     addMealBtn.addEventListener('click', () => {
       const note = (mealNoteEl.value || '').trim();
       const now = Date.now();
+
       const newMeal = {
         id: 'm_' + now + '_' + Math.random().toString(36).slice(2, 8),
         ts: now,
         note,
         isSnack: false
       };
+
       meals.push(newMeal);
       saveMeals(meals);
+
       mealNoteEl.value = '';
+
       renderMeals();
       renderStats();
       renderPeriodSummary();
@@ -1327,22 +1507,29 @@
       const maxDayIntHours = numOrNull(goalDayIntMaxEl);
 
       goals = {
-        minMealsPerDay: minMeals ?? null,
-        maxMealsPerDay: maxMeals ?? null,
-        maxSnacksPerDay: maxSnacks ?? null,
-        minSleepHours: minSleepHours ?? null,
-        maxSleepHours: maxSleepHours ?? null,
+        minMealsPerDay: minMeals != null ? minMeals : null,
+        maxMealsPerDay: maxMeals != null ? maxMeals : null,
+        maxSnacksPerDay: maxSnacks != null ? maxSnacks : null,
+        minSleepHours: minSleepHours != null ? minSleepHours : null,
+        maxSleepHours: maxSleepHours != null ? maxSleepHours : null,
         minDayIntervalMinutes: minDayIntHours != null ? minDayIntHours * 60 : null,
         maxDayIntervalMinutes: maxDayIntHours != null ? maxDayIntHours * 60 : null
       };
 
       saveGoals(goals);
-      goalsStatusEl.textContent = 'Цели сохранены. Зелёная подсветка и статистика обновлены.';
+      goalsStatusEl.textContent = 'Цели сохранены. Зелёная подсветка и счётчик дней обновлены.';
       renderPeriodSummary();
       renderHistory();
 
-      setTimeout(() => { goalsStatusEl.textContent = ''; }, 3000);
+      setTimeout(() => {
+        goalsStatusEl.textContent = '';
+      }, 3000);
     });
+
+    // обработчик на выгрузку CSV
+    if (exportMealsBtn) {
+      exportMealsBtn.addEventListener('click', exportMealsCsv);
+    }
 
     loadGoalsIntoUI();
     renderMeals();
