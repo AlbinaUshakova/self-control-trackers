@@ -4,7 +4,7 @@
 const CACHE_VERSION = 'eatlog-v1';
 const CORE_ASSETS = [
   './',
-  './eatlog.html',
+  './meal-tracker.html',
   './manifest.json',
   './service-worker.js',
   './icons/icon-192.png',
@@ -46,10 +46,10 @@ self.addEventListener('fetch', (event) => {
       fetch(req)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put('./eatlog.html', copy));
+          caches.open(CACHE_VERSION).then((cache) => cache.put('./meal-tracker.html', copy));
           return res;
         })
-        .catch(() => caches.match('./eatlog.html'))
+        .catch(() => caches.match('./meal-tracker.html'))
     );
     return;
   }

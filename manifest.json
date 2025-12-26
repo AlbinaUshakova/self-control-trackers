@@ -2,7 +2,7 @@
   "name": "EatLog",
   "short_name": "EatLog",
   "description": "Трекер приёмов пищи и перекусов",
-  "start_url": "./eatlog.html",
+  "start_url": "./meal-tracker.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#020617",
