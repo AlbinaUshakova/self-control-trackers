@@ -548,7 +548,7 @@
         <div class="card">
           <h2 data-i18n="h.newMeal">Новый приём пищи</h2>
           <textarea id="mealNote" data-i18n-placeholder="textarea.placeholder"
-            placeholder="Например: Овсянка с семечками, Чипсы, Чай с печеньем"></textarea>
+            placeholder="овсянка, 2 варёных яйца, кофе с печеньем"></textarea>
           <button id="addMealBtn" class="btn-primary">
             <span id="addMealMain" data-i18n="btn.eating">Я ем сейчас</span>
             <span id="addMealSub" data-i18n="btn.eatingSub">🍽 или 🍪</span>
@@ -564,7 +564,7 @@
               <div class="stat-value" id="statMealsToday">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.snacks">Из них перекусов</div>
+              <div class="stat-label" data-i18n="stat.snacks">Перекусы</div>
               <div class="stat-value" id="statSnacksToday">0</div>
             </div>
             <div class="stat-box">
@@ -572,12 +572,11 @@
               <div class="stat-value" id="statAvgInterval">–</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.sinceLast">Сейчас от <br> последнего</div>
+              <div class="stat-label" data-i18n="stat.sinceLast">С последнего <br> приёма</div>
               <div class="stat-value" id="statSinceLast">–</div>
             </div>
           </div>
         </div>
-
         <div class="card">
           <h2 data-i18n="today.list">Сегодняшние приёмы пищи</h2>
           <div class="list" id="mealList"></div>
@@ -608,7 +607,7 @@
               <div class="stat-value" id="statPeriodSleepInterval">–</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.dayInterval">Дневной интервал</div>
+              <div class="stat-label" data-i18n="stat.dayInterval">Интервал между приёмами</div>
               <div class="stat-value" id="statPeriodAvgInterval">–</div>
             </div>
           </div>
@@ -670,7 +669,7 @@
           </div>
 
           <div class="goal-row">
-            <div class="subtle" data-i18n="goals.dayIntervalLabel">Дневной интервал между приёмами пищи (часы, в среднем
+            <div class="subtle" data-i18n="goals.dayIntervalLabel">Интервал между приёмами пищи (часы, в среднем
               за день)</div>
             <span>
               <span data-i18n="range.from">от</span> <input type="number" id="goalDayIntMin" min="0" step="0.25" />
@@ -715,35 +714,35 @@
         "tab.stats": "Statistics",
         "tab.goals": "Goals",
         "h.newMeal": "New meal",
-        "textarea.placeholder": "Cottage cheese with jam, tea with cookies",
+        "textarea.placeholder": "oatmeal, 2 boiled eggs, coffee with cookies",
         "btn.eating": "I'm eating now",
-        "btn.eatingSub": "🍽 or 🍪",
-        "stats.today": "Statistics for today",
+        "btn.eatingSub": "🍽 / 🍪",
+        "stats.today": "Today's stats",
         "today.list": "Today's meals",
         "stat.meals": "Meals",
-        "stat.snacks": "Of them: snacks",
-        "stat.dayInterval": "Daily interval",
-        "stat.sinceLast": "Since last",
-        "list.empty": "No meals recorded yet. When you eat, press \"I'm eating now\". If it is a snack, press the plate icon to mark it as a snack.",
-        "period.stats": "Period statistics",
+        "stat.snacks": "Snacks included",
+        "stat.dayInterval": "Eating interval",
+        "stat.sinceLast": "Since last meal",
+        "list.empty": "No meals recorded yet.\nTap \"I'm eating now\" when you eat.\nUse the plate icon to mark a snack.",
+        "period.stats": "Period stats",
         "daily.breakdown": "Daily breakdown",
         "stat.sleep": "Sleep interval",
         "table.date": "Date",
         "table.meals": "Meals",
         "table.snacks": "Snacks",
         "table.sleep": "Sleep interval",
-        "table.dayInterval": "Day interval",
+        "table.dayInterval": "Eating interval",
         "export.btn": "⬇️ Export all data (CSV)",
         "period.7": "7 days",
         "period.14": "14 days",
         "period.21": "21 days",
         "period.all": "All",
         "goals.title": "Daily goals",
-        "goals.desc": "Days that meet goals will be highlighted in green in statistics.",
+        "goals.desc": "Days that meet your goals will be highlighted in green in statistics.",
         "goals.mealsLabel": "Meals per day",
         "goals.snacksLabel": "Max snacks per day",
         "goals.sleepLabel": "Sleep interval (hours)",
-        "goals.dayIntervalLabel": "Day interval (hours)",
+        "goals.dayIntervalLabel": "Eating interval (hours)",
         "range.from": "from",
         "range.to": "to",
         "goals.save": "Save goals ✅",
@@ -759,7 +758,7 @@
         "no.description": "(no description)",
         "interval.first": "First recorded meal (no previous entries).",
         "interval.sincePrev": "Interval since previous meal: ",
-        "last.meal": "Last meal: ",
+        "last.meal": "Last meal at ",
         "history.empty": "No data for the selected period yet."
       },
       ru: {
@@ -767,24 +766,24 @@
         "tab.stats": "Статистика",
         "tab.goals": "Цели",
         "h.newMeal": "Новый приём пищи",
-        "textarea.placeholder": "Творог с вареньем, чай с печеньем",
+        "textarea.placeholder": "овсянка, 2 варёных яйца, кофе с печеньем",
         "btn.eating": "Я ем сейчас",
-        "btn.eatingSub": "🍽 или 🍪",
+        "btn.eatingSub": "🍽 / 🍪",
         "stats.today": "Статистика за сегодня",
         "today.list": "Сегодняшние приёмы пищи",
         "stat.meals": "Приёмов пищи",
         "stat.snacks": "Из них перекусов",
-        "stat.dayInterval": "Дневной интервал",
-        "stat.sinceLast": "Сейчас от последнего",
-        "list.empty": "Сегодня ещё не было приёмов пищи. Когда начнёшь есть — нажми «Я ем сейчас». Если приём пищи - перекус, нажми на 🍽 - она измениться на 🍪.",
+        "stat.dayInterval": "Интервал между приёмами",
+        "stat.sinceLast": "С последнего приёма",
+        "list.empty": "Сегодня пока нет записей.\nНажми «Я ем сейчас», когда начнёшь есть.\nИспользуй 🍽 / 🍪, чтобы отметить перекус.",
         "period.stats": "Статистика за период",
         "daily.breakdown": "Детализация по дням",
         "stat.sleep": "Интервал сна",
         "table.date": "Дата",
         "table.meals": "Приёмы пищи",
-        "table.snacks": "Перекусы",
+        "table.snacks": "Из них перекусов",
         "table.sleep": "Интервал сна",
-        "table.dayInterval": "Дневной интервал",
+        "table.dayInterval": "Интервал между приёмами",
         "export.btn": "⬇️ Выгрузить все данные (CSV)",
         "period.7": "7 дней",
         "period.14": "14 дней",
@@ -795,7 +794,7 @@
         "goals.mealsLabel": "Приёмов пищи в день",
         "goals.snacksLabel": "Из них перекусов в день (максимум)",
         "goals.sleepLabel": "Интервал сна (часы)",
-        "goals.dayIntervalLabel": "Дневной интервал (часы)",
+        "goals.dayIntervalLabel": "Интервал между приёмами (часы)",
         "range.from": "от",
         "range.to": "до",
         "goals.save": "Сохранить цели ✅",
@@ -811,7 +810,7 @@
         "no.description": "(без описания)",
         "interval.first": "Первый зафиксированный приём (раньше записей нет).",
         "interval.sincePrev": "Интервал с прошлого приёма: ",
-        "last.meal": "Последний приём: ",
+        "last.meal": "Последний приём в ",
         "history.empty": "Пока нет данных за выбранный период."
       }
     };
@@ -1219,7 +1218,7 @@
         statAvgIntervalEl.textContent = formatInterval(avg);
       }
 
-      // 🔽 Новая логика для "Сейчас от последнего"
+      // 🔽 Новая логика для "С момента последнего"
       const allSorted = getAllMealsSorted();
 
       if (allSorted.length === 0) {
