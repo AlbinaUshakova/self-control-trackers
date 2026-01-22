@@ -383,32 +383,63 @@
       width: 22%;
     }
 
-    th:nth-child(4),
+    th:nth-child(4) {
+      width: 23%;
+      white-space: pre-line;
+      /* заголовок может переноситься */
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
     td:nth-child(4) {
       width: 23%;
       white-space: nowrap;
-      /* не переносим "13 ч 58 мин" */
+      /* значения вроде "13 ч 58 мин" не переносим */
     }
 
-    th:nth-child(5),
+    th:nth-child(5) {
+      width: 24%;
+      white-space: pre-line;
+      /* заголовок может переноситься */
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
     td:nth-child(5) {
       width: 24%;
       white-space: nowrap;
-      /* и тут тоже всё в одну строку */
+      /* значения оставляем в одну строку */
     }
 
     th {
-      font-size: 9px;
+      /* заголовки столбцов должны влезать полностью (и на RU, и на EN) */
+      font-size: 10px;
       color: #9ca3af;
       font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      /* uppercase сильно «раздувает» ширину и часто обрезает подписи */
+      text-transform: none;
+      letter-spacing: 0.02em;
       background: #020617;
       position: sticky;
       top: 0;
       z-index: 1;
-      white-space: normal;
-      line-height: 1.2;
+      white-space: pre-line;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    /* на очень узких экранах делаем заголовки компактнее */
+    @media (max-width: 380px) {
+      th {
+        font-size: 9px;
+        letter-spacing: 0.01em;
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
     }
 
     tr:last-child td {
@@ -518,6 +549,190 @@
         padding-inline: 12px;
       }
     }
+
+    /* Save goals button feedback */
+    .savebtn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      overflow: hidden;
+      transition: transform .12s ease, filter .2s ease;
+      min-height: 38px;
+    }
+
+    .savebtn:active {
+      transform: scale(.98);
+    }
+
+    .savebtn.is-saving,
+    .savebtn.is-saved {
+      pointer-events: none;
+      filter: saturate(.92) brightness(.98);
+    }
+
+    .savebtn__spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      display: none;
+      animation: savebtnspin .8s linear infinite;
+      opacity: .9;
+    }
+
+    .savebtn__check {
+      display: none;
+      font-weight: 800;
+      transform: translateY(1px);
+    }
+
+    .savebtn.is-saving .savebtn__spinner {
+      display: inline-block;
+    }
+
+    .savebtn.is-saved .savebtn__check {
+      display: inline-block;
+    }
+
+    @keyframes savebtnspin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+    /* Export button feedback */
+    .exportbtn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      overflow: hidden;
+      transition: transform .12s ease, filter .2s ease;
+      min-height: 38px;
+      width: 100%;
+    }
+
+    .exportbtn:active {
+      transform: scale(.98);
+    }
+
+    .exportbtn.is-saving,
+    .exportbtn.is-saved {
+      pointer-events: none;
+      filter: saturate(.92) brightness(.98);
+    }
+
+    .exportbtn__spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      display: none;
+      animation: exportbtnspin .8s linear infinite;
+      opacity: .9;
+    }
+
+    .exportbtn__check {
+      display: none;
+      font-weight: 800;
+      transform: translateY(1px);
+    }
+
+    .exportbtn.is-saving .exportbtn__spinner {
+      display: inline-block;
+    }
+
+    .exportbtn.is-saved .exportbtn__check {
+      display: inline-block;
+    }
+
+    @keyframes exportbtnspin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+
+    /* EDIT MODAL */
+    #editMealModal {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+    }
+
+    .editmodal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .editmodal__panel {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(92vw, 520px);
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid #111827;
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .65);
+    }
+
+    .editmodal__title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .editmodal__textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      height: 4.2em;
+      /* ≈ 3 строки */
+      max-height: 4.2em;
+      resize: none;
+      overflow-y: auto;
+      outline: none;
+    }
+
+    .editmodal__textarea:focus {
+      border-color: #22c55e;
+    }
+
+    .editmodal__actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .editmodal__btn {
+      width: auto;
+      min-width: 120px;
+    }
+
+    @media (max-width: 380px) {
+      .editmodal__btn {
+        min-width: 104px;
+        padding: 9px 12px;
+      }
+    }
   </style>
 </head>
 
@@ -529,8 +744,7 @@
       </div>
       <!-- language switch -->
       <div style="display:flex; gap:6px; align-items:center;">
-        <button id="langRuBtn" class="tab-btn" style="padding:6px 10px;">RU</button>
-        <button id="langEnBtn" class="tab-btn active" style="padding:6px 10px;">EN</button>
+        <button id="langToggleBtn" class="tab-btn" style="padding:6px 10px;" aria-label="Switch language">EN</button>
       </div>
     </header>
 
@@ -622,8 +836,8 @@
                   <th data-i18n="table.date">Дата</th>
                   <th data-i18n="table.meals">Приёмы пищи</th>
                   <th data-i18n="table.snacks">Перекусы</th>
-                  <th data-i18n="table.sleep">Интервал<br>сна</th>
-                  <th data-i18n="table.dayInterval">Дневной<br>интервал</th>
+                  <th data-i18n="table.sleep">Интервал сна</th>
+                  <th data-i18n="table.dayInterval">Интервал между приёмами</th>
                 </tr>
               </thead>
               <tbody id="historyBody"></tbody>
@@ -631,8 +845,13 @@
           </div>
 
           <!-- КНОПКА ВЫГРУЗКИ CSV -->
-          <button id="exportMealsBtn" class="btn-outline" style="margin-top: 8px; width: 100%" data-i18n="export.btn">⬇️
-            Выгрузить все данные (CSV)</button>
+          <button id="exportMealsBtn" class="btn-outline exportbtn" style="margin-top: 8px; width: 100%">
+            <span class="exportbtn__label" data-i18n="export.btn" data-default-key="export.btn">⬇️ Скачать данные</span>
+            <span class="exportbtn__spinner" aria-hidden="true"></span>
+            <span class="exportbtn__check" aria-hidden="true">✓</span>
+          </button>
+          <div class="subtle" id="exportHint" style="margin-top:6px;" data-i18n="export.hint">Файл для Excel/таблиц
+            (.csv)</div>
         </div>
       </div>
 
@@ -677,8 +896,11 @@
             </span>
           </div>
 
-          <button id="saveGoalsBtn" class="btn-outline" data-i18n="goals.save">Сохранить цели ✅</button>
-          <p class="subtle" id="goalsStatus"></p>
+          <button id="saveGoalsBtn" class="btn-outline savebtn">
+            <span class="savebtn__label" data-i18n="goals.save" data-default-key="goals.save">Сохранить цели</span>
+            <span class="savebtn__spinner" aria-hidden="true"></span>
+            <span class="savebtn__check" aria-hidden="true">✓</span>
+          </button>
         </div>
       </div>
     </div>
@@ -695,6 +917,23 @@
     <div id="detailContent"></div>
   </div>
 
+
+  <!-- EDIT MEAL MODAL -->
+  <div id="editMealModal" style="display:none;" aria-hidden="true">
+    <div class="editmodal__backdrop" id="editMealBackdrop"></div>
+    <div class="editmodal__panel" role="dialog" aria-modal="true" aria-labelledby="editMealTitle">
+      <div class="editmodal__header">
+        <div id="editMealTitle" class="editmodal__title" data-i18n="edit.title">Редактировать приём пищи</div>
+      </div>
+      <textarea id="editMealTextarea" class="editmodal__textarea" rows="3"></textarea>
+      <div class="editmodal__actions">
+        <button id="editMealCancelBtn" class="btn-outline editmodal__btn" data-i18n="edit.cancel">Отмена</button>
+        <button id="editMealSaveBtn" class="btn-primary editmodal__btn" data-i18n="edit.save">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     // Service Worker (offline) — works only over https or http://localhost (not file://)
     if ('serviceWorker' in navigator) {
@@ -707,7 +946,10 @@
   <script>
     // --- i18n support ---
     const LANG_KEY = 'eatlog_lang';
-    const defaultLang = localStorage.getItem(LANG_KEY) || 'en';
+    const savedLang = localStorage.getItem(LANG_KEY);
+    const deviceLang = (navigator.languages && navigator.languages[0]) ? navigator.languages[0] : (navigator.language || 'en');
+    const detectedLang = /^ru/i.test(deviceLang) ? 'ru' : 'en';
+    const defaultLang = savedLang || detectedLang;
     const translations = {
       en: {
         "tab.today": "Today",
@@ -729,10 +971,15 @@
         "stat.sleep": "Sleep interval",
         "table.date": "Date",
         "table.meals": "Meals",
-        "table.snacks": "Snacks",
-        "table.sleep": "Sleep interval",
-        "table.dayInterval": "Eating interval",
-        "export.btn": "⬇️ Export all data (CSV)",
+        "table.snacks": "Snacks\nincluded",
+        "table.sleep": "Sleep\ninterval",
+        "table.dayInterval": "Eating\ninterval",
+        "export.btn": "⬇️ Download data",
+        "export.hint": "For Excel/spreadsheets (.csv)",
+        "export.downloading": "Preparing file…",
+        "export.done": "File ready",
+        "export.downloading": "Preparing file…",
+        "export.done": "File ready",
         "period.7": "7 days",
         "period.14": "14 days",
         "period.21": "21 days",
@@ -745,7 +992,8 @@
         "goals.dayIntervalLabel": "Eating interval (hours)",
         "range.from": "from",
         "range.to": "to",
-        "goals.save": "Save goals ✅",
+        "goals.save": "Save goals",
+        "goals.saved": "Saved",
         "footer": "EatLog · small step towards mindful eating",
         "detail.back": "← Back",
         "detail.noEntries": "No entries for this day yet.",
@@ -760,6 +1008,10 @@
         "interval.sincePrev": "Interval since previous meal: ",
         "last.meal": "Last meal at ",
         "history.empty": "No data for the selected period yet."
+        ,
+        "edit.title": "Edit meal",
+        "edit.save": "Save",
+        "edit.cancel": "Cancel"
       },
       ru: {
         "tab.today": "Сегодня",
@@ -782,9 +1034,10 @@
         "table.date": "Дата",
         "table.meals": "Приёмы пищи",
         "table.snacks": "Из них перекусов",
-        "table.sleep": "Интервал сна",
-        "table.dayInterval": "Интервал между приёмами",
-        "export.btn": "⬇️ Выгрузить все данные (CSV)",
+        "table.sleep": "Интервал\nсна",
+        "table.dayInterval": "Интервал\nмежду приёмами",
+        "export.btn": "⬇️ Скачать данные",
+        "export.hint": "Файл для Excel/таблиц (.csv)",
         "period.7": "7 дней",
         "period.14": "14 дней",
         "period.21": "21 день",
@@ -797,7 +1050,8 @@
         "goals.dayIntervalLabel": "Интервал между приёмами (часы)",
         "range.from": "от",
         "range.to": "до",
-        "goals.save": "Сохранить цели ✅",
+        "goals.save": "Сохранить цели",
+        "goals.saved": "Сохранено",
         "footer": "EatLog · маленький шаг к более осознанному питанию",
         "detail.back": "← Назад",
         "detail.noEntries": "Для этого дня пока нет записей.",
@@ -812,6 +1066,10 @@
         "interval.sincePrev": "Интервал с прошлого приёма: ",
         "last.meal": "Последний приём в ",
         "history.empty": "Пока нет данных за выбранный период."
+        ,
+        "edit.title": "Редактировать приём пищи",
+        "edit.save": "Сохранить",
+        "edit.cancel": "Отмена"
       }
     };
 
@@ -826,6 +1084,7 @@
 
     function applyTranslations(lang) {
       window._eatlogLang = lang;
+      document.documentElement.lang = lang;
       localStorage.setItem(LANG_KEY, lang);
       // simple elements
       document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -849,15 +1108,25 @@
       renderStats();
       renderPeriodSummary();
       renderHistory();
+      syncLangToggleLabel();
     }
 
-    // language buttons
-    const langRuBtn = document.getElementById('langRuBtn');
-    const langEnBtn = document.getElementById('langEnBtn');
-    if (langRuBtn && langEnBtn) {
-      langRuBtn.addEventListener('click', () => { langRuBtn.classList.add('active'); langEnBtn.classList.remove('active'); applyTranslations('ru'); });
-      langEnBtn.addEventListener('click', () => { langEnBtn.classList.add('active'); langRuBtn.classList.remove('active'); applyTranslations('en'); });
+    // language toggle button (single)
+    const langToggleBtn = document.getElementById('langToggleBtn');
+    function syncLangToggleLabel() {
+      if (!langToggleBtn) return;
+      const current = window._eatlogLang || defaultLang;
+      langToggleBtn.textContent = current === 'ru' ? 'RU' : 'EN';
+      langToggleBtn.title = current === 'ru' ? 'Switch to English' : 'Переключить на русский';
     }
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener('click', () => {
+        const current = window._eatlogLang || defaultLang;
+        const next = current === 'ru' ? 'en' : 'ru';
+        applyTranslations(next);
+      });
+    }
+
     // apply initial language
     applyTranslations(window._eatlogLang || defaultLang);
     // --- end i18n ---
@@ -946,6 +1215,63 @@
     let currentDetailDayKey = null;
 
     let currentPeriod = 'all';
+    // --- Edit meal modal (better UX than prompt) ---
+    const editMealModalEl = document.getElementById('editMealModal');
+    const editMealBackdropEl = document.getElementById('editMealBackdrop');
+    const editMealTextareaEl = document.getElementById('editMealTextarea');
+    const editMealSaveBtn = document.getElementById('editMealSaveBtn');
+    const editMealCancelBtn = document.getElementById('editMealCancelBtn');
+    let editingMealId = null;
+
+    function openEditMealModal(id, text) {
+      if (!editMealModalEl || !editMealTextareaEl) return;
+      editingMealId = id;
+      editMealTextareaEl.value = text || '';
+      editMealModalEl.style.display = 'block';
+      editMealModalEl.setAttribute('aria-hidden', 'false');
+
+      // focus and place cursor at the end (so user can instantly add after last word)
+      setTimeout(() => {
+        try {
+          editMealTextareaEl.focus();
+          const len = editMealTextareaEl.value.length;
+          editMealTextareaEl.setSelectionRange(len, len);
+          editMealTextareaEl.scrollTop = editMealTextareaEl.scrollHeight;
+        } catch (e) { }
+      }, 0);
+    }
+
+    function closeEditMealModal() {
+      if (!editMealModalEl) return;
+      editMealModalEl.style.display = 'none';
+      editMealModalEl.setAttribute('aria-hidden', 'true');
+      editingMealId = null;
+    }
+
+    function saveEditMealModal() {
+      if (!editingMealId) return closeEditMealModal();
+      const entry = meals.find(m => m.id === editingMealId);
+      if (!entry) return closeEditMealModal();
+      entry.note = (editMealTextareaEl.value || '').trim();
+      saveMeals(meals);
+      closeEditMealModal();
+      renderMeals();
+      renderHistory();
+      renderPeriodSummary();
+      refreshDetailIfOpen();
+    }
+
+    if (editMealBackdropEl) editMealBackdropEl.addEventListener('click', closeEditMealModal);
+    if (editMealCancelBtn) editMealCancelBtn.addEventListener('click', (e) => { e.preventDefault(); closeEditMealModal(); });
+    if (editMealSaveBtn) editMealSaveBtn.addEventListener('click', (e) => { e.preventDefault(); saveEditMealModal(); });
+
+    // ESC to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && editMealModalEl && editMealModalEl.style.display === 'block') {
+        closeEditMealModal();
+      }
+    });
+
 
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
@@ -1027,15 +1353,7 @@
     function editMealNote(id) {
       const entry = meals.find(m => m.id === id);
       if (!entry) return;
-      const currentNote = entry.note || '';
-      const updated = prompt(t('prompt.editNote'), currentNote);
-      if (updated === null) return;
-      entry.note = updated.trim();
-      saveMeals(meals);
-      renderMeals();
-      renderHistory();
-      renderPeriodSummary();
-      refreshDetailIfOpen();
+      openEditMealModal(id, entry.note || '');
     }
 
     function editMealTime(id) {
@@ -1656,6 +1974,44 @@
       if (goals.maxDayIntervalMinutes != null) goalDayIntMaxEl.value = goals.maxDayIntervalMinutes / 60;
     }
 
+
+    function animateSaveGoalsButton(btn) {
+      if (!btn) return;
+      const label = btn.querySelector('.savebtn__label');
+
+      // If animation is already running, restart cleanly
+      if (btn._saveAnimTimers) {
+        btn._saveAnimTimers.forEach(id => clearTimeout(id));
+      }
+      btn._saveAnimTimers = [];
+
+      // Ensure default label is correct for current language
+      const defaultKey = label?.dataset.defaultKey || 'goals.save';
+      const defaultText = t(defaultKey);
+
+      // Stage 1: saving (spinner)
+      btn.classList.remove('is-saved');
+      btn.classList.add('is-saving');
+      btn.disabled = true;
+      if (label) label.textContent = defaultText;
+
+      // Stage 2: saved (checkmark + short label)
+      const t1 = setTimeout(() => {
+        btn.classList.remove('is-saving');
+        btn.classList.add('is-saved');
+        if (label) label.textContent = t('goals.saved');
+      }, 350);
+
+      // Stage 3: back to normal
+      const t2 = setTimeout(() => {
+        btn.classList.remove('is-saved');
+        btn.disabled = false;
+        if (label) label.textContent = defaultText;
+      }, 1450);
+
+      btn._saveAnimTimers.push(t1, t2);
+    }
+
     saveGoalsBtn.addEventListener('click', () => {
       function numOrNull(el) {
         const v = el.value.trim();
@@ -1683,14 +2039,47 @@
       };
 
       saveGoals(goals);
-      goalsStatusEl.textContent = t('goals.save') + '...';
+
+      animateSaveGoalsButton(saveGoalsBtn);
+
       renderPeriodSummary();
       renderHistory();
-
-      setTimeout(() => {
-        goalsStatusEl.textContent = '';
-      }, 3000);
     });
+
+
+    function animateExportButton(btn) {
+      if (!btn) return;
+      const label = btn.querySelector('.exportbtn__label');
+
+      // Restart cleanly if user taps fast
+      if (btn._exportAnimTimers) {
+        btn._exportAnimTimers.forEach(id => clearTimeout(id));
+      }
+      btn._exportAnimTimers = [];
+
+      const defaultKey = label?.dataset.defaultKey || 'export.btn';
+      const defaultText = t(defaultKey);
+
+      btn.classList.remove('is-saved');
+      btn.classList.add('is-saving');
+      btn.disabled = true;
+      if (label) label.textContent = t('export.downloading');
+
+      const t1 = setTimeout(() => {
+        btn.classList.remove('is-saving');
+        btn.classList.add('is-saved');
+        if (label) label.textContent = t('export.done');
+      }, 450);
+
+      const t2 = setTimeout(() => {
+        btn.classList.remove('is-saved');
+        btn.disabled = false;
+        if (label) label.textContent = defaultText;
+      }, 1550);
+
+      btn._exportAnimTimers.push(t1, t2);
+    }
+
 
     // обработчик на выгрузку CSV
     if (exportMealsBtn) {
