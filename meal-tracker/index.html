@@ -41,6 +41,11 @@
       text-align: left;
     }
 
+    body.modal-open {
+      overflow: hidden;
+    }
+
+
     /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
     h1,
     h2,
@@ -676,16 +681,20 @@
     }
 
     .editmodal__panel {
-      position: absolute;
+      position: fixed;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       width: min(92vw, 520px);
+      max-height: 90vh;
+      overflow: auto;
       background: rgba(15, 23, 42, 0.98);
       border: 1px solid #111827;
       border-radius: 18px;
       padding: 12px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, .65);
+      display: flex;
+      flex-direction: column;
     }
 
     .editmodal__title {
@@ -1116,9 +1125,13 @@
     function syncLangToggleLabel() {
       if (!langToggleBtn) return;
       const current = window._eatlogLang || defaultLang;
-      langToggleBtn.textContent = current === 'ru' ? 'RU' : 'EN';
-      langToggleBtn.title = current === 'ru' ? 'Switch to English' : 'Переключить на русский';
+      // Icon shows CURRENT app language
+      langToggleBtn.textContent = current.toUpperCase();
+      langToggleBtn.title = current === 'ru'
+        ? 'Язык приложения: Русский'
+        : 'App language: English';
     }
+
     if (langToggleBtn) {
       langToggleBtn.addEventListener('click', () => {
         const current = window._eatlogLang || defaultLang;
@@ -1224,6 +1237,8 @@
     let editingMealId = null;
 
     function openEditMealModal(id, text) {
+      document.body.classList.add('modal-open');
+
       if (!editMealModalEl || !editMealTextareaEl) return;
       editingMealId = id;
       editMealTextareaEl.value = text || '';
@@ -1242,6 +1257,8 @@
     }
 
     function closeEditMealModal() {
+      document.body.classList.remove('modal-open');
+
       if (!editMealModalEl) return;
       editMealModalEl.style.display = 'none';
       editMealModalEl.setAttribute('aria-hidden', 'true');
