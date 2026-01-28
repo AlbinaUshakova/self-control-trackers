@@ -1,10 +1,10 @@
 // EatLog — simple offline-first Service Worker
 // Note: Service Workers require HTTPS (or http://localhost)
 
-const CACHE_VERSION = 'eatlog-v1';
+const CACHE_VERSION = 'eatlog-v2';
 const CORE_ASSETS = [
-  './',
-  './meal-tracker.html',
+    './',
+  './index.html',
   './manifest.json',
   './service-worker.js',
   './icons/icon-192.png',
@@ -46,10 +46,10 @@ self.addEventListener('fetch', (event) => {
       fetch(req)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put('./meal-tracker.html', copy));
+          caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', copy));
           return res;
         })
-        .catch(() => caches.match('./meal-tracker.html'))
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }

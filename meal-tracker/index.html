@@ -4,7 +4,24 @@
 <head>
   <meta charset="UTF-8" />
   <title>EatLog — трекер приёмов пищи</title>
+
+  <meta name="description"
+    content="EatLog — простой трекер приёмов пищи. Помогает отслеживать интервалы между едой, сон и пищевые привычки. Работает офлайн, без регистрации." />
+
+  <meta name="keywords"
+    content="трекер питания, дневник питания, приёмы пищи, перекусы, интервалы между едой, осознанное питание" />
+
+  <meta name="author" content="EatLog" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="EatLog — трекер приёмов пищи" />
+  <meta property="og:description"
+    content="Простой дневник питания: приёмы пищи, перекусы, интервалы, статистика. Можно установить как приложение." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://albinaushakova.github.io/eatlog/" />
+  <meta property="og:image" content="https://albinaushakova.github.io/eatlog/og-image.png" />
+
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020617" />
@@ -1112,11 +1129,12 @@
       const sub = document.getElementById('addMealSub');
       if (main) main.textContent = t('btn.eating');
       if (sub) sub.textContent = t('btn.eatingSub');
-      // last meal label may be updated by renderStats/renderMeals; re-render UI texts
-      renderMeals();
-      renderStats();
-      renderPeriodSummary();
-      renderHistory();
+      // Data-driven UI strings are rendered by functions declared later in another <script> tag.
+      // When running in the browser, script tags do NOT share hoisting, so guard calls here.
+      if (typeof renderMeals === 'function') renderMeals();
+      if (typeof renderStats === 'function') renderStats();
+      if (typeof renderPeriodSummary === 'function') renderPeriodSummary();
+      if (typeof renderHistory === 'function') renderHistory();
       syncLangToggleLabel();
     }
 
@@ -1140,8 +1158,10 @@
       });
     }
 
-    // apply initial language
-    applyTranslations(window._eatlogLang || defaultLang);
+    // apply initial language after all scripts are loaded (so render* functions exist)
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTranslations(window._eatlogLang || defaultLang);
+    });
     // --- end i18n ---
   </script>
 
