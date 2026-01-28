@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://albinaushakova.github.io/self-control-trackers/meal-tracker/sitemap.xml
