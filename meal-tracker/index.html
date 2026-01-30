@@ -3,6 +3,21 @@
 
 <head>
   <meta charset="UTF-8" />
+
+  <script>
+    // Early language hint to reduce initial relayout (safe even before full i18n init)
+    (function () {
+      try {
+        const key = 'eatlog_lang';
+        const saved = localStorage.getItem(key);
+        const deviceLang = (navigator.languages && navigator.languages[0]) ? navigator.languages[0] : (navigator.language || 'en');
+        const detected = /^ru/i.test(deviceLang) ? 'ru' : 'en';
+        const lang = saved || detected;
+        document.documentElement.lang = lang;
+      } catch (e) {}
+    })();
+  </script>
+
   <meta name="google-site-verification" content="DIEjG1KJAKMRZcO0IhGHHjHVpjYuYUvos7rULW_0690" />
   <title>EatLog — трекер приемов пищи, дневник питания и контроль перекусов</title>
 
@@ -14,7 +29,7 @@
 
   <meta name="author" content="EatLog" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
 
   <link rel="canonical" href="https://albinaushakova.github.io/self-control-trackers/meal-tracker/" />
@@ -30,17 +45,42 @@
 
   <!-- iOS (Add to Home Screen) -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="EatLog" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
   <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
   <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png" />
+  <!-- iOS Startup images (splash) -->
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="startup/apple-launch-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1242x2208.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="startup/apple-launch-828x1792.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1242x2688.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1284x2778.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1179x2556.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="startup/apple-launch-1290x2796.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="startup/apple-launch-1536x2048.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="startup/apple-launch-2048x1536.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="startup/apple-launch-1668x2224.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="startup/apple-launch-2224x1668.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="startup/apple-launch-1668x2388.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="startup/apple-launch-2388x1668.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="startup/apple-launch-2048x2732.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="startup/apple-launch-2732x2048.png">
+
 
   <!-- Android / Chrome -->
   <meta name="mobile-web-app-capable" content="yes" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <style>
+    /* Critical: prevent white flash before CSS/JS paint */
+    html, body { background: #020617; }
+  </style>
+
   <style>
     :root {
       color-scheme: dark;
@@ -680,10 +720,98 @@
       }
     }
 
+    /* Native-like splash overlay */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      transition: opacity .22s ease, transform .22s ease;
+      opacity: 1;
+    }
+    #splash.is-hiding {
+      opacity: 0;
+      transform: scale(1.01);
+      pointer-events: none;
+    }
+    .splash-card {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 28px;
+      background: rgba(15, 23, 42, 0.96);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 22px 18px 18px;
+      text-align: center;
+    }
+    .splash-logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 20px;
+      margin: 0 auto 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(2, 6, 23, 0.85);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      overflow: hidden;
+    }
+    .splash-logo img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      display: block;
+    }
+    .splash-title {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      color: #e5e7eb;
+    }
+    .splash-sub {
+      margin: 6px 0 14px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .splash-spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(229, 231, 235, 0.85);
+      border-top-color: transparent;
+      margin: 0 auto;
+      animation: splashspin .8s linear infinite;
+      opacity: .9;
+    }
+    @keyframes splashspin { to { transform: rotate(360deg); } }
+
+    /* Slightly more native scrolling on iOS */
+    .app-content {
+      -webkit-overflow-scrolling: touch;
+    }
+
   </style>
 </head>
 
 <body>
+
+  <!-- Native-like splash overlay (removed after first paint) -->
+  <div id="splash" aria-hidden="true">
+    <div class="splash-card">
+      <div class="splash-logo">
+        <!-- reuse icon if available -->
+        <img src="icons/icon-192.png" alt="EatLog" onerror="this.style.display='none'">
+      </div>
+      <h1 class="splash-title">EatLog</h1>
+      <div class="splash-sub">Loading…</div>
+      <div class="splash-spinner" aria-hidden="true"></div>
+    </div>
+  </div>
+
   <div class="app-shell">
     <header class="app-header">
       <div>
@@ -1974,10 +2102,37 @@
     }
 
     loadGoalsIntoUI();
+
+    // Fast first paint: render today + top stats first
     renderMeals();
     renderStats();
-    renderPeriodSummary();
-    renderHistory();
+
+    // Defer heavier computations (period summary + history) to idle time
+    const _runIdle = (fn) => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => fn(), { timeout: 900 });
+      } else {
+        setTimeout(fn, 60);
+      }
+    };
+
+    _runIdle(() => {
+      renderPeriodSummary();
+      renderHistory();
+      refreshDetailIfOpen();
+    });
+
+    // Hide splash after the first frame where UI is ready
+    const splash = document.getElementById('splash');
+    if (splash) {
+      requestAnimationFrame(() => {
+        // second frame to ensure styles are applied
+        requestAnimationFrame(() => {
+          splash.classList.add('is-hiding');
+          setTimeout(() => splash.remove(), 260);
+        });
+      });
+    }
   </script>
 </body>
 
