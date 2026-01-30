@@ -62,12 +62,6 @@
       padding: 16px 12px;
       text-align: left;
     }
-
-    body.modal-open {
-      overflow: hidden;
-    }
-
-
     /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
     h1,
     h2,
@@ -686,84 +680,6 @@
       }
     }
 
-
-    /* EDIT MODAL */
-    #editMealModal {
-      position: fixed;
-      inset: 0;
-      z-index: 300;
-    }
-
-    .editmodal__backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, .55);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .editmodal__panel {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: min(92vw, 520px);
-      max-height: 90vh;
-      overflow: auto;
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid #111827;
-      border-radius: 18px;
-      padding: 12px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, .65);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .editmodal__title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .editmodal__textarea {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      color: #e5e7eb;
-      padding: 10px 12px;
-      font-size: 14px;
-      line-height: 1.4;
-      height: 4.2em;
-      /* ≈ 3 строки */
-      max-height: 4.2em;
-      resize: none;
-      overflow-y: auto;
-      outline: none;
-    }
-
-    .editmodal__textarea:focus {
-      border-color: #22c55e;
-    }
-
-    .editmodal__actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      margin-top: 10px;
-    }
-
-    .editmodal__btn {
-      width: auto;
-      min-width: 120px;
-    }
-
-    @media (max-width: 380px) {
-      .editmodal__btn {
-        min-width: 104px;
-        padding: 9px 12px;
-      }
-    }
   </style>
 </head>
 
@@ -947,21 +863,6 @@
     <h2 id="detailTitle"></h2>
     <div id="detailContent"></div>
   </div>
-
-
-  <!-- EDIT MEAL MODAL -->
-  <div id="editMealModal" style="display:none;" aria-hidden="true">
-    <div class="editmodal__backdrop" id="editMealBackdrop"></div>
-    <div class="editmodal__panel" role="dialog" aria-modal="true" aria-labelledby="editMealTitle">
-      <div class="editmodal__header">
-        <div id="editMealTitle" class="editmodal__title" data-i18n="edit.title">Редактировать приём пищи</div>
-      </div>
-      <textarea id="editMealTextarea" class="editmodal__textarea" rows="3"></textarea>
-      <div class="editmodal__actions">
-        <button id="editMealCancelBtn" class="btn-outline editmodal__btn" data-i18n="edit.cancel">Отмена</button>
-        <button id="editMealSaveBtn" class="btn-primary editmodal__btn" data-i18n="edit.save">Сохранить</button>
-      </div>
-    </div>
   </div>
 
 
@@ -1007,8 +908,6 @@
         "table.dayInterval": "Eating\ninterval",
         "export.btn": "⬇️ Download data",
         "export.hint": "For Excel/spreadsheets (.csv)",
-        "export.downloading": "Preparing file…",
-        "export.done": "File ready",
         "export.downloading": "Preparing file…",
         "export.done": "File ready",
         "period.7": "7 days",
@@ -1253,68 +1152,6 @@
     let currentDetailDayKey = null;
 
     let currentPeriod = 'all';
-    // --- Edit meal modal (better UX than prompt) ---
-    const editMealModalEl = document.getElementById('editMealModal');
-    const editMealBackdropEl = document.getElementById('editMealBackdrop');
-    const editMealTextareaEl = document.getElementById('editMealTextarea');
-    const editMealSaveBtn = document.getElementById('editMealSaveBtn');
-    const editMealCancelBtn = document.getElementById('editMealCancelBtn');
-    let editingMealId = null;
-
-    function openEditMealModal(id, text) {
-      document.body.classList.add('modal-open');
-
-      if (!editMealModalEl || !editMealTextareaEl) return;
-      editingMealId = id;
-      editMealTextareaEl.value = text || '';
-      editMealModalEl.style.display = 'block';
-      editMealModalEl.setAttribute('aria-hidden', 'false');
-
-      // focus and place cursor at the end (so user can instantly add after last word)
-      setTimeout(() => {
-        try {
-          editMealTextareaEl.focus();
-          const len = editMealTextareaEl.value.length;
-          editMealTextareaEl.setSelectionRange(len, len);
-          editMealTextareaEl.scrollTop = editMealTextareaEl.scrollHeight;
-        } catch (e) { }
-      }, 0);
-    }
-
-    function closeEditMealModal() {
-      document.body.classList.remove('modal-open');
-
-      if (!editMealModalEl) return;
-      editMealModalEl.style.display = 'none';
-      editMealModalEl.setAttribute('aria-hidden', 'true');
-      editingMealId = null;
-    }
-
-    function saveEditMealModal() {
-      if (!editingMealId) return closeEditMealModal();
-      const entry = meals.find(m => m.id === editingMealId);
-      if (!entry) return closeEditMealModal();
-      entry.note = (editMealTextareaEl.value || '').trim();
-      saveMeals(meals);
-      closeEditMealModal();
-      renderMeals();
-      renderHistory();
-      renderPeriodSummary();
-      refreshDetailIfOpen();
-    }
-
-    if (editMealBackdropEl) editMealBackdropEl.addEventListener('click', closeEditMealModal);
-    if (editMealCancelBtn) editMealCancelBtn.addEventListener('click', (e) => { e.preventDefault(); closeEditMealModal(); });
-    if (editMealSaveBtn) editMealSaveBtn.addEventListener('click', (e) => { e.preventDefault(); saveEditMealModal(); });
-
-    // ESC to close
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && editMealModalEl && editMealModalEl.style.display === 'block') {
-        closeEditMealModal();
-      }
-    });
-
-
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
       const d2 = new Date(refDate);
@@ -1395,7 +1232,15 @@
     function editMealNote(id) {
       const entry = meals.find(m => m.id === id);
       if (!entry) return;
-      openEditMealModal(id, entry.note || '');
+      const currentNote = entry.note || '';
+      const updated = prompt(t('prompt.editNote'), currentNote);
+      if (updated === null) return;
+      entry.note = updated.trim();
+      saveMeals(meals);
+      renderMeals();
+      renderHistory();
+      renderPeriodSummary();
+      refreshDetailIfOpen();
     }
 
     function editMealTime(id) {
