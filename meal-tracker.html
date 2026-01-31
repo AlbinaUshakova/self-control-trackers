@@ -1,12 +1,71 @@
 <!doctype html>
-<html>
+<html lang="ru">
 
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="refresh" content="0; url=./meal-tracker/" />
-  <script>location.replace("./meal-tracker/");</script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#020617" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>EatLog — loading</title>
+
+  <!-- Critical inline style: very first thing to avoid white flash -->
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .loader {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
 </head>
 
-<body></body>
+<body>
+  <div class="loader" aria-hidden="true">
+    <!-- small neutral SVG so user sees consistent dark UI while redirecting -->
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke-opacity="0.12"></circle>
+      <path d="M21 12a9 9 0 0 0-9-9" stroke-linecap="round"></path>
+    </svg>
+  </div>
+
+  <noscript class="visually-hidden">
+    <!-- fallback link if JS disabled -->
+    <a href="./meal-tracker/">Open EatLog</a>
+  </noscript>
+
+  <script>
+    (function () {
+      // target where the full app lives
+      var target = './meal-tracker/';
+      // If already inside target, do nothing (prevents redirect loops)
+      var p = location.pathname.replace(/\/+$/, '') + '/';
+      if (p.endsWith(target)) return;
+      // Small timeout ensures inline styles applied before navigation
+      setTimeout(function () {
+        // use replace to avoid creating history entry
+        location.replace(target);
+      }, 0);
+    })();
+  </script>
+</body>
 
 </html>
