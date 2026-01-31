@@ -4,6 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- ensure browser sees the same manifest & theme (prevents white splash) -->
+  <link rel="manifest" href="/self-control-trackers/meal-tracker/manifest.json" />
   <meta name="theme-color" content="#020617" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -54,8 +56,8 @@
 
   <script>
     (function () {
-      // target where the full app lives
-      var target = './meal-tracker/';
+      // target MUST match manifest.start_url exactly (use absolute path to be safe)
+      var target = '/self-control-trackers/meal-tracker/';
       // If already inside target, do nothing (prevents redirect loops)
       var p = location.pathname.replace(/\/+$/, '') + '/';
       if (p.endsWith(target)) return;
