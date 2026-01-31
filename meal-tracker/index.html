@@ -2,10 +2,13 @@
 <html lang="ru">
 
 <head>
-<style>
-  /* Critical: prevent white flash on app launch */
-  html, body { background: #020617; }
-</style>
+  <style>
+    /* Critical: prevent white flash on app launch */
+    html,
+    body {
+      background: #020617;
+    }
+  </style>
 
   <meta charset="UTF-8" />
   <meta name="google-site-verification" content="DIEjG1KJAKMRZcO0IhGHHjHVpjYuYUvos7rULW_0690" />
@@ -67,6 +70,7 @@
       padding: 16px 12px;
       text-align: left;
     }
+
     /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
     h1,
     h2,
@@ -501,14 +505,15 @@
     }
 
     .goal-row {
-      margin-bottom: 9px;
-      font-size: 13px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      /* уменьшенный шрифт для блока целей */
     }
 
     .goal-row span {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -522,6 +527,18 @@
       font-size: 13px;
       outline: none;
       transition: border-color 0.12s ease;
+    }
+
+    /* hide native spinner arrows so users type values manually */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* firefox */
+    input[type="number"] {
+      -moz-appearance: textfield;
     }
 
     input[type="number"]:focus {
@@ -684,7 +701,6 @@
         transform: rotate(360deg);
       }
     }
-
   </style>
 </head>
 
@@ -756,8 +772,7 @@
           <div class="period-controls">
             <button class="btn-outline period-btn" data-period="7" data-i18n="period.7">7 дней</button>
             <button class="btn-outline period-btn" data-period="14" data-i18n="period.14">14 дней</button>
-            <button class="btn-outline period-btn" data-period="21" data-i18n="period.21">21 день</button>
-            <button class="btn-outline period-btn active" data-period="all" data-i18n="period.all">All</button>
+            <button class="btn-outline period-btn active" data-period="21" data-i18n="period.21">21 день</button>
           </div>
           <div class="stats-grid">
             <div class="stat-box">
@@ -777,6 +792,10 @@
               <div class="stat-value" id="statPeriodAvgInterval">–</div>
             </div>
           </div>
+
+          <!-- пояснение про ретеншн и мотивация -->
+          <div class="subtle" style="margin-top:10px;" data-i18n="stats.retention"></div>
+
         </div>
 
         <div class="card">
@@ -817,35 +836,54 @@
 
           <div class="goal-row">
             <div class="subtle" data-i18n="goals.mealsLabel">Приёмов пищи в день</div>
-            <span>
-              <span data-i18n="range.from">от</span> <input type="number" id="goalMealsMin" min="0" step="1" />
-              <span data-i18n="range.to">до</span> <input type="number" id="goalMealsMax" min="0" step="1" />
-            </span>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <label style="font-size:12px;color:#9ca3af">от
+                <input type="number" id="goalMealsMin" min="0" step="1" data-i18n-placeholder="placeholder.mealsMin"
+                  inputmode="numeric" aria-label="Минимум приёмов пищи" style="margin-left:6px;width:86px">
+              </label>
+              <label style="font-size:12px;color:#9ca3af">до
+                <input type="number" id="goalMealsMax" min="0" step="1" data-i18n-placeholder="placeholder.mealsMax"
+                  inputmode="numeric" aria-label="Максимум приёмов пищи" style="margin-left:6px;width:86px">
+              </label>
+            </div>
           </div>
 
           <div class="goal-row">
             <div class="subtle" data-i18n="goals.snacksLabel">Из них перекусов в день (максимум)</div>
-            <span>
-              <span data-i18n="range.to">до</span> <input type="number" id="goalSnacksMax" min="0" step="1" />
-            </span>
+            <div>
+              <input type="number" id="goalSnacksMax" min="0" step="1" data-i18n-placeholder="placeholder.snacksMax"
+                inputmode="numeric" aria-label="Максимум перекусов в день" style="width:100px">
+            </div>
           </div>
 
           <div class="goal-row">
-            <div class="subtle" data-i18n="goals.sleepLabel">Интервал сна (часы, между последним приёмом пищи вчера и
-              первым сегодня)</div>
-            <span>
-              <span data-i18n="range.from">от</span> <input type="number" id="goalSleepMin" min="0" step="0.5" />
-              <span data-i18n="range.to">до</span> <input type="number" id="goalSleepMax" min="0" step="0.5" />
-            </span>
+            <div class="subtle" data-i18n="goals.sleepLabel">Интервал сна (часы)</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <label style="font-size:12px;color:#9ca3af">от
+                <input type="number" id="goalSleepMin" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMin"
+                  inputmode="numeric" aria-label="Минимальный интервал сна" style="margin-left:6px;width:86px">
+              </label>
+              <label style="font-size:12px;color:#9ca3af">до
+                <input type="number" id="goalSleepMax" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMax"
+                  inputmode="numeric" aria-label="Максимальный интервал сна" style="margin-left:6px;width:86px">
+              </label>
+            </div>
           </div>
 
           <div class="goal-row">
-            <div class="subtle" data-i18n="goals.dayIntervalLabel">Интервал между приёмами пищи (часы, в среднем
-              за день)</div>
-            <span>
-              <span data-i18n="range.from">от</span> <input type="number" id="goalDayIntMin" min="0" step="0.25" />
-              <span data-i18n="range.to">до</span> <input type="number" id="goalDayIntMax" min="0" step="0.25" />
-            </span>
+            <div class="subtle" data-i18n="goals.dayIntervalLabel">Интервал между приёмами (часы, среднее за день)</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <label style="font-size:12px;color:#9ca3af">от
+                <input type="number" id="goalDayIntMin" min="0" step="0.25"
+                  data-i18n-placeholder="placeholder.dayIntMin" inputmode="numeric"
+                  aria-label="Минимальный интервал между приёмами" style="margin-left:6px;width:86px">
+              </label>
+              <label style="font-size:12px;color:#9ca3af">до
+                <input type="number" id="goalDayIntMax" min="0" step="0.25"
+                  data-i18n-placeholder="placeholder.dayIntMax" inputmode="numeric"
+                  aria-label="Максимальный интервал между приёмами" style="margin-left:6px;width:86px">
+              </label>
+            </div>
           </div>
 
           <button id="saveGoalsBtn" class="btn-outline savebtn">
@@ -868,7 +906,6 @@
     <h2 id="detailTitle"></h2>
     <div id="detailContent"></div>
   </div>
-  </div>
 
 
   <script>
@@ -889,6 +926,7 @@
     const defaultLang = savedLang || detectedLang;
     const translations = {
       en: {
+        "stats.retention": "Data is kept for 21 days — that's enough to form a habit and reveal your eating rhythm.",
         "tab.today": "Today",
         "tab.stats": "Statistics",
         "tab.goals": "Goals",
@@ -921,8 +959,8 @@
         "period.all": "All",
         "goals.title": "Daily goals",
         "goals.desc": "Days that meet your goals will be highlighted in green in statistics.",
-        "goals.mealsLabel": "Meals per day",
-        "goals.snacksLabel": "Max snacks per day",
+        "goals.mealsLabel": "Meals",
+        "goals.snacksLabel": "Snacks (of total meals, max)",
         "goals.sleepLabel": "Sleep interval (hours)",
         "goals.dayIntervalLabel": "Eating interval (hours)",
         "range.from": "from",
@@ -946,9 +984,17 @@
         ,
         "edit.title": "Edit meal",
         "edit.save": "Save",
-        "edit.cancel": "Cancel"
+        "edit.cancel": "Cancel",
+        "placeholder.mealsMin": "e.g. 2",
+        "placeholder.mealsMax": "e.g. 4",
+        "placeholder.snacksMax": "e.g. 1",
+        "placeholder.sleepMin": "e.g. 6",
+        "placeholder.sleepMax": "e.g. 9",
+        "placeholder.dayIntMin": "e.g. 3",
+        "placeholder.dayIntMax": "e.g. 6"
       },
       ru: {
+        "stats.retention": "Данные сохраняются за 21 день — этого достаточно, чтобы сформировалась привычка и проявился ваш ритм питания.",
         "tab.today": "Сегодня",
         "tab.stats": "Статистика",
         "tab.goals": "Цели",
@@ -979,8 +1025,8 @@
         "period.all": "All",
         "goals.title": "Цели на день",
         "goals.desc": "Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.",
-        "goals.mealsLabel": "Приёмов пищи в день",
-        "goals.snacksLabel": "Из них перекусов в день (максимум)",
+        "goals.mealsLabel": "Приёмов пищи",
+        "goals.snacksLabel": "Из них перекусов (максимум)",
         "goals.sleepLabel": "Интервал сна (часы)",
         "goals.dayIntervalLabel": "Интервал между приёмами (часы)",
         "range.from": "от",
@@ -1004,7 +1050,14 @@
         ,
         "edit.title": "Редактировать приём пищи",
         "edit.save": "Сохранить",
-        "edit.cancel": "Отмена"
+        "edit.cancel": "Отмена",
+        "placeholder.mealsMin": "напр. 2",
+        "placeholder.mealsMax": "напр. 4",
+        "placeholder.snacksMax": "напр. 1",
+        "placeholder.sleepMin": "напр. 6",
+        "placeholder.sleepMax": "напр. 9",
+        "placeholder.dayIntMin": "напр. 3",
+        "placeholder.dayIntMax": "напр. 6"
       }
     };
 
@@ -1113,6 +1166,18 @@
 
     let meals = loadMeals();
     let goals = loadGoals();
+    // retention: keep only last RETENTION_DAYS days of data
+    const RETENTION_DAYS = 21;
+    function pruneOldMeals() {
+      const cutoff = Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000;
+      const filtered = meals.filter(m => m.ts >= cutoff);
+      if (filtered.length !== meals.length) {
+        meals = filtered;
+        saveMeals(meals);
+      }
+    }
+    // prune on load
+    pruneOldMeals();
 
     const mealNoteEl = document.getElementById('mealNote');
     const addMealBtn = document.getElementById('addMealBtn');
@@ -1156,7 +1221,8 @@
     const detailContent = document.getElementById('detailContent');
     let currentDetailDayKey = null;
 
-    let currentPeriod = 'all';
+    // default to 21 days (remove "All" option)
+    let currentPeriod = '21';
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
       const d2 = new Date(refDate);
@@ -1227,6 +1293,7 @@
 
       meals = meals.filter(m => m.id !== id);
       saveMeals(meals);
+      pruneOldMeals();
       renderMeals();
       renderStats();
       renderPeriodSummary();
@@ -1242,6 +1309,7 @@
       if (updated === null) return;
       entry.note = updated.trim();
       saveMeals(meals);
+      pruneOldMeals();
       renderMeals();
       renderHistory();
       renderPeriodSummary();
@@ -1279,6 +1347,7 @@
       entry.ts = newDate.getTime();
 
       saveMeals(meals);
+      pruneOldMeals();
       renderMeals();
       renderStats();
       renderHistory();
@@ -1291,6 +1360,7 @@
       if (!entry) return;
       entry.isSnack = !entry.isSnack;
       saveMeals(meals);
+      pruneOldMeals();
       renderMeals();
       renderStats();
       renderHistory();
@@ -1508,14 +1578,9 @@
 
     function getFilteredDailyStats() {
       const all = computeDailyStats();
-
-      // весь период
-      if (currentPeriod === 'all') return all;
-
       const days = parseInt(currentPeriod, 10);
-      if (!isFinite(days) || days <= 0) return all;
-
-      const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+      const useDays = (isFinite(days) && days > 0) ? days : RETENTION_DAYS;
+      const cutoff = Date.now() - useDays * 24 * 60 * 60 * 1000;
       return all.filter(d => d.ts >= cutoff);
     }
 
@@ -1739,31 +1804,31 @@
         prevTs = meal.ts;
 
         html += `
-            <div class="meal-row">
-              <div class="row-top">
-                <div>
-                  <span class="meal-time">${formatTimeHM(meal.ts)}</span>
-                </div>
-                <div class="actions">
-                  <button class="btn-ghost"
-                    title="${meal.isSnack
+              <div class="meal-row">
+                <div class="row-top">
+                  <div>
+                    <span class="meal-time">${formatTimeHM(meal.ts)}</span>
+                  </div>
+                  <div class="actions">
+                    <button class="btn-ghost"
+                      title="${meal.isSnack
             ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
             : 'Обычный приём пищи (нажми, чтобы отметить как перекус)'}"
-                    onclick="toggleSnack('${meal.id}')">
-                    ${meal.isSnack ? '🍪' : '🍽'}
-                  </button>
-                  <button class="btn-ghost" title="Изменить время"
-                    onclick="editMealTime('${meal.id}')">⏰</button>
-                  <button class="btn-ghost" title="Редактировать описание"
-                    onclick="editMealNote('${meal.id}')">✏️</button>
-                  <button class="btn-danger" title="Удалить приём"
-                    onclick="deleteMeal('${meal.id}')">🗑</button>
+                      onclick="toggleSnack('${meal.id}')">
+                      ${meal.isSnack ? '🍪' : '🍽'}
+                    </button>
+                    <button class="btn-ghost" title="Изменить время"
+                      onclick="editMealTime('${meal.id}')">⏰</button>
+                    <button class="btn-ghost" title="Редактировать описание"
+                      onclick="editMealNote('${meal.id}')">✏️</button>
+                    <button class="btn-danger" title="Удалить приём"
+                      onclick="deleteMeal('${meal.id}')">🗑</button>
+                  </div>
                 </div>
+                <div class="meal-note">${meal.note || t('no.description')}</div>
+                <div class="meal-interval">${intervalText}</div>
               </div>
-              <div class="meal-note">${meal.note || t('no.description')}</div>
-              <div class="meal-interval">${intervalText}</div>
-            </div>
-          `;
+            `;
       }
 
       detailContent.innerHTML = html;
@@ -1806,6 +1871,8 @@
 
       meals.push(newMeal);
       saveMeals(meals);
+      // prune after adding
+      pruneOldMeals();
 
       mealNoteEl.value = '';
 
@@ -1906,7 +1973,7 @@
 
     saveGoalsBtn.addEventListener('click', () => {
       function numOrNull(el) {
-        const v = el.value.trim();
+        const v = String(el.value || '').trim();
         if (!v) return null;
         const n = Number(v.replace(',', '.'));
         return isNaN(n) ? null : n;
@@ -1919,6 +1986,24 @@
       const maxSleepHours = numOrNull(goalSleepMaxEl);
       const minDayIntHours = numOrNull(goalDayIntMinEl);
       const maxDayIntHours = numOrNull(goalDayIntMaxEl);
+
+      // Basic validation: min <= max where both provided
+      if (minMeals != null && maxMeals != null && minMeals > maxMeals) {
+        alert('Минимум приёмов не может быть больше максимума.');
+        return;
+      }
+      if (minSleepHours != null && maxSleepHours != null && minSleepHours > maxSleepHours) {
+        alert('Минимальный интервал сна больше максимального.');
+        return;
+      }
+      if (minDayIntHours != null && maxDayIntHours != null && minDayIntHours > maxDayIntHours) {
+        alert('Минимальный интервал между приёмами больше максимального.');
+        return;
+      }
+      if (maxSnacks != null && maxMeals != null && maxSnacks > maxMeals) {
+        // snacks cannot exceed total meals logically
+        if (!confirm('Максимум перекусов больше максимума приёмов пищи. Продолжить?')) return;
+      }
 
       goals = {
         minMealsPerDay: minMeals != null ? minMeals : null,
