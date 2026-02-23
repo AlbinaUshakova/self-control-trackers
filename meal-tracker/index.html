@@ -701,6 +701,93 @@
         transform: rotate(360deg);
       }
     }
+
+    .prompt-backdrop[hidden] {
+      display: none !important;
+    }
+
+    .prompt-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.7);
+      z-index: 320;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .prompt-dialog {
+      width: 100%;
+      max-width: 420px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+    }
+
+    .prompt-label {
+      display: block;
+      color: #f3f4f6;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .prompt-input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #f3f4f6;
+      padding: 10px 12px;
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: 0.03em;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+      text-align: left;
+    }
+
+    .prompt-input:focus {
+      border-color: #60a5fa;
+    }
+
+    .prompt-textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #f3f4f6;
+      padding: 10px 12px;
+      font-size: 16px;
+      line-height: 1.35;
+      min-height: 96px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .prompt-textarea:focus {
+      border-color: #60a5fa;
+    }
+
+    .prompt-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .prompt-btn {
+      background: transparent;
+      color: #60a5fa;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
   </style>
 </head>
 
@@ -907,6 +994,42 @@
     <div id="detailContent"></div>
   </div>
 
+  <div id="timePromptBackdrop" class="prompt-backdrop" hidden>
+    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="timePromptLabel">
+      <label id="timePromptLabel" class="prompt-label" for="timePromptInput" data-i18n="prompt.newTime">
+        Новое время (формат ЧЧ:ММ, 24 часа):
+      </label>
+      <input id="timePromptInput" class="prompt-input" type="text" inputmode="numeric" autocomplete="off" />
+      <div class="prompt-actions">
+        <button id="timePromptCancel" type="button" class="prompt-btn" data-i18n="prompt.cancel">Отмена</button>
+        <button id="timePromptOk" type="button" class="prompt-btn" data-i18n="prompt.ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notePromptBackdrop" class="prompt-backdrop" hidden>
+    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="notePromptLabel">
+      <label id="notePromptLabel" class="prompt-label" for="notePromptInput" data-i18n="prompt.editNote">
+        Изменить описание приёма пищи:
+      </label>
+      <textarea id="notePromptInput" class="prompt-textarea" autocomplete="off"></textarea>
+      <div class="prompt-actions">
+        <button id="notePromptCancel" type="button" class="prompt-btn" data-i18n="prompt.cancel">Отмена</button>
+        <button id="notePromptOk" type="button" class="prompt-btn" data-i18n="prompt.ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmPromptBackdrop" class="prompt-backdrop" hidden>
+    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmPromptMessage">
+      <div id="confirmPromptMessage" class="prompt-label"></div>
+      <div class="prompt-actions">
+        <button id="confirmPromptCancel" type="button" class="prompt-btn" data-i18n="prompt.cancel">Отмена</button>
+        <button id="confirmPromptOk" type="button" class="prompt-btn" data-i18n="confirm.ok">Удалить</button>
+      </div>
+    </div>
+  </div>
+
 
   <script>
     // Service Worker (offline) — works only over https or http://localhost (not file://)
@@ -973,6 +1096,9 @@
         "confirm.delete": "Delete meal {txt}?",
         "prompt.editNote": "Edit meal note:",
         "prompt.newTime": "New time (format HH:MM, 24-hour):",
+        "prompt.cancel": "Cancel",
+        "prompt.ok": "OK",
+        "confirm.ok": "Delete",
         "alert.invalidTime": "Invalid format. Enter, for example: 08:30 or 22:05",
         "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59.",
         "export.noData": "No meals yet to export.",
@@ -1039,6 +1165,9 @@
         "confirm.delete": "Удалить приём пищи {txt}?",
         "prompt.editNote": "Изменить описание приёма пищи:",
         "prompt.newTime": "Новое время (формат ЧЧ:ММ, 24 часа):",
+        "prompt.cancel": "Отмена",
+        "prompt.ok": "OK",
+        "confirm.ok": "Удалить",
         "alert.invalidTime": "Неверный формат. Введи, например: 08:30 или 22:05",
         "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59.",
         "export.noData": "Пока нет ни одного приёма пищи для выгрузки.",
@@ -1219,6 +1348,18 @@
     const btnDetailBack = document.getElementById('btnDetailBack');
     const detailTitle = document.getElementById('detailTitle');
     const detailContent = document.getElementById('detailContent');
+    const timePromptBackdrop = document.getElementById('timePromptBackdrop');
+    const timePromptInput = document.getElementById('timePromptInput');
+    const timePromptCancel = document.getElementById('timePromptCancel');
+    const timePromptOk = document.getElementById('timePromptOk');
+    const notePromptBackdrop = document.getElementById('notePromptBackdrop');
+    const notePromptInput = document.getElementById('notePromptInput');
+    const notePromptCancel = document.getElementById('notePromptCancel');
+    const notePromptOk = document.getElementById('notePromptOk');
+    const confirmPromptBackdrop = document.getElementById('confirmPromptBackdrop');
+    const confirmPromptMessage = document.getElementById('confirmPromptMessage');
+    const confirmPromptCancel = document.getElementById('confirmPromptCancel');
+    const confirmPromptOk = document.getElementById('confirmPromptOk');
     let currentDetailDayKey = null;
 
     // default to 21 days (remove "All" option)
@@ -1286,10 +1427,10 @@
         .sort((a, b) => a.ts - b.ts);
     }
 
-    function deleteMeal(id) {
+    async function deleteMeal(id) {
       const entry = meals.find(m => m.id === id);
       const preview = entry ? ('"' + (entry.note || '').slice(0, 30) + (entry.note && entry.note.length > 30 ? '…' : '') + '"') : '';
-      if (!confirm(t('confirm.delete', { txt: preview }))) return;
+      if (!await openConfirmPrompt(t('confirm.delete', { txt: preview }))) return;
 
       meals = meals.filter(m => m.id !== id);
       saveMeals(meals);
@@ -1301,11 +1442,11 @@
       refreshDetailIfOpen();
     }
 
-    function editMealNote(id) {
+    async function editMealNote(id) {
       const entry = meals.find(m => m.id === id);
       if (!entry) return;
       const currentNote = entry.note || '';
-      const updated = prompt(t('prompt.editNote'), currentNote);
+      const updated = await openNotePrompt(currentNote);
       if (updated === null) return;
       entry.note = updated.trim();
       saveMeals(meals);
@@ -1316,7 +1457,153 @@
       refreshDetailIfOpen();
     }
 
-    function editMealTime(id) {
+    function openTimePrompt(initialValue) {
+      return new Promise(resolve => {
+        const prevFocused = document.activeElement;
+        timePromptInput.value = initialValue || '';
+        timePromptBackdrop.hidden = false;
+
+        const cleanup = () => {
+          timePromptCancel.removeEventListener('click', onCancel);
+          timePromptOk.removeEventListener('click', onOk);
+          timePromptBackdrop.removeEventListener('click', onBackdropClick);
+          document.removeEventListener('keydown', onKeyDown);
+        };
+
+        const done = (result) => {
+          cleanup();
+          timePromptBackdrop.hidden = true;
+          if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
+          resolve(result);
+        };
+
+        const onCancel = () => done(null);
+        const onOk = () => done(timePromptInput.value);
+        const onBackdropClick = (e) => {
+          if (e.target === timePromptBackdrop) done(null);
+        };
+        const onKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            done(null);
+            return;
+          }
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            done(timePromptInput.value);
+          }
+        };
+
+        timePromptCancel.addEventListener('click', onCancel);
+        timePromptOk.addEventListener('click', onOk);
+        timePromptBackdrop.addEventListener('click', onBackdropClick);
+        document.addEventListener('keydown', onKeyDown);
+
+        setTimeout(() => {
+          timePromptInput.focus();
+          timePromptInput.select();
+        }, 0);
+      });
+    }
+
+    function openNotePrompt(initialValue) {
+      return new Promise(resolve => {
+        const prevFocused = document.activeElement;
+        notePromptInput.value = initialValue || '';
+        notePromptBackdrop.hidden = false;
+
+        const cleanup = () => {
+          notePromptCancel.removeEventListener('click', onCancel);
+          notePromptOk.removeEventListener('click', onOk);
+          notePromptBackdrop.removeEventListener('click', onBackdropClick);
+          document.removeEventListener('keydown', onKeyDown);
+        };
+
+        const done = (result) => {
+          cleanup();
+          notePromptBackdrop.hidden = true;
+          if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
+          resolve(result);
+        };
+
+        const onCancel = () => done(null);
+        const onOk = () => done(notePromptInput.value);
+        const onBackdropClick = (e) => {
+          if (e.target === notePromptBackdrop) done(null);
+        };
+        const onKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            done(null);
+            return;
+          }
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            done(notePromptInput.value);
+          }
+        };
+
+        notePromptCancel.addEventListener('click', onCancel);
+        notePromptOk.addEventListener('click', onOk);
+        notePromptBackdrop.addEventListener('click', onBackdropClick);
+        document.addEventListener('keydown', onKeyDown);
+
+        setTimeout(() => {
+          notePromptInput.focus();
+          notePromptInput.setSelectionRange(notePromptInput.value.length, notePromptInput.value.length);
+        }, 0);
+      });
+    }
+
+    function openConfirmPrompt(message) {
+      return new Promise(resolve => {
+        const prevFocused = document.activeElement;
+        confirmPromptMessage.textContent = message || '';
+        confirmPromptBackdrop.hidden = false;
+
+        const cleanup = () => {
+          confirmPromptCancel.removeEventListener('click', onCancel);
+          confirmPromptOk.removeEventListener('click', onOk);
+          confirmPromptBackdrop.removeEventListener('click', onBackdropClick);
+          document.removeEventListener('keydown', onKeyDown);
+        };
+
+        const done = (result) => {
+          cleanup();
+          confirmPromptBackdrop.hidden = true;
+          if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
+          resolve(result);
+        };
+
+        const onCancel = () => done(false);
+        const onOk = () => done(true);
+        const onBackdropClick = (e) => {
+          if (e.target === confirmPromptBackdrop) done(false);
+        };
+        const onKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            done(false);
+            return;
+          }
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            done(true);
+          }
+        };
+
+        confirmPromptCancel.addEventListener('click', onCancel);
+        confirmPromptOk.addEventListener('click', onOk);
+        confirmPromptBackdrop.addEventListener('click', onBackdropClick);
+        document.addEventListener('keydown', onKeyDown);
+
+        setTimeout(() => {
+          confirmPromptOk.focus();
+        }, 0);
+      });
+    }
+
+    async function editMealTime(id) {
       const entry = meals.find(m => m.id === id);
       if (!entry) return;
       const d = new Date(entry.ts);
@@ -1324,7 +1611,7 @@
       const currentMM = String(d.getMinutes()).padStart(2, '0');
       const current = currentHH + ':' + currentMM;
 
-      const input = prompt(t('prompt.newTime'), current);
+      const input = await openTimePrompt(current);
       if (input === null) return;
 
       const trimmed = input.trim();
