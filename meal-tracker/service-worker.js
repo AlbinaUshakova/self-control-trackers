@@ -1,7 +1,7 @@
 // EatLog — simple offline-first Service Worker
 // Note: Service Workers require HTTPS (or http://localhost)
 
-const CACHE_VERSION = 'eatlog-v2';
+const CACHE_VERSION = 'eatlog-v3';
 const CORE_ASSETS = [
     './',
   './index.html',
@@ -63,6 +63,19 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_VERSION).then((cache) => cache.put(req, copy));
         return res;
       });
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if ('focus' in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow('./');
+      return undefined;
     })
   );
 });

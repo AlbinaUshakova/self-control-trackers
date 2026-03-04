@@ -158,8 +158,8 @@
     }
 
     .tab-btn.active {
-      background: #e5e7eb;
-      color: #020617;
+      background: #22c55e;
+      color: #ffffff;
       transform: translateY(-1px);
     }
 
@@ -504,17 +504,266 @@
       border-color: transparent;
     }
 
-    .goal-row {
+    .goals-card h2 {
+      font-size: 24px;
+      font-weight: 600;
       margin-bottom: 8px;
-      font-size: 12px;
-      /* уменьшенный шрифт для блока целей */
     }
 
-    .goal-row span {
-      display: inline-flex;
+    .goals-intro {
+      font-size: 14px;
+      opacity: .7;
+      margin-bottom: 16px;
+    }
+
+    .goal-section {
+      margin-top: 32px;
+    }
+
+    .goal-section:first-of-type {
+      margin-top: 0;
+    }
+
+    .goal-section-title {
+      font-size: 12px;
+      color: #93c5fd;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .goal-item {
+      margin-bottom: 16px;
+    }
+
+    .goal-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .goal-label {
+      color: #d1d5db;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .goal-hint {
+      color: #9ca3af;
+      font-size: 12px;
+      margin: 6px 0 0;
+    }
+
+    .range-row {
+      display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .range-dash {
+      color: #6b7280;
+      font-size: 18px;
+      line-height: 1;
+      margin-top: -2px;
+    }
+
+    .unit-label {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    .single-input {
+      width: 100px !important;
+    }
+
+    .goal-switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .switch-slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      transition: background .2s ease, border-color .2s ease;
+      cursor: pointer;
+    }
+
+    .switch-slider::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      transition: transform .2s ease;
+    }
+
+    .switch input:checked+.switch-slider {
+      background: #22c55e;
+      border-color: #22c55e;
+    }
+
+    .switch input:checked+.switch-slider::before {
+      transform: translateX(20px);
+      background: #ffffff;
+    }
+
+    .goal-preview {
+      margin-top: 0;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .goal-preview-title {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .goal-preview-line {
+      font-size: 14px;
+      color: #e5e7eb;
+      margin: 4px 0;
+    }
+
+    #view-goals .card {
+      margin-bottom: 8px;
+    }
+
+    #view-goals .savebtn {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    @media (max-height: 820px) {
+      .goal-section {
+        margin-top: 20px;
+      }
+
+      .goal-section-title {
+        margin-bottom: 12px;
+      }
+
+      .goal-item {
+        margin-bottom: 12px;
+      }
+
+      .goal-hint {
+        display: none;
+      }
+
+      .reminder-mechanics-hint {
+        display: block;
+      }
+
+      .goal-preview {
+        display: none;
+      }
+
+    }
+
+    @media (max-height: 920px) {
+      #view-goals .card {
+        padding: 10px 10px 8px;
+        margin-bottom: 6px;
+      }
+
+      .goals-card h2 {
+        font-size: 21px;
+        margin-bottom: 4px;
+      }
+
+      .goal-section-title,
+      .goal-hint,
+      .goal-preview {
+        display: none;
+      }
+
+      .reminder-mechanics-hint {
+        display: block;
+        font-size: 11px;
+      }
+
+      .goal-section {
+        margin-top: 10px !important;
+      }
+
+      .goal-item {
+        margin-bottom: 10px;
+      }
+
+      .goal-label {
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+
+      .range-row {
+        gap: 6px;
+      }
+
+      input[type="number"] {
+        width: 64px;
+        font-size: 12px;
+        padding: 3px 6px;
+      }
+
+      .single-input {
+        width: 84px !important;
+      }
+
+      .unit-label {
+        font-size: 12px;
+      }
+
+      .switch {
+        width: 44px;
+        height: 26px;
+      }
+
+      .switch-slider::before {
+        width: 18px;
+        height: 18px;
+      }
+
+      .switch input:checked+.switch-slider::before {
+        transform: translateX(18px);
+      }
+
+      #reminderStatus {
+        margin-top: 4px !important;
+        font-size: 11px;
+      }
+
+      #view-goals .savebtn {
+        margin-top: 6px;
+        min-height: 34px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+      }
     }
 
     input[type="number"] {
@@ -551,8 +800,12 @@
 
     .app-footer {
       margin-top: 4px;
-      font-size: 10px;
+      font-size: 12px;
       color: #6b7280;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      gap: 2px;
     }
 
     /* FULLSCREEN DETAIL */
@@ -915,65 +1168,94 @@
 
       <!-- ЦЕЛИ -->
       <div id="view-goals" style="display: none;">
-        <div class="card">
+        <div class="card card-compact goals-card">
           <h2 data-i18n="goals.title">Цели на день</h2>
-          <p class="subtle">
+          <p class="subtle goals-intro">
             <span data-i18n="goals.desc">Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.</span>
           </p>
+        </div>
 
-          <div class="goal-row">
-            <div class="subtle" data-i18n="goals.mealsLabel">Приёмов пищи в день</div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <label style="font-size:12px;color:#9ca3af">от
+        <div class="card card-compact">
+          <section class="goal-section" style="margin-top:0;">
+            <h3 class="goal-section-title" data-i18n="goals.sectionFood">Питание</h3>
+
+            <div class="goal-item">
+              <div class="goal-label" data-i18n="goals.mealsLabel">Приёмов пищи</div>
+              <div class="range-row">
                 <input type="number" id="goalMealsMin" min="0" step="1" data-i18n-placeholder="placeholder.mealsMin"
-                  inputmode="numeric" aria-label="Минимум приёмов пищи" style="margin-left:6px;width:86px">
-              </label>
-              <label style="font-size:12px;color:#9ca3af">до
+                  inputmode="numeric" aria-label="Минимум приёмов пищи">
+                <span class="range-dash">—</span>
                 <input type="number" id="goalMealsMax" min="0" step="1" data-i18n-placeholder="placeholder.mealsMax"
-                  inputmode="numeric" aria-label="Максимум приёмов пищи" style="margin-left:6px;width:86px">
-              </label>
+                  inputmode="numeric" aria-label="Максимум приёмов пищи">
+              </div>
+              <div class="goal-hint" data-i18n="goals.mealsHint">Сколько раз вы планируете есть в день</div>
             </div>
-          </div>
 
-          <div class="goal-row">
-            <div class="subtle" data-i18n="goals.snacksLabel">Из них перекусов в день (максимум)</div>
-            <div>
+            <div class="goal-item">
+              <div class="goal-label" data-i18n="goals.snacksLabel">Из них перекусов</div>
               <input type="number" id="goalSnacksMax" min="0" step="1" data-i18n-placeholder="placeholder.snacksMax"
-                inputmode="numeric" aria-label="Максимум перекусов в день" style="width:100px">
+                inputmode="numeric" aria-label="Максимум перекусов в день" class="single-input">
             </div>
-          </div>
 
-          <div class="goal-row">
-            <div class="subtle" data-i18n="goals.sleepLabel">Интервал сна (часы)</div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <label style="font-size:12px;color:#9ca3af">от
-                <input type="number" id="goalSleepMin" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMin"
-                  inputmode="numeric" aria-label="Минимальный интервал сна" style="margin-left:6px;width:86px">
-              </label>
-              <label style="font-size:12px;color:#9ca3af">до
-                <input type="number" id="goalSleepMax" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMax"
-                  inputmode="numeric" aria-label="Максимальный интервал сна" style="margin-left:6px;width:86px">
-              </label>
-            </div>
-          </div>
-
-          <div class="goal-row">
-            <div class="subtle" data-i18n="goals.dayIntervalLabel">Интервал между приёмами (часы, среднее за день)</div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <label style="font-size:12px;color:#9ca3af">от
+            <div class="goal-item">
+              <div class="goal-label" data-i18n="goals.dayIntervalLabel">Интервал между приёмами пищи</div>
+              <div class="range-row">
                 <input type="number" id="goalDayIntMin" min="0" step="0.25"
                   data-i18n-placeholder="placeholder.dayIntMin" inputmode="numeric"
-                  aria-label="Минимальный интервал между приёмами" style="margin-left:6px;width:86px">
-              </label>
-              <label style="font-size:12px;color:#9ca3af">до
+                  aria-label="Минимальный интервал между приёмами">
+                <span class="range-dash">—</span>
                 <input type="number" id="goalDayIntMax" min="0" step="0.25"
                   data-i18n-placeholder="placeholder.dayIntMax" inputmode="numeric"
-                  aria-label="Максимальный интервал между приёмами" style="margin-left:6px;width:86px">
+                  aria-label="Максимальный интервал между приёмами">
+                <span class="unit-label" data-i18n="unit.hours">часов</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="card card-compact">
+          <section class="goal-section" style="margin-top:0;">
+            <h3 class="goal-section-title" data-i18n="goals.sectionSleep">Сон</h3>
+            <div class="goal-item">
+              <div class="goal-label" data-i18n="goals.sleepLabel">Ночной интервал без еды</div>
+              <div class="range-row">
+                <input type="number" id="goalSleepMin" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMin"
+                  inputmode="numeric" aria-label="Минимальный интервал сна">
+                <span class="range-dash">—</span>
+                <input type="number" id="goalSleepMax" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMax"
+                  inputmode="numeric" aria-label="Максимальный интервал сна">
+                <span class="unit-label" data-i18n="unit.hours">часов</span>
+              </div>
+              <div class="goal-hint" data-i18n="goals.sleepHint">Помогает улучшить метаболизм</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="card card-compact" id="remindersCard">
+          <section class="goal-section" style="margin-top:0;">
+            <h3 class="goal-section-title" data-i18n="goals.sectionReminders">Напоминания</h3>
+            <div class="goal-item goal-switch-row">
+              <div class="goal-label" style="margin:0;" data-i18n="goals.reminderLabel">Напоминания о приёме пищи</div>
+              <label class="switch" for="reminderToggleInput">
+                <input id="reminderToggleInput" type="checkbox" />
+                <span class="switch-slider" aria-hidden="true"></span>
               </label>
             </div>
-          </div>
+            <div class="goal-hint reminder-mechanics-hint" data-i18n="goals.reminderHint">Время уведомления считается от последнего приёма пищи по цели интервала между приёмами.</div>
+            <div class="goal-hint" id="reminderToggleText"></div>
+            <div id="reminderStatus" class="subtle" style="margin: 8px 0 0;"></div>
+          </section>
+        </div>
 
-          <button id="saveGoalsBtn" class="btn-outline savebtn">
+        <div class="card card-compact">
+          <section class="goal-preview" aria-live="polite">
+            <div class="goal-preview-title" data-i18n="goals.previewTitle">Сегодня:</div>
+            <div class="goal-preview-line" id="goalPreviewMeals"></div>
+            <div class="goal-preview-line" id="goalPreviewInterval"></div>
+            <div class="goal-preview-line" id="goalPreviewSleep"></div>
+          </section>
+
+          <button id="saveGoalsBtn" class="btn-primary savebtn">
             <span class="savebtn__label" data-i18n="goals.save" data-default-key="goals.save">Сохранить цели</span>
             <span class="savebtn__spinner" aria-hidden="true"></span>
             <span class="savebtn__check" aria-hidden="true">✓</span>
@@ -982,7 +1264,10 @@
       </div>
     </div>
 
-    <footer class="app-footer" data-i18n="footer">EatLog · маленький шаг к более осознанному питанию</footer>
+    <footer class="app-footer">
+      <span data-i18n="footer.line1">EatLog</span>
+      <span data-i18n="footer.line2">Маленький шаг к осознанному питанию</span>
+    </footer>
   </div>
 
   <!-- FULLSCREEN ДЕТАЛИЗАЦИЯ ДНЯ -->
@@ -1049,7 +1334,7 @@
     const defaultLang = savedLang || detectedLang;
     const translations = {
       en: {
-        "stats.retention": "We keep data for 21 days — enough time for a habit to form and your eating rhythm to emerge.",
+        "stats.retention": "We keep data for 21 days.",
         "tab.today": "Today",
         "tab.stats": "Statistics",
         "tab.goals": "Goals",
@@ -1082,15 +1367,41 @@
         "period.all": "All",
         "goals.title": "Daily goals",
         "goals.desc": "Days that meet your goals will be highlighted in green in statistics.",
-        "goals.mealsLabel": "Meals",
-        "goals.snacksLabel": "Snacks (of total meals, max)",
-        "goals.sleepLabel": "Sleep interval (hours)",
-        "goals.dayIntervalLabel": "Eating interval (hours)",
+        "goals.sectionFood": "Nutrition",
+        "goals.sectionSleep": "Sleep",
+        "goals.sectionReminders": "Reminders",
+        "goals.mealsLabel": "Meals per day",
+        "goals.mealsHint": "How many times you plan to eat during the day",
+        "goals.snacksLabel": "Of these, snacks",
+        "goals.sleepLabel": "Night fasting interval",
+        "goals.sleepHint": "Can help improve metabolic health",
+        "goals.dayIntervalLabel": "Interval between meals",
+        "goals.reminderLabel": "Meal reminders",
+        "goals.reminderHint": "Reminder time is calculated from your last meal using the meal-interval goal. If both min and max are set, the average is used.",
+        "goals.previewTitle": "Today:",
         "range.from": "from",
         "range.to": "to",
+        "unit.hours": "hours",
         "goals.save": "Save goals",
         "goals.saved": "Saved",
-        "footer": "EatLog · small step towards mindful eating",
+        "reminder.toggleOn": "On",
+        "reminder.toggleOff": "Off",
+        "reminder.status.off": "Reminders are off.",
+        "reminder.status.noGoal": "Set a meal interval goal first.",
+        "reminder.status.noMeals": "Add a meal so EatLog can schedule the next reminder.",
+        "reminder.status.denied": "Notification permission is blocked in browser settings.",
+        "reminder.status.needPermission": "Allow notifications to schedule reminders.",
+        "reminder.status.unsupported": "Scheduled notifications are not supported on this device/browser yet.",
+        "reminder.status.scheduledAt": "Next reminder at {time}.",
+        "reminder.status.scheduledAtOpen": "Next reminder at {time} (works while app is open).",
+        "reminder.status.error": "Could not schedule reminder.",
+        "reminder.title": "EatLog reminder",
+        "reminder.body": "Time for your next meal by goal schedule.",
+        "goal.preview.meals": "🍽 {from}–{to} meals",
+        "goal.preview.interval": "⏱ {from}–{to} hours between meals",
+        "goal.preview.sleep": "🌙 {from}–{to} hours without food",
+        "footer.line1": "EatLog",
+        "footer.line2": "Small step to mindful eating",
         "detail.back": "← Back",
         "detail.noEntries": "No entries for this day yet.",
         "confirm.delete": "Delete meal {txt}?",
@@ -1120,7 +1431,7 @@
         "placeholder.dayIntMax": "e.g. 6"
       },
       ru: {
-        "stats.retention": "Мы храним данные за 21 день — этого достаточно, чтобы сформировалась привычка и проявился ваш ритм питания.",
+        "stats.retention": "Мы храним данные за 21 день.",
         "tab.today": "Сегодня",
         "tab.stats": "Статистика",
         "tab.goals": "Цели",
@@ -1151,15 +1462,41 @@
         "period.all": "All",
         "goals.title": "Цели на день",
         "goals.desc": "Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.",
+        "goals.sectionFood": "Питание",
+        "goals.sectionSleep": "Сон",
+        "goals.sectionReminders": "Напоминания",
         "goals.mealsLabel": "Приёмов пищи",
-        "goals.snacksLabel": "Из них перекусов (максимум)",
-        "goals.sleepLabel": "Интервал сна (часы)",
-        "goals.dayIntervalLabel": "Интервал между приёмами (часы)",
+        "goals.mealsHint": "Сколько раз вы планируете есть в день",
+        "goals.snacksLabel": "Из них перекусов",
+        "goals.sleepLabel": "Ночной интервал без еды",
+        "goals.sleepHint": "Помогает улучшить метаболизм",
+        "goals.dayIntervalLabel": "Интервал между приёмами пищи",
+        "goals.reminderLabel": "Напоминания о приёме пищи",
+        "goals.reminderHint": "Уведомление рассчитывается от времени последнего приёма пищи по цели интервала между приёмами. Если заданы «от» и «до», берётся среднее значение.",
+        "goals.previewTitle": "Сегодня:",
         "range.from": "от",
         "range.to": "до",
+        "unit.hours": "часов",
         "goals.save": "Сохранить цели",
         "goals.saved": "Сохранено",
-        "footer": "EatLog · маленький шаг к более осознанному питанию",
+        "reminder.toggleOn": "Вкл",
+        "reminder.toggleOff": "Выкл",
+        "reminder.status.off": "Напоминания выключены.",
+        "reminder.status.noGoal": "Сначала задайте цель по интервалу между приёмами.",
+        "reminder.status.noMeals": "Добавьте приём пищи, чтобы запланировать следующий.",
+        "reminder.status.denied": "Разрешение на уведомления заблокировано в настройках браузера.",
+        "reminder.status.needPermission": "Разрешите уведомления, чтобы планировать напоминания.",
+        "reminder.status.unsupported": "Запланированные уведомления пока не поддерживаются на этом устройстве/в браузере.",
+        "reminder.status.scheduledAt": "Следующее напоминание в {time}.",
+        "reminder.status.scheduledAtOpen": "Следующее напоминание в {time} (работает, пока приложение открыто).",
+        "reminder.status.error": "Не удалось запланировать напоминание.",
+        "reminder.title": "Напоминание EatLog",
+        "reminder.body": "Время начать следующий приём пищи по вашей цели.",
+        "goal.preview.meals": "🍽 {from}–{to} приёма пищи",
+        "goal.preview.interval": "⏱ {from}–{to} часов между приёмами",
+        "goal.preview.sleep": "🌙 {from}–{to} часов без еды",
+        "footer.line1": "EatLog",
+        "footer.line2": "Маленький шаг к осознанному питанию",
         "detail.back": "← Назад",
         "detail.noEntries": "Для этого дня пока нет записей.",
         "confirm.delete": "Удалить приём пищи {txt}?",
@@ -1226,6 +1563,9 @@
       if (typeof renderStats === 'function') renderStats();
       if (typeof renderPeriodSummary === 'function') renderPeriodSummary();
       if (typeof renderHistory === 'function') renderHistory();
+      if (typeof updateReminderToggleButton === 'function') updateReminderToggleButton();
+      if (typeof renderGoalsPreview === 'function') renderGoalsPreview();
+      if (typeof scheduleNextMealReminder === 'function') scheduleNextMealReminder({ interactive: false });
       syncLangToggleLabel();
     }
 
@@ -1259,6 +1599,10 @@
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
+    const STORAGE_KEY_REMINDER_ENABLED = 'meal_tracker_reminder_enabled_v1';
+    const USER_AGENT = navigator.userAgent || '';
+    const IS_ANDROID = /Android/i.test(USER_AGENT);
+    const REMINDER_FEATURE_ENABLED = IS_ANDROID;
 
     function loadMeals() {
       try {
@@ -1293,8 +1637,22 @@
       localStorage.setItem(STORAGE_KEY_GOALS, JSON.stringify(goals));
     }
 
+    function loadReminderEnabled() {
+      try {
+        return localStorage.getItem(STORAGE_KEY_REMINDER_ENABLED) === '1';
+      } catch (e) {
+        console.error('Failed to read reminder setting', e);
+        return false;
+      }
+    }
+
+    function saveReminderEnabled(enabled) {
+      localStorage.setItem(STORAGE_KEY_REMINDER_ENABLED, enabled ? '1' : '0');
+    }
+
     let meals = loadMeals();
     let goals = loadGoals();
+    let reminderEnabled = loadReminderEnabled();
     // retention: keep only last RETENTION_DAYS days of data
     const RETENTION_DAYS = 21;
     function pruneOldMeals() {
@@ -1341,6 +1699,13 @@
     const goalSleepMaxEl = document.getElementById('goalSleepMax');
     const goalDayIntMinEl = document.getElementById('goalDayIntMin');
     const goalDayIntMaxEl = document.getElementById('goalDayIntMax');
+    const remindersCardEl = document.getElementById('remindersCard');
+    const reminderToggleInput = document.getElementById('reminderToggleInput');
+    const reminderToggleText = document.getElementById('reminderToggleText');
+    const reminderStatusEl = document.getElementById('reminderStatus');
+    const goalPreviewMealsEl = document.getElementById('goalPreviewMeals');
+    const goalPreviewIntervalEl = document.getElementById('goalPreviewInterval');
+    const goalPreviewSleepEl = document.getElementById('goalPreviewSleep');
     const saveGoalsBtn = document.getElementById('saveGoalsBtn');
     const goalsStatusEl = document.getElementById('goalsStatus');
 
@@ -1420,6 +1785,164 @@
       return [...meals].sort((a, b) => a.ts - b.ts);
     }
 
+    function formatReminderTime(ts) {
+      const lang = window._eatlogLang === 'ru' ? 'ru-RU' : undefined;
+      return new Date(ts).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function getGoalReminderIntervalMinutes() {
+      const min = goals.minDayIntervalMinutes;
+      const max = goals.maxDayIntervalMinutes;
+      if (min != null && max != null) return Math.round((min + max) / 2);
+      if (min != null) return min;
+      if (max != null) return max;
+      return null;
+    }
+
+    function updateReminderToggleButton() {
+      if (!REMINDER_FEATURE_ENABLED) return;
+      if (reminderToggleInput) reminderToggleInput.checked = !!reminderEnabled;
+      if (reminderToggleText) reminderToggleText.textContent = reminderEnabled ? t('reminder.toggleOn') : t('reminder.toggleOff');
+    }
+
+    function renderGoalsPreview() {
+      if (goalPreviewMealsEl) {
+        goalPreviewMealsEl.textContent = t('goal.preview.meals', {
+          from: goals.minMealsPerDay != null ? goals.minMealsPerDay : '…',
+          to: goals.maxMealsPerDay != null ? goals.maxMealsPerDay : '…'
+        });
+      }
+      if (goalPreviewIntervalEl) {
+        goalPreviewIntervalEl.textContent = t('goal.preview.interval', {
+          from: goals.minDayIntervalMinutes != null ? (goals.minDayIntervalMinutes / 60) : '…',
+          to: goals.maxDayIntervalMinutes != null ? (goals.maxDayIntervalMinutes / 60) : '…'
+        });
+      }
+      if (goalPreviewSleepEl) {
+        goalPreviewSleepEl.textContent = t('goal.preview.sleep', {
+          from: goals.minSleepHours != null ? goals.minSleepHours : '…',
+          to: goals.maxSleepHours != null ? goals.maxSleepHours : '…'
+        });
+      }
+    }
+
+    function setReminderStatus(text) {
+      if (!reminderStatusEl) return;
+      reminderStatusEl.textContent = text || '';
+    }
+
+    function canScheduleBySystem() {
+      return 'TimestampTrigger' in window;
+    }
+
+    async function clearScheduledReminder(registration) {
+      if (!registration || typeof registration.getNotifications !== 'function') return;
+      const pending = await registration.getNotifications({ tag: 'eatlog-next-meal-reminder' });
+      pending.forEach((n) => n.close());
+    }
+
+    function showReminderWithPageTimeout(targetTs) {
+      if (window._eatlogReminderTimeoutId) {
+        clearTimeout(window._eatlogReminderTimeoutId);
+      }
+      const delay = Math.max(0, targetTs - Date.now());
+      window._eatlogReminderTimeoutId = setTimeout(() => {
+        if (Notification.permission === 'granted') {
+          new Notification(t('reminder.title'), {
+            body: t('reminder.body'),
+            icon: './icons/icon-192.png',
+            tag: 'eatlog-next-meal-reminder'
+          });
+        }
+      }, delay);
+    }
+
+    async function scheduleNextMealReminder(options) {
+      if (!REMINDER_FEATURE_ENABLED) return;
+      const interactive = options && options.interactive;
+      updateReminderToggleButton();
+
+      if (!reminderEnabled) {
+        if (window._eatlogReminderTimeoutId) {
+          clearTimeout(window._eatlogReminderTimeoutId);
+          window._eatlogReminderTimeoutId = null;
+        }
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready
+            .then((registration) => clearScheduledReminder(registration))
+            .catch(() => { });
+        }
+        setReminderStatus(t('reminder.status.off'));
+        return;
+      }
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+        setReminderStatus(t('reminder.status.unsupported'));
+        return;
+      }
+
+      if (Notification.permission === 'denied') {
+        setReminderStatus(t('reminder.status.denied'));
+        return;
+      }
+
+      if (Notification.permission !== 'granted') {
+        if (!interactive) {
+          setReminderStatus(t('reminder.status.needPermission'));
+          return;
+        }
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          setReminderStatus(permission === 'denied' ? t('reminder.status.denied') : t('reminder.status.needPermission'));
+          return;
+        }
+      }
+
+      const intervalMin = getGoalReminderIntervalMinutes();
+      if (intervalMin == null || intervalMin <= 0) {
+        setReminderStatus(t('reminder.status.noGoal'));
+        return;
+      }
+
+      const all = getAllMealsSorted();
+      if (all.length === 0) {
+        setReminderStatus(t('reminder.status.noMeals'));
+        return;
+      }
+
+      const lastMeal = all[all.length - 1];
+      const targetTsRaw = lastMeal.ts + intervalMin * 60 * 1000;
+      const targetTs = Math.max(targetTsRaw, Date.now() + 5000);
+
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        await clearScheduledReminder(registration);
+
+        if (window._eatlogReminderTimeoutId) {
+          clearTimeout(window._eatlogReminderTimeoutId);
+          window._eatlogReminderTimeoutId = null;
+        }
+
+        if (canScheduleBySystem()) {
+          await registration.showNotification(t('reminder.title'), {
+            body: t('reminder.body'),
+            tag: 'eatlog-next-meal-reminder',
+            icon: './icons/icon-192.png',
+            badge: './icons/favicon-32.png',
+            showTrigger: new TimestampTrigger(targetTs),
+            data: { type: 'next-meal-reminder', targetTs }
+          });
+          setReminderStatus(t('reminder.status.scheduledAt', { time: formatReminderTime(targetTs) }));
+          return;
+        }
+
+        showReminderWithPageTimeout(targetTs);
+        setReminderStatus(t('reminder.status.scheduledAtOpen', { time: formatReminderTime(targetTs) }));
+      } catch (e) {
+        console.error('Failed to schedule reminder', e);
+        setReminderStatus(t('reminder.status.error'));
+      }
+    }
+
     function getTodayMeals() {
       const now = new Date();
       return meals
@@ -1440,6 +1963,7 @@
       renderPeriodSummary();
       renderHistory();
       refreshDetailIfOpen();
+      scheduleNextMealReminder({ interactive: false });
     }
 
     async function editMealNote(id) {
@@ -1640,6 +2164,7 @@
       renderHistory();
       renderPeriodSummary();
       refreshDetailIfOpen();
+      scheduleNextMealReminder({ interactive: false });
     }
 
     function toggleSnack(id) {
@@ -2168,6 +2693,7 @@
       renderPeriodSummary();
       renderHistory();
       refreshDetailIfOpen();
+      scheduleNextMealReminder({ interactive: false });
     });
 
     function switchView(view) {
@@ -2218,6 +2744,22 @@
       if (goals.maxSleepHours != null) goalSleepMaxEl.value = goals.maxSleepHours;
       if (goals.minDayIntervalMinutes != null) goalDayIntMinEl.value = goals.minDayIntervalMinutes / 60;
       if (goals.maxDayIntervalMinutes != null) goalDayIntMaxEl.value = goals.maxDayIntervalMinutes / 60;
+      renderGoalsPreview();
+    }
+
+    if (!REMINDER_FEATURE_ENABLED) {
+      reminderEnabled = false;
+      saveReminderEnabled(false);
+      if (remindersCardEl) remindersCardEl.style.display = 'none';
+    }
+
+    if (reminderToggleInput) {
+      reminderToggleInput.addEventListener('change', async () => {
+        reminderEnabled = !!reminderToggleInput.checked;
+        saveReminderEnabled(reminderEnabled);
+        if (!reminderEnabled) setReminderStatus(t('reminder.status.off'));
+        await scheduleNextMealReminder({ interactive: reminderEnabled });
+      });
     }
 
 
@@ -2253,7 +2795,7 @@
         btn.classList.remove('is-saved');
         btn.disabled = false;
         if (label) label.textContent = defaultText;
-      }, 1450);
+      }, 2350);
 
       btn._saveAnimTimers.push(t1, t2);
     }
@@ -2303,8 +2845,10 @@
       };
 
       saveGoals(goals);
+      renderGoalsPreview();
 
       animateSaveGoalsButton(saveGoalsBtn);
+      scheduleNextMealReminder({ interactive: false });
 
       renderPeriodSummary();
       renderHistory();
@@ -2351,10 +2895,12 @@
     }
 
     loadGoalsIntoUI();
+    updateReminderToggleButton();
     renderMeals();
     renderStats();
     renderPeriodSummary();
     renderHistory();
+    scheduleNextMealReminder({ interactive: false });
   </script>
 </body>
 
