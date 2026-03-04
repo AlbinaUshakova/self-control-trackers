@@ -1392,6 +1392,7 @@
         "reminder.status.denied": "Notification permission is blocked in browser settings.",
         "reminder.status.needPermission": "Allow notifications to schedule reminders.",
         "reminder.status.unsupported": "Scheduled notifications are not supported on this device/browser yet.",
+        "reminder.status.nightSuppressed": "No reminder is scheduled during your night fasting interval.",
         "reminder.status.scheduledAt": "Next reminder at {time}.",
         "reminder.status.scheduledAtOpen": "Next reminder at {time} (works while app is open).",
         "reminder.status.error": "Could not schedule reminder.",
@@ -1487,6 +1488,7 @@
         "reminder.status.denied": "Разрешение на уведомления заблокировано в настройках браузера.",
         "reminder.status.needPermission": "Разрешите уведомления, чтобы планировать напоминания.",
         "reminder.status.unsupported": "Запланированные уведомления пока не поддерживаются на этом устройстве/в браузере.",
+        "reminder.status.nightSuppressed": "Во время ночного интервала уведомление не ставится.",
         "reminder.status.scheduledAt": "Следующее напоминание в {time}.",
         "reminder.status.scheduledAtOpen": "Следующее напоминание в {time} (работает, пока приложение открыто).",
         "reminder.status.error": "Не удалось запланировать напоминание.",
@@ -1799,6 +1801,15 @@
       return null;
     }
 
+    function hasNightIntervalGoal() {
+      return goals.minSleepHours != null || goals.maxSleepHours != null;
+    }
+
+    function isNightTime(ts) {
+      const h = new Date(ts).getHours();
+      return h >= 22 || h < 8;
+    }
+
     function updateReminderToggleButton() {
       if (!REMINDER_FEATURE_ENABLED) return;
       if (reminderToggleInput) reminderToggleInput.checked = !!reminderEnabled;
@@ -1920,6 +1931,11 @@
         if (window._eatlogReminderTimeoutId) {
           clearTimeout(window._eatlogReminderTimeoutId);
           window._eatlogReminderTimeoutId = null;
+        }
+
+        if (hasNightIntervalGoal() && isNightTime(targetTs)) {
+          setReminderStatus(t('reminder.status.nightSuppressed'));
+          return;
         }
 
         if (canScheduleBySystem()) {
