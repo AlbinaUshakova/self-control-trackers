@@ -101,7 +101,7 @@
       max-width: 480px;
       margin: 0 auto;
       border-radius: 28px;
-      padding: 14px 14px 20px;
+      padding: 12px 14px 20px;
       background: rgba(15, 23, 42, 0.96);
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(18px);
@@ -116,7 +116,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
     }
 
     h1 {
@@ -126,49 +126,81 @@
     }
 
     .subtle {
-      font-size: 12px;
-      color: #9ca3af;
+      font-size: 11px;
+      color: #607086;
+      line-height: 1.3;
       margin: 4px 2px 10px;
     }
 
     /* Вкладки */
     .view-tabs-wrapper {
-      margin: 4px 0 10px;
+      margin: 2px 0 6px;
     }
 
     .view-tabs {
-      display: flex;
-      gap: 4px;
-      padding: 4px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      padding: 5px;
+      border-radius: 18px;
+      background: rgba(2, 6, 23, 0.72);
+      border: 1px solid rgba(51, 65, 85, 0.42);
+      box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.03);
     }
 
-    .tab-btn {
+    .view-tabs .tab-btn {
       flex: 1;
+      width: 100%;
+      min-height: 42px;
+      margin: 0;
+      padding: 0 12px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: #cbd5e1;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
+    }
+
+    .view-tabs .tab-btn:not(.active) {
+      background: rgba(15, 23, 42, 0.18);
+    }
+
+    .view-tabs .tab-btn.active {
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    #langToggleBtn {
+      min-height: 36px;
+      margin: 0;
       padding: 6px 10px;
       border-radius: 999px;
-      border: none;
       background: transparent;
       color: #9ca3af;
       font-size: 13px;
-      cursor: pointer;
       font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
-    }
-
-    .tab-btn.active {
-      background: #22c55e;
-      color: #ffffff;
-      transform: translateY(-1px);
     }
 
     .app-content {
       flex: 1;
       overflow-y: auto;
       padding-right: 2px;
-      padding-bottom: 8px;
+      padding-bottom: 4px;
       margin-top: 2px;
+    }
+
+    .app-shell.goals-active {
+      max-height: none;
+      padding-bottom: 12px;
+    }
+
+    .app-shell.goals-active .app-content {
+      flex: 0 0 auto;
+      overflow-y: visible;
+      padding-bottom: 0;
     }
 
     h2 {
@@ -377,6 +409,27 @@
       border-radius: 12px;
       margin-top: 4px;
       background: #020617;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(107, 114, 128, 0.34) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .history-wrapper::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    .history-wrapper::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .history-wrapper::-webkit-scrollbar-thumb {
+      background: rgba(107, 114, 128, 0.34);
+      border-radius: 999px;
+    }
+
+    .history-wrapper::-webkit-scrollbar-thumb:hover {
+      background: rgba(107, 114, 128, 0.5);
     }
 
     /* ТАБЛИЦА СТАТИСТИКИ */
@@ -395,52 +448,39 @@
       vertical-align: middle;
     }
 
-    /* более удобные ширины столбцов */
     th:nth-child(1),
     td:nth-child(1) {
-      /* дата — меньше, места ей много не нужно */
-      width: 14%;
+      width: 16%;
     }
 
     th:nth-child(2),
-    td:nth-child(2) {
-      width: 17%;
-    }
-
+    td:nth-child(2),
     th:nth-child(3),
-    td:nth-child(3) {
-      /* перекусы — шире, чтобы влезла "ПЕРЕКУСЫ" */
-      width: 22%;
-    }
-
-    th:nth-child(4) {
-      width: 23%;
-      white-space: pre-line;
-      /* заголовок может переноситься */
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      hyphens: auto;
-    }
-
-    td:nth-child(4) {
-      width: 23%;
-      white-space: nowrap;
-      /* значения вроде "13 ч 58 мин" не переносим */
-    }
-
-    th:nth-child(5) {
-      width: 24%;
-      white-space: pre-line;
-      /* заголовок может переноситься */
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      hyphens: auto;
-    }
-
+    td:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(4),
+    th:nth-child(5),
     td:nth-child(5) {
-      width: 24%;
+      width: 21%;
+    }
+
+    td:nth-child(4),
+    td:nth-child(5) {
       white-space: nowrap;
-      /* значения оставляем в одну строку */
+    }
+
+    .history-sleep-col {
+      white-space: normal;
+      overflow-wrap: normal;
+      word-break: keep-all;
+      hyphens: none;
+    }
+
+    .history-day-interval-col {
+      white-space: normal;
+      overflow-wrap: normal;
+      word-break: keep-all;
+      hyphens: none;
     }
 
     th {
@@ -504,67 +544,153 @@
       border-color: transparent;
     }
 
+    .goals-card {
+      padding: 12px 12px 10px;
+    }
+
     .goals-card h2 {
-      font-size: 24px;
+      font-size: 17px;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .goals-intro {
-      font-size: 14px;
-      opacity: .7;
-      margin-bottom: 16px;
+      font-size: 11px;
+      color: #607086;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      max-width: none;
     }
 
     .goal-section {
-      margin-top: 32px;
+      position: relative;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: none;
+    }
+
+    .goal-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 2px;
+      right: 2px;
+      height: 1px;
+      background: rgba(51, 65, 85, 0.42);
     }
 
     .goal-section:first-of-type {
       margin-top: 0;
+      padding-top: 0;
+    }
+
+    .goal-section:first-of-type::before {
+      display: none;
     }
 
     .goal-section-title {
-      font-size: 12px;
-      color: #93c5fd;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin: 0 0 16px;
-      font-weight: 700;
+      font-size: 17px;
+      color: #e5e7eb;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      margin: 0 0 6px;
+      font-weight: 600;
     }
 
     .goal-item {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: none;
     }
 
     .goal-item:last-child {
       margin-bottom: 0;
     }
 
+    .goal-item-sub {
+      margin-top: 18px;
+      padding-top: 0;
+      padding-left: 6px;
+    }
+
     .goal-label {
-      color: #d1d5db;
-      font-size: 15px;
-      margin-bottom: 8px;
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .goal-item-sub .goal-label {
+      color: #8693a5;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      margin-bottom: 10px;
     }
 
     .goal-hint {
-      color: #9ca3af;
-      font-size: 12px;
-      margin: 6px 0 0;
+      color: #607086;
+      font-size: 11px;
+      margin: 8px 0 0;
+      font-weight: 400;
+    }
+
+    .goal-hint-persistent {
+      display: block;
+      margin-top: 8px;
+    }
+
+    .goal-item-interval .goal-hint-persistent {
+      margin-top: 4px;
+      margin-bottom: 16px;
+      color: #7a8798;
+      font-size: 11px;
+    }
+
+    .field-stack {
+      width: 72px;
     }
 
     .range-row {
-      display: flex;
+      display: grid;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: start;
+    }
+
+    .range-row--pair {
+      grid-template-columns: 72px 14px 72px;
+    }
+
+    .range-row--pair-unit {
+      grid-template-columns: 72px 14px 72px 42px;
+    }
+
+    .goal-item-interval .range-row--pair-unit {
+      grid-template-columns: 72px 14px 72px 42px;
+    }
+
+    .range-row--single {
+      grid-template-columns: 72px 14px 72px;
+    }
+
+    .goal-item-sub .field-stack {
+      width: 72px;
+    }
+
+    .goal-item-sub .range-row--single {
+      grid-template-columns: 72px 14px 72px;
     }
 
     .range-dash {
       color: #6b7280;
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1;
-      margin-top: -2px;
+      text-align: center;
+      width: 14px;
+      justify-self: center;
     }
 
     .unit-label {
@@ -573,147 +699,116 @@
     }
 
     .single-input {
-      width: 100px !important;
+      width: 100% !important;
     }
 
-    .goal-switch-row {
+    .range-spacer {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .goal-number-input,
+    .computed-value {
+      width: 100%;
+      box-sizing: border-box;
+      height: 38px;
+      min-height: 38px;
+      padding: 0;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .computed-value {
+      padding: 0;
+      cursor: default;
+      text-align: center;
+      text-align-last: center;
+    }
+
+    .goal-inline-unit {
+      color: #94a3b8;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 48px;
-      height: 28px;
-      flex: 0 0 auto;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-    }
-
-    .switch-slider {
-      position: absolute;
-      inset: 0;
-      border-radius: 999px;
-      background: #1f2937;
-      border: 1px solid #374151;
-      transition: background .2s ease, border-color .2s ease;
-      cursor: pointer;
-    }
-
-    .switch-slider::before {
-      content: '';
-      position: absolute;
-      left: 3px;
-      top: 3px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #e5e7eb;
-      transition: transform .2s ease;
-    }
-
-    .switch input:checked+.switch-slider {
-      background: #22c55e;
-      border-color: #22c55e;
-    }
-
-    .switch input:checked+.switch-slider::before {
-      transform: translateX(20px);
-      background: #ffffff;
-    }
-
-    .goal-preview {
-      margin-top: 0;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid #1f2937;
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .goal-preview-title {
-      font-size: 13px;
-      color: #9ca3af;
-      margin-bottom: 6px;
-    }
-
-    .goal-preview-line {
       font-size: 14px;
-      color: #e5e7eb;
-      margin: 4px 0;
-    }
-
-    #view-goals .card {
-      margin-bottom: 8px;
+      font-weight: 500;
+      width: 42px;
+      min-height: 38px;
+      text-align: left;
+      line-height: 1;
+      justify-self: start;
+      padding-left: 4px;
     }
 
     #view-goals .savebtn {
-      margin-top: 10px;
+      display: inline-flex;
+      margin-top: 28px;
       width: 100%;
     }
 
     @media (max-height: 820px) {
       .goal-section {
-        margin-top: 20px;
+        margin-top: 16px;
+        padding-top: 12px;
       }
 
       .goal-section-title {
-        margin-bottom: 12px;
+        margin-bottom: 9px;
       }
 
       .goal-item {
-        margin-bottom: 12px;
+        margin-bottom: 14px;
+        padding: 0;
       }
 
       .goal-hint {
         display: none;
       }
 
-      .reminder-mechanics-hint {
+      .goal-hint-persistent {
         display: block;
-      }
-
-      .goal-preview {
-        display: none;
       }
 
     }
 
     @media (max-height: 920px) {
-      #view-goals .card {
-        padding: 10px 10px 8px;
-        margin-bottom: 6px;
+      .goals-card {
+        padding: 12px 12px 10px;
       }
 
       .goals-card h2 {
-        font-size: 21px;
+        font-size: 17px;
         margin-bottom: 4px;
       }
 
       .goal-section-title,
-      .goal-hint,
-      .goal-preview {
+      .goal-hint {
         display: none;
       }
 
-      .reminder-mechanics-hint {
+      .goal-hint-persistent {
         display: block;
         font-size: 11px;
+        margin-top: 6px;
       }
 
       .goal-section {
-        margin-top: 10px !important;
+        margin-top: 12px !important;
+        padding-top: 8px;
       }
 
       .goal-item {
         margin-bottom: 10px;
+        padding: 0;
+      }
+
+      .goal-item-sub {
+        margin-top: 12px;
+        padding-top: 2px;
+        padding-left: 6px;
       }
 
       .goal-label {
@@ -725,73 +820,166 @@
         gap: 6px;
       }
 
-      input[type="number"] {
-        width: 64px;
-        font-size: 12px;
-        padding: 3px 6px;
+      .field-stack {
+        width: 84px;
       }
 
-      .single-input {
-        width: 84px !important;
+      .goal-item-sub .field-stack {
+        width: 94px;
+      }
+
+      .range-row--pair {
+        grid-template-columns: 84px 16px 84px;
+      }
+
+      .range-row--pair-unit {
+        grid-template-columns: 84px 16px 84px 44px;
+      }
+
+      .goal-item-interval .range-row--pair-unit {
+        grid-template-columns: 84px 16px 84px 44px;
+      }
+
+      .range-row--single {
+        grid-template-columns: 84px 16px 84px;
+      }
+
+      .goal-item-sub .range-row--single {
+        grid-template-columns: 94px 16px 84px;
+      }
+
+      .goal-number-input {
+        font-size: 13px;
+        min-height: 44px;
+        padding: 0 14px;
       }
 
       .unit-label {
         font-size: 12px;
       }
 
-      .switch {
-        width: 44px;
-        height: 26px;
-      }
-
-      .switch-slider::before {
-        width: 18px;
-        height: 18px;
-      }
-
-      .switch input:checked+.switch-slider::before {
-        transform: translateX(18px);
-      }
-
-      #reminderStatus {
-        margin-top: 4px !important;
-        font-size: 11px;
-      }
-
       #view-goals .savebtn {
+        display: flex;
         margin-top: 6px;
+        width: min(100%, 286px);
         min-height: 34px;
+        padding-left: 24px;
+        padding-right: 24px;
         padding-top: 7px;
         padding-bottom: 7px;
       }
     }
 
-    input[type="number"] {
-      width: 72px;
-      border-radius: 10px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      color: #e5e7eb;
-      padding: 4px 6px;
-      font-size: 13px;
+    @media (max-height: 700px) {
+      .app-shell {
+        padding-top: 10px;
+        padding-bottom: 14px;
+      }
+
+      .app-header {
+        margin-bottom: 0;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .view-tabs-wrapper {
+        margin: 1px 0 4px;
+      }
+
+      .view-tabs {
+        gap: 4px;
+        padding: 4px;
+      }
+
+      .view-tabs .tab-btn {
+        min-height: 38px;
+        font-size: 13px;
+      }
+
+      .app-content {
+        margin-top: 0;
+        padding-bottom: 0;
+      }
+
+      #view-today .card {
+        padding: 10px 10px 8px;
+        margin-bottom: 8px;
+      }
+
+      #view-today h2 {
+        margin-bottom: 4px;
+      }
+
+      #view-today textarea {
+        min-height: 44px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+      }
+
+      #view-today .btn-primary {
+        min-height: 42px;
+      }
+
+      #view-today .card-compact {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      #view-today .stats-grid {
+        gap: 6px;
+        margin-top: 4px;
+      }
+
+      #view-today .stat-box {
+        min-height: 46px;
+        padding: 7px 8px;
+      }
+
+      #view-today .stat-label {
+        font-size: 10px;
+      }
+
+      #view-today .stat-value {
+        font-size: 17px;
+      }
+
+      #view-today .list {
+        max-height: 300px;
+      }
+    }
+
+    .goal-number-input {
+      width: 100%;
+      display: block;
+      appearance: none;
+      -webkit-appearance: none;
+      line-height: 1;
       outline: none;
-      transition: border-color 0.12s ease;
+      direction: ltr;
+      text-align: center;
+      text-align-last: center;
+      text-indent: 0;
+      font-variant-numeric: tabular-nums;
+      transition: border-color 0.12s ease, background 0.12s ease;
     }
 
     /* hide native spinner arrows so users type values manually */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
+    .goal-number-input::-webkit-outer-spin-button,
+    .goal-number-input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
 
     /* firefox */
-    input[type="number"] {
+    .goal-number-input {
       -moz-appearance: textfield;
     }
 
-    input[type="number"]:focus {
+    .goal-number-input:focus {
       border-color: #22c55e;
+      background: #020617;
     }
 
     .day-ok td {
@@ -799,13 +987,13 @@
     }
 
     .app-footer {
-      margin-top: 4px;
-      font-size: 12px;
+      margin-top: 2px;
+      font-size: 11px;
       color: #6b7280;
       display: flex;
       flex-direction: column;
-      line-height: 1.2;
-      gap: 2px;
+      line-height: 1.15;
+      gap: 1px;
     }
 
     /* FULLSCREEN DETAIL */
@@ -847,6 +1035,16 @@
     }
 
     /* Save goals button feedback */
+    #view-goals .savebtn {
+      display: flex;
+      margin-top: 22px;
+      width: min(100%, 300px);
+      padding-left: 32px;
+      padding-right: 32px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     .savebtn {
       position: relative;
       display: inline-flex;
@@ -855,7 +1053,11 @@
       gap: 10px;
       overflow: hidden;
       transition: transform .12s ease, filter .2s ease;
-      min-height: 38px;
+      min-height: 48px;
+      border-radius: 15px;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.005em;
     }
 
     .savebtn:active {
@@ -909,13 +1111,45 @@
       justify-content: center;
       gap: 10px;
       overflow: hidden;
-      transition: transform .12s ease, filter .2s ease;
-      min-height: 38px;
-      width: 100%;
+      transition: transform .12s ease, filter .2s ease, background .15s ease, border-color .15s ease;
+      min-height: 42px;
+      width: auto;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 28px;
+      padding-right: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(107, 114, 128, 0.54);
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.005em;
+    }
+
+    .export-cta {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .export-cta .subtle {
+      margin-top: 6px;
+      margin-bottom: 0;
+      text-align: center;
+      font-size: 10px;
+      color: #748297;
     }
 
     .exportbtn:active {
       transform: scale(.98);
+    }
+
+    .exportbtn:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.46);
     }
 
     .exportbtn.is-saving,
@@ -985,6 +1219,13 @@
       color: #f3f4f6;
       font-size: 14px;
       margin-bottom: 10px;
+    }
+
+    .prompt-body {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 0;
     }
 
     .prompt-input {
@@ -1147,8 +1388,8 @@
                   <th data-i18n="table.date">Дата</th>
                   <th data-i18n="table.meals">Приёмы пищи</th>
                   <th data-i18n="table.snacks">Перекусы</th>
-                  <th data-i18n="table.sleep">Интервал сна</th>
-                  <th data-i18n="table.dayInterval">Интервал между приёмами</th>
+                  <th class="history-sleep-col" data-i18n-html="table.sleep">Ночной интервал<br>без еды</th>
+                  <th class="history-day-interval-col" data-i18n-html="table.dayInterval">Интервал<br>между приёмами</th>
                 </tr>
               </thead>
               <tbody id="historyBody"></tbody>
@@ -1156,107 +1397,90 @@
           </div>
 
           <!-- КНОПКА ВЫГРУЗКИ CSV -->
-          <button id="exportMealsBtn" class="btn-outline exportbtn" style="margin-top: 8px; width: 100%">
-            <span class="exportbtn__label" data-i18n="export.btn" data-default-key="export.btn">⬇️ Скачать данные</span>
-            <span class="exportbtn__spinner" aria-hidden="true"></span>
-            <span class="exportbtn__check" aria-hidden="true">✓</span>
-          </button>
-          <div class="subtle" id="exportHint" style="margin-top:6px;" data-i18n="export.hint">Файл для Excel/таблиц
-            (.csv)</div>
+          <div class="export-cta">
+            <button id="exportMealsBtn" class="exportbtn">
+              <span class="exportbtn__label" data-i18n="export.btn" data-default-key="export.btn">Скачать данные</span>
+              <span class="exportbtn__spinner" aria-hidden="true"></span>
+              <span class="exportbtn__check" aria-hidden="true">✓</span>
+            </button>
+            <div class="subtle" id="exportHint" data-i18n="export.hint">Скачивается в формате CSV</div>
+          </div>
         </div>
       </div>
 
       <!-- ЦЕЛИ -->
       <div id="view-goals" style="display: none;">
-        <div class="card card-compact goals-card">
+        <div class="card goals-card">
           <h2 data-i18n="goals.title">Цели на день</h2>
           <p class="subtle goals-intro">
-            <span data-i18n="goals.desc">Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.</span>
+            <span data-i18n="goals.desc">Если цель выполнена, день подсветится зелёным в статистике.</span>
           </p>
-        </div>
 
-        <div class="card card-compact">
-          <section class="goal-section" style="margin-top:0;">
-            <h3 class="goal-section-title" data-i18n="goals.sectionFood">Питание</h3>
-
+          <section class="goal-section">
             <div class="goal-item">
               <div class="goal-label" data-i18n="goals.mealsLabel">Приёмов пищи</div>
-              <div class="range-row">
-                <input type="number" id="goalMealsMin" min="0" step="1" data-i18n-placeholder="placeholder.mealsMin"
-                  inputmode="numeric" aria-label="Минимум приёмов пищи">
+              <div class="range-row range-row--pair">
+                <div class="field-stack">
+                  <input type="text" id="goalMealsMin" class="goal-number-input" inputmode="numeric"
+                    autocomplete="off" data-i18n-placeholder="placeholder.mealsMin" aria-label="Минимум приёмов пищи">
+                </div>
                 <span class="range-dash">—</span>
-                <input type="number" id="goalMealsMax" min="0" step="1" data-i18n-placeholder="placeholder.mealsMax"
-                  inputmode="numeric" aria-label="Максимум приёмов пищи">
+                <div class="field-stack">
+                  <input type="text" id="goalMealsMax" class="goal-number-input" inputmode="numeric"
+                    autocomplete="off" data-i18n-placeholder="placeholder.mealsMax" aria-label="Максимум приёмов пищи">
+                </div>
               </div>
               <div class="goal-hint" data-i18n="goals.mealsHint">Сколько раз вы планируете есть в день</div>
             </div>
-
-            <div class="goal-item">
-              <div class="goal-label" data-i18n="goals.snacksLabel">Из них перекусов</div>
-              <input type="number" id="goalSnacksMax" min="0" step="1" data-i18n-placeholder="placeholder.snacksMax"
-                inputmode="numeric" aria-label="Максимум перекусов в день" class="single-input">
+            <div class="goal-item goal-item-sub">
+              <div class="goal-label" data-i18n="goals.snacksLabel">Из них - перекусов</div>
+              <div class="range-row range-row--single">
+                <div class="field-stack">
+                  <input type="text" id="goalSnacksMax" class="goal-number-input single-input" inputmode="numeric"
+                    autocomplete="off" data-i18n-placeholder="placeholder.snacksMax" aria-label="Максимум перекусов в день">
+                </div>
+                <span class="range-dash range-spacer">—</span>
+                <div class="field-stack range-spacer" aria-hidden="true"></div>
+              </div>
             </div>
+          </section>
 
-            <div class="goal-item">
+          <section class="goal-section">
+            <div class="goal-item goal-item-interval">
               <div class="goal-label" data-i18n="goals.dayIntervalLabel">Интервал между приёмами пищи</div>
-              <div class="range-row">
-                <input type="number" id="goalDayIntMin" min="0" step="0.25"
-                  data-i18n-placeholder="placeholder.dayIntMin" inputmode="numeric"
-                  aria-label="Минимальный интервал между приёмами">
+              <div class="range-row range-row--pair-unit">
+                <div class="field-stack">
+                  <input type="text" id="goalDayIntMin" class="goal-number-input" inputmode="decimal"
+                    autocomplete="off" data-i18n-placeholder="placeholder.dayIntMin"
+                    aria-label="Минимальный интервал между приёмами">
+                </div>
                 <span class="range-dash">—</span>
-                <input type="number" id="goalDayIntMax" min="0" step="0.25"
-                  data-i18n-placeholder="placeholder.dayIntMax" inputmode="numeric"
-                  aria-label="Максимальный интервал между приёмами">
-                <span class="unit-label" data-i18n="unit.hours">часов</span>
+                <div class="field-stack">
+                  <input type="text" id="goalDayIntMax" class="goal-number-input" inputmode="decimal"
+                    autocomplete="off" data-i18n-placeholder="placeholder.dayIntMax"
+                    aria-label="Максимальный интервал между приёмами">
+                </div>
+                <span class="goal-inline-unit" data-i18n="unit.hours">часов</span>
               </div>
             </div>
-          </section>
-        </div>
-
-        <div class="card card-compact">
-          <section class="goal-section" style="margin-top:0;">
-            <h3 class="goal-section-title" data-i18n="goals.sectionSleep">Сон</h3>
-            <div class="goal-item">
-              <div class="goal-label" data-i18n="goals.sleepLabel">Ночной интервал без еды</div>
-              <div class="range-row">
-                <input type="number" id="goalSleepMin" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMin"
-                  inputmode="numeric" aria-label="Минимальный интервал сна">
+            <div class="goal-item goal-item-interval">
+              <div class="goal-label" data-i18n="goals.sleepLabel">Интервал сна</div>
+              <div class="goal-hint goal-hint-persistent" id="goalSleepAutoText" data-i18n="goals.sleepAutoHint">Рассчитывается автоматически</div>
+              <div class="range-row range-row--pair-unit">
+                <div class="field-stack">
+                  <input type="text" id="goalSleepMinValue" class="goal-number-input computed-value" readonly aria-label="Минимальный ночной интервал без еды">
+                </div>
                 <span class="range-dash">—</span>
-                <input type="number" id="goalSleepMax" min="0" step="0.5" data-i18n-placeholder="placeholder.sleepMax"
-                  inputmode="numeric" aria-label="Максимальный интервал сна">
-                <span class="unit-label" data-i18n="unit.hours">часов</span>
+                <div class="field-stack">
+                  <input type="text" id="goalSleepMaxValue" class="goal-number-input computed-value" readonly aria-label="Максимальный ночной интервал без еды">
+                </div>
+                <span class="goal-inline-unit" data-i18n="unit.hours">часов</span>
               </div>
-              <div class="goal-hint" data-i18n="goals.sleepHint">Помогает улучшить метаболизм</div>
             </div>
-          </section>
-        </div>
-
-        <div class="card card-compact" id="remindersCard">
-          <section class="goal-section" style="margin-top:0;">
-            <h3 class="goal-section-title" data-i18n="goals.sectionReminders">Напоминания</h3>
-            <div class="goal-item goal-switch-row">
-              <div class="goal-label" style="margin:0;" data-i18n="goals.reminderLabel">Напоминания о приёме пищи</div>
-              <label class="switch" for="reminderToggleInput">
-                <input id="reminderToggleInput" type="checkbox" />
-                <span class="switch-slider" aria-hidden="true"></span>
-              </label>
-            </div>
-            <div class="goal-hint reminder-mechanics-hint" data-i18n="goals.reminderHint">Время уведомления считается от последнего приёма пищи по цели интервала между приёмами.</div>
-            <div class="goal-hint" id="reminderToggleText"></div>
-            <div id="reminderStatus" class="subtle" style="margin: 8px 0 0;"></div>
-          </section>
-        </div>
-
-        <div class="card card-compact">
-          <section class="goal-preview" aria-live="polite">
-            <div class="goal-preview-title" data-i18n="goals.previewTitle">Сегодня:</div>
-            <div class="goal-preview-line" id="goalPreviewMeals"></div>
-            <div class="goal-preview-line" id="goalPreviewInterval"></div>
-            <div class="goal-preview-line" id="goalPreviewSleep"></div>
           </section>
 
           <button id="saveGoalsBtn" class="btn-primary savebtn">
-            <span class="savebtn__label" data-i18n="goals.save" data-default-key="goals.save">Сохранить цели</span>
+            <span class="savebtn__label" data-i18n="goals.save" data-default-key="goals.save">Сохранить</span>
             <span class="savebtn__spinner" aria-hidden="true"></span>
             <span class="savebtn__check" aria-hidden="true">✓</span>
           </button>
@@ -1315,6 +1539,16 @@
     </div>
   </div>
 
+  <div id="updateNoticeBackdrop" class="prompt-backdrop" hidden>
+    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="updateNoticeTitle">
+      <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.sleepNotice.title">Обновление в целях</div>
+      <p class="prompt-body" data-i18n="update.sleepNotice.body">Ночной интервал без еды теперь рассчитывается автоматически по количеству приёмов пищи и интервалу между ними.</p>
+      <div class="prompt-actions">
+        <button id="updateNoticeOk" type="button" class="prompt-btn" data-i18n="update.sleepNotice.ok">Понятно</button>
+      </div>
+    </div>
+  </div>
+
 
   <script>
     // Service Worker (offline) — works only over https or http://localhost (not file://)
@@ -1345,20 +1579,20 @@
         "stats.today": "Today's stats",
         "today.list": "Today's meals",
         "stat.meals": "Meals",
-        "stat.snacks": "Snacks included",
-        "stat.dayInterval": "Eating interval",
+        "stat.snacks": "Snacks within that",
+        "stat.dayInterval": "Interval between meals",
         "stat.sinceLast": "Since last meal",
         "list.empty": "No entries for today yet.\nTap \"I'm eating now\" when you start your meal.\nUse 🍽 / 🍪 to mark a snack.",
         "period.stats": "Period stats",
         "daily.breakdown": "Daily breakdown",
-        "stat.sleep": "Sleep interval",
+        "stat.sleep": "Night fasting interval",
         "table.date": "Date",
-        "table.meals": "Meals",
-        "table.snacks": "Snacks\nincluded",
-        "table.sleep": "Sleep\ninterval",
-        "table.dayInterval": "Eating\ninterval",
-        "export.btn": "⬇️ Download data",
-        "export.hint": "For Excel/spreadsheets (.csv)",
+        "table.meals": "Meals per day",
+        "table.snacks": "Snacks\nwithin that",
+        "table.sleep": "Night<br>fasting<br>interval",
+        "table.dayInterval": "Interval<br>between<br>meals",
+        "export.btn": "Download data",
+        "export.hint": "Downloads as CSV",
         "export.downloading": "Preparing file…",
         "export.done": "File ready",
         "period.7": "7 days",
@@ -1366,41 +1600,29 @@
         "period.21": "21 days",
         "period.all": "All",
         "goals.title": "Daily goals",
-        "goals.desc": "Days that meet your goals will be highlighted in green in statistics.",
+        "goals.desc": "If a goal is met, the day is highlighted green in statistics.",
         "goals.sectionFood": "Nutrition",
+        "goals.sectionMeals": "Meals",
+        "goals.sectionSnacks": "Snacks",
+        "goals.sectionIntervals": "Intervals",
         "goals.sectionSleep": "Sleep",
-        "goals.sectionReminders": "Reminders",
         "goals.mealsLabel": "Meals per day",
         "goals.mealsHint": "How many times you plan to eat during the day",
-        "goals.snacksLabel": "Of these, snacks",
+        "goals.snacksLabel": "Of these — snacks",
         "goals.sleepLabel": "Night fasting interval",
+        "goals.sleepAutoHint": "Calculated automatically.",
+        "goals.sleepComputed": "{from}–{to} hours",
         "goals.sleepHint": "Can help improve metabolic health",
         "goals.dayIntervalLabel": "Interval between meals",
-        "goals.reminderLabel": "Meal reminders",
-        "goals.reminderHint": "Reminder time is calculated from your last meal using the meal-interval goal. If both min and max are set, the average is used.",
         "goals.previewTitle": "Today:",
         "range.from": "from",
         "range.to": "to",
         "unit.hours": "hours",
-        "goals.save": "Save goals",
+        "goals.save": "Save",
         "goals.saved": "Saved",
-        "reminder.toggleOn": "On",
-        "reminder.toggleOff": "Off",
-        "reminder.status.off": "Reminders are off.",
-        "reminder.status.noGoal": "Set a meal interval goal first.",
-        "reminder.status.noMeals": "Add a meal so EatLog can schedule the next reminder.",
-        "reminder.status.denied": "Notification permission is blocked in browser settings.",
-        "reminder.status.needPermission": "Allow notifications to schedule reminders.",
-        "reminder.status.unsupported": "Scheduled notifications are not supported on this device/browser yet.",
-        "reminder.status.nightSuppressed": "No reminder is scheduled during your night fasting interval.",
-        "reminder.status.scheduledAt": "Next reminder at {time}.",
-        "reminder.status.scheduledAtOpen": "Next reminder at {time} (works while app is open).",
-        "reminder.status.error": "Could not schedule reminder.",
-        "reminder.title": "EatLog reminder",
-        "reminder.body": "Time for your next meal by goal schedule.",
         "goal.preview.meals": "🍽 {from}–{to} meals",
         "goal.preview.interval": "⏱ {from}–{to} hours between meals",
-        "goal.preview.sleep": "🌙 {from}–{to} hours without food",
+        "goal.preview.sleep": "🌙 {from}–{to} hours",
         "footer.line1": "EatLog",
         "footer.line2": "Small step to mindful eating",
         "detail.back": "← Back",
@@ -1413,6 +1635,9 @@
         "confirm.ok": "Delete",
         "alert.invalidTime": "Invalid format. Enter, for example: 08:30 or 22:05",
         "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59.",
+        "update.sleepNotice.title": "Goals update",
+        "update.sleepNotice.body": "Night fasting interval is now calculated automatically.",
+        "update.sleepNotice.ok": "OK",
         "export.noData": "No meals yet to export.",
         "no.description": "(no description)",
         "interval.first": "First recorded meal (no previous entries).",
@@ -1423,13 +1648,13 @@
         "edit.title": "Edit meal",
         "edit.save": "Save",
         "edit.cancel": "Cancel",
-        "placeholder.mealsMin": "e.g. 2",
-        "placeholder.mealsMax": "e.g. 4",
-        "placeholder.snacksMax": "e.g. 1",
-        "placeholder.sleepMin": "e.g. 6",
-        "placeholder.sleepMax": "e.g. 9",
-        "placeholder.dayIntMin": "e.g. 3",
-        "placeholder.dayIntMax": "e.g. 6"
+        "placeholder.mealsMin": "",
+        "placeholder.mealsMax": "",
+        "placeholder.snacksMax": "",
+        "placeholder.sleepMin": "",
+        "placeholder.sleepMax": "",
+        "placeholder.dayIntMin": "",
+        "placeholder.dayIntMax": ""
       },
       ru: {
         "stats.retention": "Мы храним данные за 21 день.",
@@ -1443,60 +1668,48 @@
         "stats.today": "Статистика за сегодня",
         "today.list": "Сегодняшние приёмы пищи",
         "stat.meals": "Приёмов пищи",
-        "stat.snacks": "Из них перекусов",
-        "stat.dayInterval": "Интервал между приёмами",
+        "stat.snacks": "Из них - перекусов",
+        "stat.dayInterval": "Интервал между приёмами пищи",
         "stat.sinceLast": "С последнего приёма",
         "list.empty": "Сегодня пока нет записей.\nНажми «Я ем сейчас», когда начнёшь есть.\nИспользуй 🍽 / 🍪, чтобы отметить перекус.",
         "period.stats": "Статистика за период",
         "daily.breakdown": "Детализация по дням",
-        "stat.sleep": "Интервал сна",
+        "stat.sleep": "Ночной интервал без еды",
         "table.date": "Дата",
-        "table.meals": "Приёмы пищи",
-        "table.snacks": "Из них перекусов",
-        "table.sleep": "Интервал\nсна",
-        "table.dayInterval": "Интервал\nмежду приёмами",
-        "export.btn": "⬇️ Скачать данные",
-        "export.hint": "Файл для Excel/таблиц (.csv)",
+        "table.meals": "Приёмов пищи",
+        "table.snacks": "Из них -\nперекусов",
+        "table.sleep": "Ночной<br>интервал<br>без еды",
+        "table.dayInterval": "Интервал<br>между<br>приёмами&nbsp;пищи",
+        "export.btn": "Скачать данные",
+        "export.hint": "Скачивается в формате CSV",
         "period.7": "7 дней",
         "period.14": "14 дней",
         "period.21": "21 день",
         "period.all": "All",
         "goals.title": "Цели на день",
-        "goals.desc": "Дни, когда цели выполнены, будут подсвечиваться зелёным в статистике.",
+        "goals.desc": "Если цель выполнена, день подсветится зелёным в статистике.",
         "goals.sectionFood": "Питание",
+        "goals.sectionMeals": "Приёмы пищи",
+        "goals.sectionSnacks": "Перекусы",
+        "goals.sectionIntervals": "Интервалы",
         "goals.sectionSleep": "Сон",
-        "goals.sectionReminders": "Напоминания",
         "goals.mealsLabel": "Приёмов пищи",
         "goals.mealsHint": "Сколько раз вы планируете есть в день",
-        "goals.snacksLabel": "Из них перекусов",
-        "goals.sleepLabel": "Ночной интервал без еды",
+        "goals.snacksLabel": "Из них — перекусов",
+        "goals.sleepLabel": "Ночной интервал без еды",
+        "goals.sleepAutoHint": "Рассчитывается автоматически",
+        "goals.sleepComputed": "{from}–{to} часов",
         "goals.sleepHint": "Помогает улучшить метаболизм",
         "goals.dayIntervalLabel": "Интервал между приёмами пищи",
-        "goals.reminderLabel": "Напоминания о приёме пищи",
-        "goals.reminderHint": "Уведомление рассчитывается от времени последнего приёма пищи по цели интервала между приёмами. Если заданы «от» и «до», берётся среднее значение.",
         "goals.previewTitle": "Сегодня:",
         "range.from": "от",
         "range.to": "до",
         "unit.hours": "часов",
-        "goals.save": "Сохранить цели",
+        "goals.save": "Сохранить",
         "goals.saved": "Сохранено",
-        "reminder.toggleOn": "Вкл",
-        "reminder.toggleOff": "Выкл",
-        "reminder.status.off": "Напоминания выключены.",
-        "reminder.status.noGoal": "Сначала задайте цель по интервалу между приёмами.",
-        "reminder.status.noMeals": "Добавьте приём пищи, чтобы запланировать следующий.",
-        "reminder.status.denied": "Разрешение на уведомления заблокировано в настройках браузера.",
-        "reminder.status.needPermission": "Разрешите уведомления, чтобы планировать напоминания.",
-        "reminder.status.unsupported": "Запланированные уведомления пока не поддерживаются на этом устройстве/в браузере.",
-        "reminder.status.nightSuppressed": "Во время ночного интервала уведомление не ставится.",
-        "reminder.status.scheduledAt": "Следующее напоминание в {time}.",
-        "reminder.status.scheduledAtOpen": "Следующее напоминание в {time} (работает, пока приложение открыто).",
-        "reminder.status.error": "Не удалось запланировать напоминание.",
-        "reminder.title": "Напоминание EatLog",
-        "reminder.body": "Время начать следующий приём пищи по вашей цели.",
         "goal.preview.meals": "🍽 {from}–{to} приёма пищи",
         "goal.preview.interval": "⏱ {from}–{to} часов между приёмами",
-        "goal.preview.sleep": "🌙 {from}–{to} часов без еды",
+        "goal.preview.sleep": "🌙 {from}–{to} часов",
         "footer.line1": "EatLog",
         "footer.line2": "Маленький шаг к осознанному питанию",
         "detail.back": "← Назад",
@@ -1509,6 +1722,9 @@
         "confirm.ok": "Удалить",
         "alert.invalidTime": "Неверный формат. Введи, например: 08:30 или 22:05",
         "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59.",
+        "update.sleepNotice.title": "Обновление в целях",
+        "update.sleepNotice.body": "Ночной интервал без еды теперь рассчитывается автоматически.",
+        "update.sleepNotice.ok": "Понятно",
         "export.noData": "Пока нет ни одного приёма пищи для выгрузки.",
         "no.description": "(без описания)",
         "interval.first": "Первый зафиксированный приём (раньше записей нет).",
@@ -1519,13 +1735,13 @@
         "edit.title": "Редактировать приём пищи",
         "edit.save": "Сохранить",
         "edit.cancel": "Отмена",
-        "placeholder.mealsMin": "напр. 2",
-        "placeholder.mealsMax": "напр. 4",
-        "placeholder.snacksMax": "напр. 1",
-        "placeholder.sleepMin": "напр. 6",
-        "placeholder.sleepMax": "напр. 9",
-        "placeholder.dayIntMin": "напр. 3",
-        "placeholder.dayIntMax": "напр. 6"
+        "placeholder.mealsMin": "",
+        "placeholder.mealsMax": "",
+        "placeholder.snacksMax": "",
+        "placeholder.sleepMin": "",
+        "placeholder.sleepMax": "",
+        "placeholder.dayIntMin": "",
+        "placeholder.dayIntMax": ""
       }
     };
 
@@ -1548,6 +1764,11 @@
         if (!key) return;
         el.textContent = t(key);
       });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (!key) return;
+        el.innerHTML = t(key).replace(/\n/g, '<br>');
+      });
       // placeholders
       document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
@@ -1565,9 +1786,7 @@
       if (typeof renderStats === 'function') renderStats();
       if (typeof renderPeriodSummary === 'function') renderPeriodSummary();
       if (typeof renderHistory === 'function') renderHistory();
-      if (typeof updateReminderToggleButton === 'function') updateReminderToggleButton();
       if (typeof renderGoalsPreview === 'function') renderGoalsPreview();
-      if (typeof scheduleNextMealReminder === 'function') scheduleNextMealReminder({ interactive: false });
       syncLangToggleLabel();
     }
 
@@ -1601,11 +1820,7 @@
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
-    const STORAGE_KEY_REMINDER_ENABLED = 'meal_tracker_reminder_enabled_v1';
-    const USER_AGENT = navigator.userAgent || '';
-    const IS_ANDROID = /Android/i.test(USER_AGENT);
-    const REMINDER_FEATURE_ENABLED = IS_ANDROID;
-
+    const STORAGE_KEY_SLEEP_NOTICE_SEEN = 'meal_tracker_sleep_notice_seen_v1';
     function loadMeals() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_MEALS);
@@ -1639,22 +1854,8 @@
       localStorage.setItem(STORAGE_KEY_GOALS, JSON.stringify(goals));
     }
 
-    function loadReminderEnabled() {
-      try {
-        return localStorage.getItem(STORAGE_KEY_REMINDER_ENABLED) === '1';
-      } catch (e) {
-        console.error('Failed to read reminder setting', e);
-        return false;
-      }
-    }
-
-    function saveReminderEnabled(enabled) {
-      localStorage.setItem(STORAGE_KEY_REMINDER_ENABLED, enabled ? '1' : '0');
-    }
-
     let meals = loadMeals();
     let goals = loadGoals();
-    let reminderEnabled = loadReminderEnabled();
     // retention: keep only last RETENTION_DAYS days of data
     const RETENTION_DAYS = 21;
     function pruneOldMeals() {
@@ -1687,6 +1888,8 @@
     const viewTodayEl = document.getElementById('view-today');
     const viewStatsEl = document.getElementById('view-stats');
     const viewGoalsEl = document.getElementById('view-goals');
+    const appShellEl = document.querySelector('.app-shell');
+    const appFooterEl = document.querySelector('.app-footer');
 
     const periodButtons = document.querySelectorAll('.period-btn');
     const statPeriodMealsPerDayEl = document.getElementById('statPeriodMealsPerDay');
@@ -1697,14 +1900,11 @@
     const goalMealsMinEl = document.getElementById('goalMealsMin');
     const goalMealsMaxEl = document.getElementById('goalMealsMax');
     const goalSnacksMaxEl = document.getElementById('goalSnacksMax');
-    const goalSleepMinEl = document.getElementById('goalSleepMin');
-    const goalSleepMaxEl = document.getElementById('goalSleepMax');
+    const goalSleepMinValueEl = document.getElementById('goalSleepMinValue');
+    const goalSleepMaxValueEl = document.getElementById('goalSleepMaxValue');
+    const goalSleepAutoTextEl = document.getElementById('goalSleepAutoText');
     const goalDayIntMinEl = document.getElementById('goalDayIntMin');
     const goalDayIntMaxEl = document.getElementById('goalDayIntMax');
-    const remindersCardEl = document.getElementById('remindersCard');
-    const reminderToggleInput = document.getElementById('reminderToggleInput');
-    const reminderToggleText = document.getElementById('reminderToggleText');
-    const reminderStatusEl = document.getElementById('reminderStatus');
     const goalPreviewMealsEl = document.getElementById('goalPreviewMeals');
     const goalPreviewIntervalEl = document.getElementById('goalPreviewInterval');
     const goalPreviewSleepEl = document.getElementById('goalPreviewSleep');
@@ -1727,6 +1927,8 @@
     const confirmPromptMessage = document.getElementById('confirmPromptMessage');
     const confirmPromptCancel = document.getElementById('confirmPromptCancel');
     const confirmPromptOk = document.getElementById('confirmPromptOk');
+    const updateNoticeBackdrop = document.getElementById('updateNoticeBackdrop');
+    const updateNoticeOk = document.getElementById('updateNoticeOk');
     let currentDetailDayKey = null;
 
     // default to 21 days (remove "All" option)
@@ -1783,179 +1985,89 @@
       return fixed;
     }
 
+    function roundToHalfHour(value) {
+      if (!isFinite(value)) return null;
+      return Math.round(value * 2) / 2;
+    }
+
+    const GOAL_INPUT_CARET_SENTINEL = '\u200B';
+
+    function normalizeGoalInputValue(raw) {
+      return String(raw || '').replaceAll(GOAL_INPUT_CARET_SENTINEL, '').trim();
+    }
+
+    function readGoalInputs() {
+      function numOrNull(el) {
+        const v = normalizeGoalInputValue(el?.value || '');
+        if (!v) return null;
+        const n = Number(v.replace(',', '.'));
+        return isNaN(n) ? null : n;
+      }
+
+      return {
+        minMeals: numOrNull(goalMealsMinEl),
+        maxMeals: numOrNull(goalMealsMaxEl),
+        maxSnacks: numOrNull(goalSnacksMaxEl),
+        minDayIntHours: numOrNull(goalDayIntMinEl),
+        maxDayIntHours: numOrNull(goalDayIntMaxEl)
+      };
+    }
+
+    function computeSleepRangeFromGoalInputs(values) {
+      const mealsMin = values?.minMeals;
+      const mealsMax = values?.maxMeals;
+      const intervalMin = values?.minDayIntHours;
+      const intervalMax = values?.maxDayIntHours;
+
+      const minSleepHours = (mealsMax != null && intervalMax != null)
+        ? roundToHalfHour(24 - Math.max(0, mealsMax - 1) * intervalMax)
+        : null;
+      const maxSleepHours = (mealsMin != null && intervalMin != null)
+        ? roundToHalfHour(24 - Math.max(0, mealsMin - 1) * intervalMin)
+        : null;
+
+      return {
+        minSleepHours,
+        maxSleepHours
+      };
+    }
+
     function getAllMealsSorted() {
       return [...meals].sort((a, b) => a.ts - b.ts);
     }
 
-    function formatReminderTime(ts) {
-      const lang = window._eatlogLang === 'ru' ? 'ru-RU' : undefined;
-      return new Date(ts).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function getGoalReminderIntervalMinutes() {
-      const min = goals.minDayIntervalMinutes;
-      const max = goals.maxDayIntervalMinutes;
-      if (min != null && max != null) return Math.round((min + max) / 2);
-      if (min != null) return min;
-      if (max != null) return max;
-      return null;
-    }
-
-    function hasNightIntervalGoal() {
-      return goals.minSleepHours != null || goals.maxSleepHours != null;
-    }
-
-    function isNightTime(ts) {
-      const h = new Date(ts).getHours();
-      return h >= 22 || h < 8;
-    }
-
-    function updateReminderToggleButton() {
-      if (!REMINDER_FEATURE_ENABLED) return;
-      if (reminderToggleInput) reminderToggleInput.checked = !!reminderEnabled;
-      if (reminderToggleText) reminderToggleText.textContent = reminderEnabled ? t('reminder.toggleOn') : t('reminder.toggleOff');
-    }
-
     function renderGoalsPreview() {
+      const inputValues = readGoalInputs();
+      const sleepRange = computeSleepRangeFromGoalInputs(inputValues);
+
       if (goalPreviewMealsEl) {
         goalPreviewMealsEl.textContent = t('goal.preview.meals', {
-          from: goals.minMealsPerDay != null ? goals.minMealsPerDay : '…',
-          to: goals.maxMealsPerDay != null ? goals.maxMealsPerDay : '…'
+          from: inputValues.minMeals != null ? inputValues.minMeals : (goals.minMealsPerDay != null ? goals.minMealsPerDay : '…'),
+          to: inputValues.maxMeals != null ? inputValues.maxMeals : (goals.maxMealsPerDay != null ? goals.maxMealsPerDay : '…')
         });
       }
       if (goalPreviewIntervalEl) {
         goalPreviewIntervalEl.textContent = t('goal.preview.interval', {
-          from: goals.minDayIntervalMinutes != null ? (goals.minDayIntervalMinutes / 60) : '…',
-          to: goals.maxDayIntervalMinutes != null ? (goals.maxDayIntervalMinutes / 60) : '…'
+          from: inputValues.minDayIntHours != null ? inputValues.minDayIntHours : (goals.minDayIntervalMinutes != null ? (goals.minDayIntervalMinutes / 60) : '…'),
+          to: inputValues.maxDayIntHours != null ? inputValues.maxDayIntHours : (goals.maxDayIntervalMinutes != null ? (goals.maxDayIntervalMinutes / 60) : '…')
         });
       }
       if (goalPreviewSleepEl) {
         goalPreviewSleepEl.textContent = t('goal.preview.sleep', {
-          from: goals.minSleepHours != null ? goals.minSleepHours : '…',
-          to: goals.maxSleepHours != null ? goals.maxSleepHours : '…'
+          from: sleepRange.minSleepHours != null ? sleepRange.minSleepHours : (goals.minSleepHours != null ? goals.minSleepHours : '…'),
+          to: sleepRange.maxSleepHours != null ? sleepRange.maxSleepHours : (goals.maxSleepHours != null ? goals.maxSleepHours : '…')
         });
       }
-    }
-
-    function setReminderStatus(text) {
-      if (!reminderStatusEl) return;
-      reminderStatusEl.textContent = text || '';
-    }
-
-    function canScheduleBySystem() {
-      return 'TimestampTrigger' in window;
-    }
-
-    async function clearScheduledReminder(registration) {
-      if (!registration || typeof registration.getNotifications !== 'function') return;
-      const pending = await registration.getNotifications({ tag: 'eatlog-next-meal-reminder' });
-      pending.forEach((n) => n.close());
-    }
-
-    function showReminderWithPageTimeout(targetTs) {
-      if (window._eatlogReminderTimeoutId) {
-        clearTimeout(window._eatlogReminderTimeoutId);
+      const from = sleepRange.minSleepHours != null ? sleepRange.minSleepHours : (goals.minSleepHours != null ? goals.minSleepHours : null);
+      const to = sleepRange.maxSleepHours != null ? sleepRange.maxSleepHours : (goals.maxSleepHours != null ? goals.maxSleepHours : null);
+      if (goalSleepMinValueEl) {
+        goalSleepMinValueEl.value = from != null ? String(from) : '';
       }
-      const delay = Math.max(0, targetTs - Date.now());
-      window._eatlogReminderTimeoutId = setTimeout(() => {
-        if (Notification.permission === 'granted') {
-          new Notification(t('reminder.title'), {
-            body: t('reminder.body'),
-            icon: './icons/icon-192.png',
-            tag: 'eatlog-next-meal-reminder'
-          });
-        }
-      }, delay);
-    }
-
-    async function scheduleNextMealReminder(options) {
-      if (!REMINDER_FEATURE_ENABLED) return;
-      const interactive = options && options.interactive;
-      updateReminderToggleButton();
-
-      if (!reminderEnabled) {
-        if (window._eatlogReminderTimeoutId) {
-          clearTimeout(window._eatlogReminderTimeoutId);
-          window._eatlogReminderTimeoutId = null;
-        }
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.ready
-            .then((registration) => clearScheduledReminder(registration))
-            .catch(() => { });
-        }
-        setReminderStatus(t('reminder.status.off'));
-        return;
+      if (goalSleepMaxValueEl) {
+        goalSleepMaxValueEl.value = to != null ? String(to) : '';
       }
-      if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-        setReminderStatus(t('reminder.status.unsupported'));
-        return;
-      }
-
-      if (Notification.permission === 'denied') {
-        setReminderStatus(t('reminder.status.denied'));
-        return;
-      }
-
-      if (Notification.permission !== 'granted') {
-        if (!interactive) {
-          setReminderStatus(t('reminder.status.needPermission'));
-          return;
-        }
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          setReminderStatus(permission === 'denied' ? t('reminder.status.denied') : t('reminder.status.needPermission'));
-          return;
-        }
-      }
-
-      const intervalMin = getGoalReminderIntervalMinutes();
-      if (intervalMin == null || intervalMin <= 0) {
-        setReminderStatus(t('reminder.status.noGoal'));
-        return;
-      }
-
-      const all = getAllMealsSorted();
-      if (all.length === 0) {
-        setReminderStatus(t('reminder.status.noMeals'));
-        return;
-      }
-
-      const lastMeal = all[all.length - 1];
-      const targetTsRaw = lastMeal.ts + intervalMin * 60 * 1000;
-      const targetTs = Math.max(targetTsRaw, Date.now() + 5000);
-
-      try {
-        const registration = await navigator.serviceWorker.ready;
-        await clearScheduledReminder(registration);
-
-        if (window._eatlogReminderTimeoutId) {
-          clearTimeout(window._eatlogReminderTimeoutId);
-          window._eatlogReminderTimeoutId = null;
-        }
-
-        if (hasNightIntervalGoal() && isNightTime(targetTs)) {
-          setReminderStatus(t('reminder.status.nightSuppressed'));
-          return;
-        }
-
-        if (canScheduleBySystem()) {
-          await registration.showNotification(t('reminder.title'), {
-            body: t('reminder.body'),
-            tag: 'eatlog-next-meal-reminder',
-            icon: './icons/icon-192.png',
-            badge: './icons/favicon-32.png',
-            showTrigger: new TimestampTrigger(targetTs),
-            data: { type: 'next-meal-reminder', targetTs }
-          });
-          setReminderStatus(t('reminder.status.scheduledAt', { time: formatReminderTime(targetTs) }));
-          return;
-        }
-
-        showReminderWithPageTimeout(targetTs);
-        setReminderStatus(t('reminder.status.scheduledAtOpen', { time: formatReminderTime(targetTs) }));
-      } catch (e) {
-        console.error('Failed to schedule reminder', e);
-        setReminderStatus(t('reminder.status.error'));
+      if (goalSleepAutoTextEl) {
+        goalSleepAutoTextEl.textContent = t('goals.sleepAutoHint');
       }
     }
 
@@ -1979,7 +2091,6 @@
       renderPeriodSummary();
       renderHistory();
       refreshDetailIfOpen();
-      scheduleNextMealReminder({ interactive: false });
     }
 
     async function editMealNote(id) {
@@ -2143,6 +2254,52 @@
       });
     }
 
+    function shouldShowSleepUpdateNotice() {
+      return !localStorage.getItem(STORAGE_KEY_SLEEP_NOTICE_SEEN);
+    }
+
+    function markSleepUpdateNoticeSeen() {
+      localStorage.setItem(STORAGE_KEY_SLEEP_NOTICE_SEEN, '1');
+    }
+
+    function openSleepUpdateNotice() {
+      if (!updateNoticeBackdrop || !updateNoticeOk) return;
+      const prevFocused = document.activeElement;
+      updateNoticeBackdrop.hidden = false;
+
+      const cleanup = () => {
+        updateNoticeOk.removeEventListener('click', onOk);
+        updateNoticeBackdrop.removeEventListener('click', onBackdropClick);
+        document.removeEventListener('keydown', onKeyDown);
+      };
+
+      const done = () => {
+        cleanup();
+        updateNoticeBackdrop.hidden = true;
+        markSleepUpdateNoticeSeen();
+        if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
+      };
+
+      const onOk = () => done();
+      const onBackdropClick = (e) => {
+        if (e.target === updateNoticeBackdrop) done();
+      };
+      const onKeyDown = (e) => {
+        if (e.key === 'Escape' || e.key === 'Enter') {
+          e.preventDefault();
+          done();
+        }
+      };
+
+      updateNoticeOk.addEventListener('click', onOk);
+      updateNoticeBackdrop.addEventListener('click', onBackdropClick);
+      document.addEventListener('keydown', onKeyDown);
+
+      setTimeout(() => {
+        updateNoticeOk.focus();
+      }, 0);
+    }
+
     async function editMealTime(id) {
       const entry = meals.find(m => m.id === id);
       if (!entry) return;
@@ -2180,7 +2337,6 @@
       renderHistory();
       renderPeriodSummary();
       refreshDetailIfOpen();
-      scheduleNextMealReminder({ interactive: false });
     }
 
     function toggleSnack(id) {
@@ -2709,7 +2865,6 @@
       renderPeriodSummary();
       renderHistory();
       refreshDetailIfOpen();
-      scheduleNextMealReminder({ interactive: false });
     });
 
     function switchView(view) {
@@ -2717,6 +2872,8 @@
         viewTodayEl.style.display = '';
         viewStatsEl.style.display = 'none';
         viewGoalsEl.style.display = 'none';
+        if (appShellEl) appShellEl.classList.remove('goals-active');
+        if (appFooterEl) appFooterEl.style.display = '';
         tabTodayBtn.classList.add('active');
         tabStatsBtn.classList.remove('active');
         tabGoalsBtn.classList.remove('active');
@@ -2724,6 +2881,8 @@
         viewTodayEl.style.display = 'none';
         viewStatsEl.style.display = '';
         viewGoalsEl.style.display = 'none';
+        if (appShellEl) appShellEl.classList.remove('goals-active');
+        if (appFooterEl) appFooterEl.style.display = '';
         tabTodayBtn.classList.remove('active');
         tabStatsBtn.classList.add('active');
         tabGoalsBtn.classList.remove('active');
@@ -2731,6 +2890,8 @@
         viewTodayEl.style.display = 'none';
         viewStatsEl.style.display = 'none';
         viewGoalsEl.style.display = '';
+        if (appShellEl) appShellEl.classList.remove('goals-active');
+        if (appFooterEl) appFooterEl.style.display = '';
         tabTodayBtn.classList.remove('active');
         tabStatsBtn.classList.remove('active');
         tabGoalsBtn.classList.add('active');
@@ -2756,27 +2917,45 @@
       if (goals.minMealsPerDay != null) goalMealsMinEl.value = goals.minMealsPerDay;
       if (goals.maxMealsPerDay != null) goalMealsMaxEl.value = goals.maxMealsPerDay;
       if (goals.maxSnacksPerDay != null) goalSnacksMaxEl.value = goals.maxSnacksPerDay;
-      if (goals.minSleepHours != null) goalSleepMinEl.value = goals.minSleepHours;
-      if (goals.maxSleepHours != null) goalSleepMaxEl.value = goals.maxSleepHours;
       if (goals.minDayIntervalMinutes != null) goalDayIntMinEl.value = goals.minDayIntervalMinutes / 60;
       if (goals.maxDayIntervalMinutes != null) goalDayIntMaxEl.value = goals.maxDayIntervalMinutes / 60;
       renderGoalsPreview();
     }
 
-    if (!REMINDER_FEATURE_ENABLED) {
-      reminderEnabled = false;
-      saveReminderEnabled(false);
-      if (remindersCardEl) remindersCardEl.style.display = 'none';
-    }
-
-    if (reminderToggleInput) {
-      reminderToggleInput.addEventListener('change', async () => {
-        reminderEnabled = !!reminderToggleInput.checked;
-        saveReminderEnabled(reminderEnabled);
-        if (!reminderEnabled) setReminderStatus(t('reminder.status.off'));
-        await scheduleNextMealReminder({ interactive: reminderEnabled });
+    [
+      goalMealsMinEl,
+      goalMealsMaxEl,
+      goalSnacksMaxEl,
+      goalDayIntMinEl,
+      goalDayIntMaxEl
+    ].forEach((el) => {
+      if (!el) return;
+      el.addEventListener('focus', () => {
+        const current = normalizeGoalInputValue(el.value);
+        if (current) return;
+        el.value = GOAL_INPUT_CARET_SENTINEL;
+        requestAnimationFrame(() => {
+          try {
+            el.setSelectionRange(1, 1);
+          } catch (_) { }
+        });
       });
-    }
+      el.addEventListener('blur', () => {
+        if (normalizeGoalInputValue(el.value)) return;
+        el.value = '';
+      });
+      el.addEventListener('input', () => renderGoalsPreview());
+      el.addEventListener('input', () => {
+        const cleaned = String(el.value || '').replaceAll(GOAL_INPUT_CARET_SENTINEL, '');
+        if (cleaned !== el.value) {
+          const pos = cleaned.length;
+          el.value = cleaned;
+          try {
+            el.setSelectionRange(pos, pos);
+          } catch (_) { }
+        }
+      });
+    });
 
 
     function animateSaveGoalsButton(btn) {
@@ -2817,28 +2996,25 @@
     }
 
     saveGoalsBtn.addEventListener('click', () => {
-      function numOrNull(el) {
-        const v = String(el.value || '').trim();
-        if (!v) return null;
-        const n = Number(v.replace(',', '.'));
-        return isNaN(n) ? null : n;
-      }
+      const {
+        minMeals,
+        maxMeals,
+        maxSnacks,
+        minDayIntHours,
+        maxDayIntHours
+      } = readGoalInputs();
+      const {
+        minSleepHours,
+        maxSleepHours
+      } = computeSleepRangeFromGoalInputs({
+        minMeals,
+        maxMeals,
+        minDayIntHours,
+        maxDayIntHours
+      });
 
-      const minMeals = numOrNull(goalMealsMinEl);
-      const maxMeals = numOrNull(goalMealsMaxEl);
-      const maxSnacks = numOrNull(goalSnacksMaxEl);
-      const minSleepHours = numOrNull(goalSleepMinEl);
-      const maxSleepHours = numOrNull(goalSleepMaxEl);
-      const minDayIntHours = numOrNull(goalDayIntMinEl);
-      const maxDayIntHours = numOrNull(goalDayIntMaxEl);
-
-      // Basic validation: min <= max where both provided
       if (minMeals != null && maxMeals != null && minMeals > maxMeals) {
         alert('Минимум приёмов не может быть больше максимума.');
-        return;
-      }
-      if (minSleepHours != null && maxSleepHours != null && minSleepHours > maxSleepHours) {
-        alert('Минимальный интервал сна больше максимального.');
         return;
       }
       if (minDayIntHours != null && maxDayIntHours != null && minDayIntHours > maxDayIntHours) {
@@ -2846,8 +3022,11 @@
         return;
       }
       if (maxSnacks != null && maxMeals != null && maxSnacks > maxMeals) {
-        // snacks cannot exceed total meals logically
         if (!confirm('Максимум перекусов больше максимума приёмов пищи. Продолжить?')) return;
+      }
+      if ((minSleepHours != null && minSleepHours < 0) || (maxSleepHours != null && maxSleepHours < 0)) {
+        alert('С такими целями в 24 часа не помещается ночной интервал без еды. Уменьшите число приёмов пищи или интервал между ними.');
+        return;
       }
 
       goals = {
@@ -2864,7 +3043,6 @@
       renderGoalsPreview();
 
       animateSaveGoalsButton(saveGoalsBtn);
-      scheduleNextMealReminder({ interactive: false });
 
       renderPeriodSummary();
       renderHistory();
@@ -2911,12 +3089,11 @@
     }
 
     loadGoalsIntoUI();
-    updateReminderToggleButton();
     renderMeals();
     renderStats();
     renderPeriodSummary();
     renderHistory();
-    scheduleNextMealReminder({ interactive: false });
+    if (shouldShowSleepUpdateNotice()) openSleepUpdateNotice();
   </script>
 </body>
 
