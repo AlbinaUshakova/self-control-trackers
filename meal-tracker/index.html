@@ -1189,6 +1189,109 @@
       }
     }
 
+    .chatgpt-cta {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+    }
+
+    .chatgpt-cta .subtle {
+      margin-bottom: 0;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(148, 163, 184, 0.7);
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
+      max-width: 100%;
+    }
+
+    .chatgpt-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      overflow: hidden;
+      transition: transform .12s ease, filter .2s ease, background .15s ease, border-color .15s ease;
+      min-height: 42px;
+      width: auto;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 18px;
+      padding-right: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(74, 222, 128, 0.18);
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(2, 6, 23, 0.9) 100%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: #ecfdf5;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 8px 20px rgba(0, 0, 0, 0.24),
+        0 0 16px rgba(34, 197, 94, 0.08);
+    }
+
+    .chatgpt-btn:active {
+      transform: scale(.98);
+    }
+
+    .chatgpt-btn:hover {
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(3, 7, 18, 0.96) 100%);
+      border-color: rgba(74, 222, 128, 0.26);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 10px 24px rgba(0, 0, 0, 0.28),
+        0 0 22px rgba(34, 197, 94, 0.11);
+    }
+
+    .chatgpt-btn.is-saving,
+    .chatgpt-btn.is-saved {
+      pointer-events: none;
+      filter: saturate(.92) brightness(.98);
+    }
+
+    .chatgpt-btn__spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      display: none;
+      animation: exportbtnspin .8s linear infinite;
+      opacity: .9;
+    }
+
+    .chatgpt-btn__check {
+      display: none;
+      font-weight: 800;
+      transform: translateY(1px);
+    }
+
+    .chatgpt-btn.is-saving .chatgpt-btn__spinner {
+      display: inline-block;
+    }
+
+    .chatgpt-btn.is-saved .chatgpt-btn__check {
+      display: inline-block;
+    }
+
+    .chatgpt-btn__sparkle {
+      font-size: 13px;
+      line-height: 1;
+      transform: translateY(-0.5px);
+      filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.18));
+    }
+
     .prompt-backdrop[hidden] {
       display: none !important;
     }
@@ -1343,6 +1446,15 @@
         <div class="card">
           <h2 data-i18n="today.list">Сегодняшние приёмы пищи</h2>
           <div class="list" id="mealList"></div>
+          <div class="chatgpt-cta">
+            <button id="sendToChatGptBtn" class="chatgpt-btn">
+              <span class="chatgpt-btn__sparkle" aria-hidden="true">✨</span>
+              <span class="chatgpt-btn__label" data-i18n="chatgpt.btn" data-default-key="chatgpt.btn">GPT-анализ питания</span>
+              <span class="chatgpt-btn__spinner" aria-hidden="true"></span>
+              <span class="chatgpt-btn__check" aria-hidden="true">✓</span>
+            </button>
+            <div class="subtle" data-i18n="chatgpt.hint">1. Нажми кнопку. 2. Откроется ChatGPT. 3. Нажми «Вставить» в чате.</div>
+          </div>
         </div>
       </div>
 
@@ -1549,7 +1661,6 @@
     </div>
   </div>
 
-
   <script>
     // Service Worker (offline) — works only over https or http://localhost (not file://)
     if ('serviceWorker' in navigator) {
@@ -1583,6 +1694,12 @@
         "stat.dayInterval": "Interval between meals",
         "stat.sinceLast": "Since last meal",
         "list.empty": "No entries for today yet.\nTap \"I'm eating now\" when you start your meal.\nUse 🍽 / 🍪 to mark a snack.",
+        "chatgpt.btn": "GPT nutrition analysis",
+        "chatgpt.hint": "1. Tap the button. 2. ChatGPT will open. 3. Tap Paste in the chat.",
+        "chatgpt.preparing": "Preparing prompt…",
+        "chatgpt.ready": "Prompt ready",
+        "chatgpt.noData": "There are no meals for today yet.",
+        "chatgpt.copyError": "Couldn't copy the prompt automatically.",
         "period.stats": "Period stats",
         "daily.breakdown": "Daily breakdown",
         "stat.sleep": "Night fasting interval",
@@ -1672,6 +1789,12 @@
         "stat.dayInterval": "Интервал между приёмами пищи",
         "stat.sinceLast": "С последнего приёма",
         "list.empty": "Сегодня пока нет записей.\nНажми «Я ем сейчас», когда начнёшь есть.\nИспользуй 🍽 / 🍪, чтобы отметить перекус.",
+        "chatgpt.btn": "GPT-анализ питания",
+        "chatgpt.hint": "1. Нажми кнопку. 2. Откроется ChatGPT. 3. Нажми «Вставить» в чате.",
+        "chatgpt.preparing": "Готовлю запрос…",
+        "chatgpt.ready": "Запрос готов",
+        "chatgpt.noData": "За сегодня ещё нет записей.",
+        "chatgpt.copyError": "Не удалось автоматически скопировать запрос.",
         "period.stats": "Статистика за период",
         "daily.breakdown": "Детализация по дням",
         "stat.sleep": "Ночной интервал без еды",
@@ -1878,6 +2001,7 @@
     const statAvgIntervalEl = document.getElementById('statAvgInterval');
     const statSinceLastEl = document.getElementById('statSinceLast');
     const lastMealInfoEl = document.getElementById('lastMealInfo');
+    const sendToChatGptBtn = document.getElementById('sendToChatGptBtn');
 
     const historyBodyEl = document.getElementById('historyBody');
     const exportMealsBtn = document.getElementById('exportMealsBtn');
@@ -2076,6 +2200,69 @@
       return meals
         .filter(m => isSameDay(m.ts, now))
         .sort((a, b) => a.ts - b.ts);
+    }
+
+    function buildTodayNutritionPrompt() {
+      const todayMeals = getTodayMeals();
+      const currentLang = window._eatlogLang || defaultLang;
+      const locale = currentLang === 'ru' ? 'ru-RU' : 'en-US';
+      const dateLabel = new Date().toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const mealLines = todayMeals.map((meal, index) => {
+        const mealType = currentLang === 'ru'
+          ? (meal.isSnack ? 'перекус' : 'основной приём')
+          : (meal.isSnack ? 'snack' : 'main meal');
+        const note = (meal.note || t('no.description')).trim();
+        return `${index + 1}. ${formatTimeHM(meal.ts)} | ${mealType} | ${note}`;
+      });
+
+      if (currentLang === 'ru') {
+        return [
+          `Мой дневник питания за ${dateLabel}.`,
+          '',
+          'Записи за сегодня:',
+          ...mealLines,
+          '',
+          'Посчитай примерные калории, белки, жиры и углеводы по каждой записи и итог за день.',
+          'Если не хватает веса или объёма, используй типичную порцию и явно помечай это как оценку.',
+          'Не задавай уточняющие вопросы, если можно сделать разумное приближение.',
+          'Ответ дай на русском в таблице: время | запись | ккал | белки | жиры | углеводы.',
+          'После таблицы добавь итог за день и коротко укажи, какие позиции были наиболее неточными по оценке.'
+        ].join('\n');
+      }
+
+      return [
+        `My food log for ${dateLabel}.`,
+        '',
+        "Today's entries:",
+        ...mealLines,
+        '',
+        'Estimate calories, protein, fat, and carbs for each entry and then the total for the day.',
+        'If weight or portion size is missing, use a typical serving and clearly mark it as an estimate.',
+        "Don't ask follow-up questions if a reasonable approximation is possible.",
+        'Reply in English as a table: time | entry | kcal | protein | fat | carbs.',
+        'After the table, add the daily total and briefly note which estimates are the least certain.'
+      ].join('\n');
+    }
+
+    async function copyTextToClipboard(text) {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        return false;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function shouldOpenChatGptInSameTab() {
+      return window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
     }
 
     async function deleteMeal(id) {
@@ -3082,10 +3269,67 @@
       btn._exportAnimTimers.push(t1, t2);
     }
 
+    function animateChatGptButton(btn) {
+      if (!btn) return;
+      const label = btn.querySelector('.chatgpt-btn__label');
+
+      if (btn._chatGptAnimTimers) {
+        btn._chatGptAnimTimers.forEach(id => clearTimeout(id));
+      }
+      btn._chatGptAnimTimers = [];
+
+      const defaultKey = label?.dataset.defaultKey || 'chatgpt.btn';
+      const defaultText = t(defaultKey);
+
+      btn.classList.remove('is-saved');
+      btn.classList.add('is-saving');
+      btn.disabled = true;
+      if (label) label.textContent = t('chatgpt.preparing');
+
+      const t1 = setTimeout(() => {
+        btn.classList.remove('is-saving');
+        btn.classList.add('is-saved');
+        if (label) label.textContent = t('chatgpt.ready');
+      }, 350);
+
+      const t2 = setTimeout(() => {
+        btn.classList.remove('is-saved');
+        btn.disabled = false;
+        if (label) label.textContent = defaultText;
+      }, 1650);
+
+      btn._chatGptAnimTimers.push(t1, t2);
+    }
+
+    async function sendTodayMealsToChatGpt() {
+      const todayMeals = getTodayMeals();
+      if (!todayMeals.length) {
+        alert(t('chatgpt.noData'));
+        return;
+      }
+
+      const prompt = buildTodayNutritionPrompt();
+      const copied = await copyTextToClipboard(prompt);
+      if (!copied) {
+        alert(t('chatgpt.copyError'));
+        return;
+      }
+
+      animateChatGptButton(sendToChatGptBtn);
+      if (shouldOpenChatGptInSameTab()) {
+        window.location.assign('https://chatgpt.com/');
+      } else {
+        window.open('https://chatgpt.com/', '_blank', 'noopener');
+      }
+    }
+
 
     // обработчик на выгрузку CSV
     if (exportMealsBtn) {
       exportMealsBtn.addEventListener('click', exportMealsCsv);
+    }
+    if (sendToChatGptBtn) {
+      sendToChatGptBtn.addEventListener('click', sendTodayMealsToChatGpt);
     }
 
     loadGoalsIntoUI();
