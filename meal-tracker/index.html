@@ -2223,30 +2223,30 @@
 
       if (currentLang === 'ru') {
         return [
-          `Мой дневник питания за ${dateLabel}.`,
+          `Дневник питания за ${dateLabel}.`,
           '',
-          'Записи за сегодня:',
+          'Записи:',
           ...mealLines,
           '',
-          'Посчитай примерные калории, белки, жиры и углеводы по каждой записи и итог за день.',
-          'Если не хватает веса или объёма, используй типичную порцию и явно помечай это как оценку.',
-          'Не задавай уточняющие вопросы, если можно сделать разумное приближение.',
-          'Ответ дай на русском в таблице: время | запись | ккал | белки | жиры | углеводы.',
-          'После таблицы добавь итог за день и коротко укажи, какие позиции были наиболее неточными по оценке.'
+          'Для каждой записи оцени: ккал, белки, жиры и углеводы.',
+          'Если вес или порция неизвестны, используй типичную порцию и помечай такую оценку знаком "~".',
+          'Если можно сделать разумную оценку, не задавай уточняющих вопросов.',
+          'Ответ дай на русском в таблице: | время | запись | ккал | б | ж | у |',
+          'После таблицы добавь: итог за день; какие оценки самые неточные и почему.'
         ].join('\n');
       }
 
       return [
-        `My food log for ${dateLabel}.`,
+        `Food log for ${dateLabel}.`,
         '',
-        "Today's entries:",
+        'Entries:',
         ...mealLines,
         '',
-        'Estimate calories, protein, fat, and carbs for each entry and then the total for the day.',
-        'If weight or portion size is missing, use a typical serving and clearly mark it as an estimate.',
-        "Don't ask follow-up questions if a reasonable approximation is possible.",
-        'Reply in English as a table: time | entry | kcal | protein | fat | carbs.',
-        'After the table, add the daily total and briefly note which estimates are the least certain.'
+        'For each entry, estimate: kcal, protein, fat, and carbs.',
+        'If weight or portion size is unknown, use a typical serving and mark that estimate with "~".',
+        "If a reasonable estimate is possible, don't ask follow-up questions.",
+        'Reply in English as a table: | time | entry | kcal | p | f | c |',
+        'After the table add: daily total; which estimates are the least certain and why.'
       ].join('\n');
     }
 
