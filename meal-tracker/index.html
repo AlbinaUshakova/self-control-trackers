@@ -1653,10 +1653,10 @@
 
   <div id="updateNoticeBackdrop" class="prompt-backdrop" hidden>
     <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="updateNoticeTitle">
-      <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.sleepNotice.title">Обновление в целях</div>
-      <p class="prompt-body" data-i18n="update.sleepNotice.body">Ночной интервал без еды теперь рассчитывается автоматически по количеству приёмов пищи и интервалу между ними.</p>
+      <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.notice.title">Что нового</div>
+      <p class="prompt-body" data-i18n="update.notice.body">Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ.</p>
       <div class="prompt-actions">
-        <button id="updateNoticeOk" type="button" class="prompt-btn" data-i18n="update.sleepNotice.ok">Понятно</button>
+        <button id="updateNoticeOk" type="button" class="prompt-btn" data-i18n="update.notice.ok">Понятно</button>
       </div>
     </div>
   </div>
@@ -1752,9 +1752,9 @@
         "confirm.ok": "Delete",
         "alert.invalidTime": "Invalid format. Enter, for example: 08:30 or 22:05",
         "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59.",
-        "update.sleepNotice.title": "Goals update",
-        "update.sleepNotice.body": "Night fasting interval is now calculated automatically.",
-        "update.sleepNotice.ok": "OK",
+        "update.notice.title": "What's new",
+        "update.notice.body": "We added GPT nutrition analysis — send the day's entries to ChatGPT and get an estimated calorie and macro breakdown.",
+        "update.notice.ok": "OK",
         "export.noData": "No meals yet to export.",
         "no.description": "(no description)",
         "interval.first": "First recorded meal (no previous entries).",
@@ -1845,9 +1845,9 @@
         "confirm.ok": "Удалить",
         "alert.invalidTime": "Неверный формат. Введи, например: 08:30 или 22:05",
         "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59.",
-        "update.sleepNotice.title": "Обновление в целях",
-        "update.sleepNotice.body": "Ночной интервал без еды теперь рассчитывается автоматически.",
-        "update.sleepNotice.ok": "Понятно",
+        "update.notice.title": "Что нового",
+        "update.notice.body": "Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ.",
+        "update.notice.ok": "Понятно",
         "export.noData": "Пока нет ни одного приёма пищи для выгрузки.",
         "no.description": "(без описания)",
         "interval.first": "Первый зафиксированный приём (раньше записей нет).",
@@ -1943,7 +1943,8 @@
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
-    const STORAGE_KEY_SLEEP_NOTICE_SEEN = 'meal_tracker_sleep_notice_seen_v1';
+    const STORAGE_KEY_UPDATE_NOTICE_VERSION = 'meal_tracker_update_notice_version';
+    const CURRENT_UPDATE_NOTICE_VERSION = 'gpt_analysis_v1';
     function loadMeals() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_MEALS);
@@ -2441,15 +2442,15 @@
       });
     }
 
-    function shouldShowSleepUpdateNotice() {
-      return !localStorage.getItem(STORAGE_KEY_SLEEP_NOTICE_SEEN);
+    function shouldShowUpdateNotice() {
+      return localStorage.getItem(STORAGE_KEY_UPDATE_NOTICE_VERSION) !== CURRENT_UPDATE_NOTICE_VERSION;
     }
 
-    function markSleepUpdateNoticeSeen() {
-      localStorage.setItem(STORAGE_KEY_SLEEP_NOTICE_SEEN, '1');
+    function markUpdateNoticeSeen() {
+      localStorage.setItem(STORAGE_KEY_UPDATE_NOTICE_VERSION, CURRENT_UPDATE_NOTICE_VERSION);
     }
 
-    function openSleepUpdateNotice() {
+    function openUpdateNotice() {
       if (!updateNoticeBackdrop || !updateNoticeOk) return;
       const prevFocused = document.activeElement;
       updateNoticeBackdrop.hidden = false;
@@ -2463,7 +2464,7 @@
       const done = () => {
         cleanup();
         updateNoticeBackdrop.hidden = true;
-        markSleepUpdateNoticeSeen();
+        markUpdateNoticeSeen();
         if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
       };
 
@@ -3337,7 +3338,7 @@
     renderStats();
     renderPeriodSummary();
     renderHistory();
-    if (shouldShowSleepUpdateNotice()) openSleepUpdateNotice();
+    if (shouldShowUpdateNotice()) openUpdateNotice();
   </script>
 </body>
 
