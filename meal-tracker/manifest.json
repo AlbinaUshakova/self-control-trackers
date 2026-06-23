@@ -2,8 +2,8 @@
   "name": "EatLog",
   "short_name": "EatLog",
   "description": "Трекер приёмов пищи и перекусов",
-  "start_url": "/self-control-trackers/meal-tracker/",
-  "scope": "/self-control-trackers/meal-tracker/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#020617",
@@ -21,5 +21,5 @@
       "purpose": "any maskable"
     }
   ],
-  "id": "/self-control-trackers/meal-tracker/"
+  "id": "./"
 }

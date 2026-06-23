@@ -25,12 +25,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-  <link rel="canonical" href="https://albinaushakova.github.io/self-control-trackers/meal-tracker/" />
+  <link rel="canonical" href="https://eatlog-tracker.vercel.app/app" />
   <meta property="og:title" content="EatLog — трекер приемов пищи и контроль перекусов" />
   <meta property="og:description"
     content="Простой дневник питания: приемы пищи, перекусы, интервалы, статистика. Можно установить как приложение." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://albinaushakova.github.io/self-control-trackers/meal-tracker/" />
+  <meta property="og:url" content="https://eatlog-tracker.vercel.app/app" />
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
@@ -59,16 +59,28 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: ui-rounded, "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
-      color: #e5e7eb;
+      background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.12) 0, rgba(37, 99, 235, 0) 30%),
+        radial-gradient(circle at 20% 0%, rgba(34, 197, 94, 0.08) 0, rgba(34, 197, 94, 0) 22%),
+        linear-gradient(180deg, #020617 0%, #030712 58%, #000 100%);
+      color: #e2e8f0;
       display: flex;
       justify-content: center;
       align-items: stretch;
       padding: 16px 12px;
       text-align: left;
+    }
+
+    body.embed-preview {
+      min-height: 100vh;
+      height: 100vh;
+      padding: 0;
+      display: block;
+      overflow: hidden;
+      background: #020617;
     }
 
     /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
@@ -102,8 +114,12 @@
       margin: 0 auto;
       border-radius: 28px;
       padding: 12px 14px 20px;
-      background: rgba(15, 23, 42, 0.96);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(8, 15, 31, 0.98) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 30px 70px rgba(0, 0, 0, 0.62);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       display: flex;
@@ -111,30 +127,58 @@
       max-height: 100%;
     }
 
+    body.embed-preview .app-shell {
+      max-width: none;
+      width: calc(100% / 0.94);
+      height: calc((100vh + 8px) / 0.94);
+      min-height: calc((100vh + 8px) / 0.94);
+      margin: 0;
+      border-radius: 0;
+      padding: 10px 10px 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      transform: scale(0.94);
+      transform-origin: top left;
+    }
+
+    body.embed-preview .app-content {
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 0;
+    }
+
+    body.embed-preview .app-footer {
+      display: none !important;
+    }
+
     .app-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
     h1 {
-      font-size: 22px;
+      font-size: 23px;
       margin: 0;
-      letter-spacing: 0.02em;
+      letter-spacing: -0.03em;
+      font-weight: 750;
+      color: #f8fafc;
     }
 
     .subtle {
       font-size: 11px;
-      color: #607086;
+      color: #718198;
       line-height: 1.3;
       margin: 4px 2px 10px;
     }
 
     /* Вкладки */
     .view-tabs-wrapper {
-      margin: 2px 0 6px;
+      margin: 3px 0 8px;
     }
 
     .view-tabs {
@@ -143,9 +187,9 @@
       gap: 6px;
       padding: 5px;
       border-radius: 18px;
-      background: rgba(2, 6, 23, 0.72);
-      border: 1px solid rgba(51, 65, 85, 0.42);
-      box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.03);
+      background: rgba(2, 6, 23, 0.56);
+      border: 1px solid rgba(71, 85, 105, 0.34);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
 
     .view-tabs .tab-btn {
@@ -157,20 +201,28 @@
       border-radius: 14px;
       border: none;
       background: transparent;
-      color: #cbd5e1;
+      color: #aebacc;
       font-size: 14px;
       cursor: pointer;
       font-weight: 600;
       transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
     }
 
+    .view-tabs .tab-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.04);
+      color: #d9e2ec;
+    }
+
     .view-tabs .tab-btn:not(.active) {
-      background: rgba(15, 23, 42, 0.18);
+      background: rgba(15, 23, 42, 0.12);
     }
 
     .view-tabs .tab-btn.active {
-      background: #22c55e;
-      color: #052e16;
+      background: linear-gradient(180deg, #31d265 0%, #22c55e 100%);
+      color: #03210f;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 8px 18px rgba(34, 197, 94, 0.2);
     }
 
     #langToggleBtn {
@@ -178,8 +230,9 @@
       margin: 0;
       padding: 6px 10px;
       border-radius: 999px;
-      background: transparent;
-      color: #9ca3af;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      color: #94a3b8;
       font-size: 13px;
       font-weight: 500;
     }
@@ -204,24 +257,60 @@
     }
 
     h2 {
-      font-size: 17px;
+      font-size: 16px;
       margin-top: 0;
-      margin-bottom: 6px;
-      letter-spacing: 0.01em;
+      margin-bottom: 7px;
+      letter-spacing: -0.02em;
+      font-weight: 680;
+      color: #f8fafc;
     }
 
     .card {
-      background: #020617;
+      background:
+        linear-gradient(180deg, rgba(5, 11, 24, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
       border-radius: 16px;
       padding: 12px 12px 10px;
       margin-bottom: 10px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-      border: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 10px 24px rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(148, 163, 184, 0.06);
     }
 
     .card-compact {
       padding-top: 10px;
       padding-bottom: 10px;
+    }
+
+    #view-today .today-entry-card {
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0) 34%),
+        linear-gradient(180deg, rgba(7, 16, 30, 0.99) 0%, rgba(2, 6, 23, 0.99) 100%);
+      border-color: rgba(34, 197, 94, 0.1);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 14px 30px rgba(0, 0, 0, 0.38);
+    }
+
+    #view-today .today-entry-card h2 {
+      margin-bottom: 8px;
+    }
+
+    #view-today .today-feed-card {
+      background:
+        linear-gradient(180deg, rgba(4, 10, 22, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
+      border-color: rgba(148, 163, 184, 0.05);
+    }
+
+    #view-today #lastMealInfo {
+      margin: 7px 2px 2px;
+      color: #8da0b8;
+      font-size: 10px;
+      letter-spacing: 0.01em;
+    }
+
+    #view-today .list {
+      margin-top: 2px;
     }
 
     label {
@@ -235,21 +324,23 @@
       width: 100%;
       box-sizing: border-box;
       border-radius: 12px;
-      border: 1px solid #1f2937;
-      background: #020617;
+      border: 1px solid rgba(51, 65, 85, 0.72);
+      background: rgba(2, 6, 23, 0.88);
       color: #e5e7eb;
-      padding: 9px 11px;
+      padding: 10px 12px;
       font-size: 14px;
       margin-bottom: 10px;
       resize: vertical;
       min-height: 52px;
       outline: none;
-      transition: border-color 0.12s ease, background 0.12s ease;
+      transition: border-color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
     }
 
     textarea:focus {
       border-color: #22c55e;
-      background: #020617;
+      background: rgba(3, 10, 24, 0.96);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
     }
 
     button {
@@ -274,15 +365,17 @@
     }
 
     .btn-primary {
-      background: #22c55e;
-      color: #022c22;
+      background: linear-gradient(180deg, #31d265 0%, #22c55e 100%);
+      color: #03210f;
       font-weight: 600;
       width: 100%;
-      box-shadow: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 10px 22px rgba(34, 197, 94, 0.18);
     }
 
     .btn-primary:hover {
-      background: #16a34a;
+      background: linear-gradient(180deg, #3ade73 0%, #16a34a 100%);
     }
 
     .btn-outline {
@@ -301,34 +394,38 @@
       border: none;
       padding: 4px 10px;
       font-size: 12px;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
     }
 
     .btn-danger:hover {
-      background: rgba(127, 29, 29, 0.3);
+      background: rgba(127, 29, 29, 0.24);
+      color: #fecaca;
     }
 
     .btn-ghost {
       background: rgba(15, 23, 42, 0.9);
       color: #e5e7eb;
       border: none;
-      padding: 4px 10px;
-      font-size: 12px;
+      padding: 4px 9px;
+      font-size: 11px;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
     }
 
     .btn-ghost:hover {
-      background: rgba(31, 41, 55, 1);
+      background: rgba(30, 41, 59, 0.96);
+      color: #f8fafc;
     }
 
     .list {
-      max-height: 360px;
+      max-height: 340px;
       overflow-y: auto;
       padding-right: 2px;
     }
 
     .meal-row {
       border-bottom: 1px solid #111827;
-      padding: 7px 0;
-      font-size: 14px;
+      padding: 6px 0;
+      font-size: 13px;
     }
 
     .meal-row:last-child {
@@ -340,7 +437,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .actions {
@@ -354,13 +451,22 @@
     .meal-time {
       font-weight: 600;
       font-variant-numeric: tabular-nums;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .meal-note {
       color: #e5e7eb;
       word-break: break-word;
-      font-size: 13px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .meal-type {
+      color: #94a3b8;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 2px 0 3px;
     }
 
     .meal-interval {
@@ -404,7 +510,7 @@
     }
 
     .history-wrapper {
-      max-height: 260px;
+      max-height: 240px;
       overflow-y: auto;
       border-radius: 12px;
       margin-top: 4px;
@@ -542,6 +648,131 @@
       background: #e5e7eb;
       color: #020617;
       border-color: transparent;
+    }
+
+    #view-stats .stats-summary-card {
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.07) 0%, rgba(96, 165, 250, 0) 34%),
+        linear-gradient(180deg, rgba(5, 11, 24, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
+      border-color: rgba(96, 165, 250, 0.08);
+    }
+
+    #view-stats .stats-history-card {
+      background:
+        linear-gradient(180deg, rgba(4, 10, 22, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
+    }
+
+    #view-stats .period-controls {
+      gap: 6px;
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+
+    #view-stats .period-btn {
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(71, 85, 105, 0.62);
+      background: rgba(2, 6, 23, 0.48);
+      color: #b7c3d4;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 0;
+      margin-right: 0;
+    }
+
+    #view-stats .period-btn:hover {
+      background: rgba(15, 23, 42, 0.82);
+      border-color: rgba(100, 116, 139, 0.86);
+    }
+
+    #view-stats .period-btn.active {
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, rgba(226, 232, 240, 0.98) 100%);
+      color: #0f172a;
+      border-color: rgba(226, 232, 240, 0.88);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    #view-stats .stats-grid {
+      gap: 9px;
+      margin-top: 4px;
+    }
+
+    #view-stats .stat-box {
+      min-height: 58px;
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(148, 163, 184, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    #view-stats .stat-label {
+      color: #8ea0b7;
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      margin-bottom: 3px;
+    }
+
+    #view-stats .stat-value {
+      font-size: 19px;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+    }
+
+    #view-stats .history-wrapper {
+      margin-top: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.05);
+      background: rgba(2, 6, 23, 0.72);
+    }
+
+    #view-stats th {
+      color: #8392a7;
+      background: rgba(2, 6, 23, 0.96);
+    }
+
+    #view-stats td {
+      color: #d8e0ea;
+    }
+
+    #view-stats tbody tr:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    #view-stats .data-storage-label {
+      margin-top: 14px;
+      margin-bottom: 8px;
+      color: #6f7f95;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+    }
+
+    #view-stats .exportbtn,
+    #view-stats .resetbtn {
+      min-height: 56px;
+      padding: 9px 10px;
+      border-radius: 18px;
+    }
+
+    #view-stats .exportbtn {
+      border-color: rgba(59, 130, 246, 0.16);
+      background: linear-gradient(180deg, rgba(8, 16, 36, 0.98), rgba(5, 11, 27, 0.98));
+    }
+
+    #view-stats .exportbtn:hover {
+      border-color: rgba(96, 165, 250, 0.24);
+      background: linear-gradient(180deg, rgba(10, 20, 42, 0.98), rgba(7, 14, 32, 0.98));
+    }
+
+    #view-stats .resetbtn {
+      border-color: rgba(244, 63, 94, 0.18);
+      background: linear-gradient(180deg, rgba(12, 13, 28, 0.98), rgba(8, 10, 22, 0.98));
+    }
+
+    #view-stats .resetbtn:hover {
+      border-color: rgba(251, 113, 133, 0.28);
+      background: linear-gradient(180deg, rgba(18, 12, 24, 0.98), rgba(12, 9, 20, 0.98));
     }
 
     .goals-card {
@@ -987,13 +1218,14 @@
     }
 
     .app-footer {
-      margin-top: 2px;
+      margin-top: 4px;
       font-size: 11px;
-      color: #6b7280;
+      color: #708094;
       display: flex;
       flex-direction: column;
       line-height: 1.15;
       gap: 1px;
+      opacity: 0.42;
     }
 
     /* FULLSCREEN DETAIL */
@@ -1106,41 +1338,57 @@
     /* Export button feedback */
     .exportbtn {
       position: relative;
-      display: inline-flex;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 16px;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
+      gap: 8px;
       overflow: hidden;
       transition: transform .12s ease, filter .2s ease, background .15s ease, border-color .15s ease;
-      min-height: 42px;
-      width: auto;
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: 28px;
-      padding-right: 28px;
-      border-radius: 999px;
-      border: 1px solid rgba(107, 114, 128, 0.54);
-      background: transparent;
+      min-height: 54px;
+      width: 100%;
+      margin: 0;
+      padding: 8px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      background: linear-gradient(180deg, rgba(9, 16, 36, 0.98), rgba(6, 12, 30, 0.98));
       color: #e5e7eb;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.005em;
+      text-align: left;
     }
 
     .export-cta {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      margin-top: 8px;
     }
 
-    .export-cta .subtle {
+    .reset-cta {
       margin-top: 6px;
-      margin-bottom: 0;
-      text-align: center;
+    }
+
+    .data-storage-label {
+      margin-top: 12px;
+      margin-bottom: 6px;
+      color: #5f6c80;
       font-size: 10px;
-      color: #748297;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .resetbtn {
+      width: 100%;
+      max-width: none;
+      justify-content: flex-start;
+      padding: 8px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(127, 29, 29, 0.7);
+      background: linear-gradient(180deg, rgba(9, 16, 36, 0.98), rgba(6, 12, 30, 0.98));
+      color: #fb7185;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 16px;
+      gap: 8px;
+      text-align: left;
     }
 
     .exportbtn:active {
@@ -1148,14 +1396,136 @@
     }
 
     .exportbtn:hover {
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(148, 163, 184, 0.46);
+      background: linear-gradient(180deg, rgba(12, 20, 42, 0.98), rgba(7, 14, 34, 0.98));
+      border-color: rgba(71, 85, 105, 0.82);
+    }
+
+    .resetbtn:hover {
+      background: linear-gradient(180deg, rgba(20, 11, 23, 0.98), rgba(16, 8, 19, 0.98));
+      border-color: rgba(153, 27, 27, 0.88);
     }
 
     .exportbtn.is-saving,
     .exportbtn.is-saved {
       pointer-events: none;
       filter: saturate(.92) brightness(.98);
+    }
+
+    .action-card__icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(37, 99, 235, 0.14);
+      color: #6ea0ff;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .resetbtn .action-card__icon {
+      background: rgba(127, 29, 29, 0.22);
+      color: #fb7185;
+    }
+
+    .exportbtn:hover .action-card__icon,
+    .resetbtn:hover .action-card__icon {
+      transform: scale(1.03);
+    }
+
+    .action-card__copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .action-card__title {
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.2;
+    }
+
+    .resetbtn .action-card__title {
+      color: #fb7185;
+    }
+
+    .action-card__desc,
+    .action-card__note {
+      color: #98a5b9;
+      font-size: 9px;
+      line-height: 1.3;
+      white-space: normal;
+    }
+
+    .action-card__note {
+      color: #6f7c90;
+    }
+
+    .history-wrapper.is-empty {
+      max-height: none;
+    }
+
+    .history-wrapper.is-empty table {
+      table-layout: auto;
+    }
+
+    .history-wrapper.is-empty thead {
+      display: none;
+    }
+
+    .history-empty-cell {
+      padding: 10px 6px 8px;
+      border-bottom: none;
+    }
+
+    .history-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      color: #94a3b8;
+      padding: 4px 2px;
+    }
+
+    .history-empty-title {
+      color: #e5e7eb;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .history-empty-text {
+      color: #7b8799;
+      font-size: 10px;
+      line-height: 1.35;
+      max-width: 26ch;
+    }
+
+    .action-card__chevron,
+    .exportbtn__spinner,
+    .exportbtn__check {
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
+      align-self: center;
+    }
+
+    .action-card__chevron {
+      color: #8fb2ff;
+      font-size: 18px;
+      line-height: 1;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+
+    .resetbtn .action-card__chevron {
+      color: #fb7185;
+    }
+
+    .exportbtn:hover .action-card__chevron,
+    .resetbtn:hover .action-card__chevron {
+      transform: translateX(2px);
     }
 
     .exportbtn__spinner {
@@ -1183,6 +1553,11 @@
       display: inline-block;
     }
 
+    .exportbtn.is-saving .action-card__chevron,
+    .exportbtn.is-saved .action-card__chevron {
+      display: none;
+    }
+
     @keyframes exportbtnspin {
       to {
         transform: rotate(360deg);
@@ -1190,77 +1565,52 @@
     }
 
     .chatgpt-cta {
-      margin-top: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 7px;
+      margin-top: 12px;
       width: 100%;
-    }
-
-    .chatgpt-cta .subtle {
-      margin-bottom: 0;
-      text-align: center;
-      font-size: 11px;
-      color: rgba(148, 163, 184, 0.7);
-      white-space: normal;
-      overflow-wrap: anywhere;
-      line-height: 1.35;
-      max-width: 100%;
+      padding-top: 11px;
+      border-top: 1px solid rgba(118, 138, 206, 0.12);
     }
 
     .chatgpt-btn {
       position: relative;
-      display: inline-flex;
-      align-items: center;
+      display: flex;
       justify-content: center;
+      align-items: center;
       gap: 8px;
-      overflow: hidden;
-      transition: transform .12s ease, filter .2s ease, background .15s ease, border-color .15s ease;
-      min-height: 42px;
-      width: auto;
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: 18px;
-      padding-right: 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(74, 222, 128, 0.18);
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(2, 6, 23, 0.9) 100%);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      color: #ecfdf5;
-      font-size: 13px;
+      transition: color .15s ease, transform .12s ease, opacity .15s ease;
+      min-height: 0;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #bcc9f7;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.01em;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        0 8px 20px rgba(0, 0, 0, 0.24),
-        0 0 16px rgba(34, 197, 94, 0.08);
+      text-align: left;
+      border-radius: 12px;
     }
 
     .chatgpt-btn:active {
-      transform: scale(.98);
+      transform: translateX(1px);
     }
 
     .chatgpt-btn:hover {
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(3, 7, 18, 0.96) 100%);
-      border-color: rgba(74, 222, 128, 0.26);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        0 10px 24px rgba(0, 0, 0, 0.28),
-        0 0 22px rgba(34, 197, 94, 0.11);
+      color: #e7ecff;
+      transform: translateX(2px);
     }
 
     .chatgpt-btn.is-saving,
     .chatgpt-btn.is-saved {
       pointer-events: none;
-      filter: saturate(.92) brightness(.98);
+      opacity: 0.96;
     }
 
     .chatgpt-btn__spinner {
+      position: absolute;
+      right: 0;
+      top: 50%;
       width: 14px;
       height: 14px;
       border-radius: 999px;
@@ -1269,12 +1619,16 @@
       display: none;
       animation: exportbtnspin .8s linear infinite;
       opacity: .9;
+      transform: translateY(-50%);
     }
 
     .chatgpt-btn__check {
+      position: absolute;
+      right: 0;
+      top: 50%;
       display: none;
       font-weight: 800;
-      transform: translateY(1px);
+      transform: translateY(-50%);
     }
 
     .chatgpt-btn.is-saving .chatgpt-btn__spinner {
@@ -1286,10 +1640,53 @@
     }
 
     .chatgpt-btn__sparkle {
-      font-size: 13px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
       line-height: 1;
       transform: translateY(-0.5px);
-      filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.18));
+      filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.16));
+      opacity: 0.88;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .chatgpt-btn:hover .chatgpt-btn__sparkle {
+      transform: translateY(-0.5px) scale(1.04);
+      opacity: 1;
+    }
+
+    .chatgpt-btn__copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .chatgpt-btn__label {
+      color: currentColor;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .chatgpt-btn__desc {
+      color: rgba(138, 152, 174, 0.82);
+      font-size: 8px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .chatgpt-btn__chevron {
+      display: none;
+    }
+
+    .chatgpt-btn.is-saving .chatgpt-btn__chevron,
+    .chatgpt-btn.is-saved .chatgpt-btn__chevron {
+      display: none;
     }
 
     .prompt-backdrop[hidden] {
@@ -1376,14 +1773,21 @@
     }
 
     .prompt-btn {
-      background: transparent;
-      color: #60a5fa;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.02);
+      color: #93c5fd;
+      border: 1px solid rgba(96, 165, 250, 0.12);
+      border-radius: 10px;
+      padding: 8px 12px;
       margin: 0;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
+    }
+
+    .prompt-btn:hover {
+      background: rgba(96, 165, 250, 0.08);
+      border-color: rgba(96, 165, 250, 0.22);
+      color: #dbeafe;
     }
   </style>
 </head>
@@ -1411,7 +1815,7 @@
     <div class="app-content">
       <!-- СЕГОДНЯ -->
       <div id="view-today">
-        <div class="card">
+        <div class="card today-entry-card">
           <h2 data-i18n="h.newMeal">Новый приём пищи</h2>
           <textarea id="mealNote" data-i18n-placeholder="textarea.placeholder"
             placeholder="овсянка, 2 варёных яйца, кофе с печеньем"></textarea>
@@ -1421,51 +1825,32 @@
           </button>
           <p class="subtle" id="lastMealInfo"></p>
         </div>
-
-        <div class="card card-compact">
-          <h2 data-i18n="stats.today">Статистика за сегодня</h2>
-          <div class="stats-grid">
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.meals">Приёмов пищи</div>
-              <div class="stat-value" id="statMealsToday">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.snacks">Перекусы</div>
-              <div class="stat-value" id="statSnacksToday">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.dayInterval">Дневной <br> интервал</div>
-              <div class="stat-value" id="statAvgInterval">–</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.sinceLast">С последнего <br> приёма</div>
-              <div class="stat-value" id="statSinceLast">–</div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
+        <div class="card today-feed-card">
           <h2 data-i18n="today.list">Сегодняшние приёмы пищи</h2>
           <div class="list" id="mealList"></div>
           <div class="chatgpt-cta">
             <button id="sendToChatGptBtn" class="chatgpt-btn">
               <span class="chatgpt-btn__sparkle" aria-hidden="true">✨</span>
-              <span class="chatgpt-btn__label" data-i18n="chatgpt.btn" data-default-key="chatgpt.btn">GPT-анализ питания</span>
+              <span class="chatgpt-btn__copy">
+                <span class="chatgpt-btn__label" data-i18n="chatgpt.btn" data-default-key="chatgpt.btn">Анализ питания за сегодня</span>
+                <span class="chatgpt-btn__desc" data-i18n="chatgpt.desc">Сформировать отчёт по питанию для ChatGPT</span>
+              </span>
               <span class="chatgpt-btn__spinner" aria-hidden="true"></span>
               <span class="chatgpt-btn__check" aria-hidden="true">✓</span>
             </button>
-            <div class="subtle" data-i18n="chatgpt.hint">Запрос скопируется автоматически, и откроется ChatGPT. Если текст не появится, нажмите «Вставить».</div>
           </div>
         </div>
       </div>
 
       <!-- СТАТИСТИКА -->
       <div id="view-stats" style="display: none;">
-        <div class="card">
-          <h2 data-i18n="period.stats">Статистика за период</h2>
+        <div class="card card-compact stats-summary-card">
+          <h2 data-i18n="period.stats">Период</h2>
           <div class="period-controls">
+            <button class="btn-outline period-btn active" data-period="today" data-i18n="period.today">Сегодня</button>
             <button class="btn-outline period-btn" data-period="7" data-i18n="period.7">7 дней</button>
             <button class="btn-outline period-btn" data-period="14" data-i18n="period.14">14 дней</button>
-            <button class="btn-outline period-btn active" data-period="21" data-i18n="period.21">21 день</button>
+            <button class="btn-outline period-btn" data-period="21" data-i18n="period.21">21 день</button>
           </div>
           <div class="stats-grid">
             <div class="stat-box">
@@ -1473,11 +1858,11 @@
               <div class="stat-value" id="statPeriodMealsPerDay">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.snacks">Из них перекусов</div>
+              <div class="stat-label" data-i18n="stat.snacks">Перекусы</div>
               <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.sleep">Интервал сна</div>
+              <div class="stat-label" data-i18n="stat.sleep">Ночной интервал без еды</div>
               <div class="stat-value" id="statPeriodSleepInterval">–</div>
             </div>
             <div class="stat-box">
@@ -1485,15 +1870,12 @@
               <div class="stat-value" id="statPeriodAvgInterval">–</div>
             </div>
           </div>
-
-          <!-- пояснение про ретеншн и мотивация -->
           <div class="subtle" style="margin-top:10px;" data-i18n="stats.retention"></div>
-
         </div>
 
-        <div class="card">
+        <div class="card stats-history-card">
           <h2 data-i18n="daily.breakdown">Детализация по дням</h2>
-          <div class="history-wrapper">
+          <div class="history-wrapper" id="historyWrapper">
             <table>
               <thead>
                 <tr>
@@ -1509,13 +1891,43 @@
           </div>
 
           <!-- КНОПКА ВЫГРУЗКИ CSV -->
+          <div class="data-storage-label" data-i18n="data.storage">Данные и хранение</div>
           <div class="export-cta">
             <button id="exportMealsBtn" class="exportbtn">
-              <span class="exportbtn__label" data-i18n="export.btn" data-default-key="export.btn">Скачать данные</span>
+              <span class="action-card__icon" aria-hidden="true">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 4V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <path d="M8.5 10.5L12 14L15.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M5 18.5H19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+              <span class="action-card__copy">
+                <span class="action-card__title exportbtn__label" data-i18n="export.btn" data-default-key="export.btn">Скачать данные</span>
+                <span class="action-card__desc" data-i18n="export.desc">Скачать всю историю приёмов пищи и статистику одним файлом</span>
+              </span>
+              <span class="action-card__chevron" aria-hidden="true">›</span>
               <span class="exportbtn__spinner" aria-hidden="true"></span>
               <span class="exportbtn__check" aria-hidden="true">✓</span>
             </button>
-            <div class="subtle" id="exportHint" data-i18n="export.hint">Скачивается в формате CSV</div>
+          </div>
+          <div class="reset-cta">
+            <button id="resetMealsBtn" class="btn-danger resetbtn">
+              <span class="action-card__icon" aria-hidden="true">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 4.5H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <path d="M5.5 7H18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <path d="M8 7V18C8 18.552 8.448 19 9 19H15C15.552 19 16 18.552 16 18V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                  <path d="M10.5 10.5V16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <path d="M13.5 10.5V16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+              <span class="action-card__copy">
+                <span class="action-card__title" data-i18n="reset.btn">Сбросить историю</span>
+                <span class="action-card__desc" data-i18n="reset.hint">Удалит все записи о еде</span>
+                <span class="action-card__note" data-i18n="reset.note">Это действие нельзя отменить</span>
+              </span>
+              <span class="action-card__chevron" aria-hidden="true">›</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1525,7 +1937,7 @@
         <div class="card goals-card">
           <h2 data-i18n="goals.title">Цели на день</h2>
           <p class="subtle goals-intro">
-            <span data-i18n="goals.desc">Если цель выполнена, день подсветится зелёным в статистике.</span>
+            <span data-i18n="goals.desc">Если цель выполнена, день подсветится зелёным в статистике</span>
           </p>
 
           <section class="goal-section">
@@ -1654,7 +2066,7 @@
   <div id="updateNoticeBackdrop" class="prompt-backdrop" hidden>
     <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="updateNoticeTitle">
       <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.notice.title">Что нового</div>
-      <p class="prompt-body" data-i18n="update.notice.body">Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ.</p>
+      <p class="prompt-body" data-i18n="update.notice.body">Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ</p>
       <div class="prompt-actions">
         <button id="updateNoticeOk" type="button" class="prompt-btn" data-i18n="update.notice.ok">Понятно</button>
       </div>
@@ -1679,9 +2091,9 @@
     const defaultLang = savedLang || detectedLang;
     const translations = {
       en: {
-        "stats.retention": "We keep data for 21 days.",
+        "stats.retention": "We keep data for 21 days",
         "tab.today": "Today",
-        "tab.stats": "Statistics",
+        "tab.stats": "Stats",
         "tab.goals": "Goals",
         "h.newMeal": "New meal",
         "textarea.placeholder": "oatmeal, 2 boiled eggs, coffee with cookies",
@@ -1693,15 +2105,19 @@
         "stat.snacks": "Snacks within that",
         "stat.dayInterval": "Interval between meals",
         "stat.sinceLast": "Since last meal",
-        "list.empty": "No entries for today yet.\nTap \"I'm eating now\" when you start your meal.\nUse 🍽 / 🍪 to mark a snack.",
-        "chatgpt.btn": "GPT nutrition analysis",
-        "chatgpt.hint": "The prompt will be copied automatically, and ChatGPT will open. If the text does not appear, tap Paste.",
+        "sinceLast.inline": "Since last meal: ",
+        "list.empty": "No meals logged today",
+        "chatgpt.btn": "Analyze today's nutrition",
+        "chatgpt.desc": "Generate a ChatGPT nutrition report",
+        "chatgpt.hint": "The prompt will be copied automatically, and ChatGPT will open. If the text does not appear, tap Paste",
         "chatgpt.preparing": "Preparing prompt…",
         "chatgpt.ready": "Prompt ready",
-        "chatgpt.noData": "There are no meals for today yet.",
-        "chatgpt.copyError": "Couldn't copy the prompt automatically.",
-        "period.stats": "Period stats",
+        "chatgpt.noData": "There are no meals for today yet",
+        "chatgpt.copyError": "Couldn't copy the prompt automatically",
+        "period.stats": "Period",
         "daily.breakdown": "Daily breakdown",
+        "data.storage": "Data & Storage",
+        "period.today": "Today",
         "stat.sleep": "Night fasting interval",
         "table.date": "Date",
         "table.meals": "Meals per day",
@@ -1709,15 +2125,20 @@
         "table.sleep": "Night<br>fasting<br>interval",
         "table.dayInterval": "Interval<br>between<br>meals",
         "export.btn": "Download data",
-        "export.hint": "Downloads as CSV",
+        "export.desc": "Download all meal history and statistics as a file",
         "export.downloading": "Preparing file…",
         "export.done": "File ready",
+        "reset.btn": "Reset history",
+        "reset.hint": "Deletes all meal entries",
+        "reset.note": "This action cannot be undone",
+        "reset.confirm": "Delete all meal history and start over?",
+        "reset.confirmOk": "Reset",
         "period.7": "7 days",
         "period.14": "14 days",
         "period.21": "21 days",
         "period.all": "All",
         "goals.title": "Daily goals",
-        "goals.desc": "If a goal is met, the day is highlighted green in statistics.",
+        "goals.desc": "If a goal is met, the day is highlighted green in statistics",
         "goals.sectionFood": "Nutrition",
         "goals.sectionMeals": "Meals",
         "goals.sectionSnacks": "Snacks",
@@ -1727,7 +2148,7 @@
         "goals.mealsHint": "How many times you plan to eat during the day",
         "goals.snacksLabel": "Of these — snacks",
         "goals.sleepLabel": "Night fasting interval",
-        "goals.sleepAutoHint": "Calculated automatically.",
+        "goals.sleepAutoHint": "Calculated automatically",
         "goals.sleepComputed": "{from}–{to} hours",
         "goals.sleepHint": "Can help improve metabolic health",
         "goals.dayIntervalLabel": "Interval between meals",
@@ -1743,7 +2164,7 @@
         "footer.line1": "EatLog",
         "footer.line2": "Small step to mindful eating",
         "detail.back": "← Back",
-        "detail.noEntries": "No entries for this day yet.",
+        "detail.noEntries": "No entries for this day yet",
         "confirm.delete": "Delete meal {txt}?",
         "prompt.editNote": "Edit meal note:",
         "prompt.newTime": "New time (format HH:MM, 24-hour):",
@@ -1751,16 +2172,18 @@
         "prompt.ok": "OK",
         "confirm.ok": "Delete",
         "alert.invalidTime": "Invalid format. Enter, for example: 08:30 or 22:05",
-        "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59.",
+        "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59",
         "update.notice.title": "What's new",
-        "update.notice.body": "We added GPT nutrition analysis — send the day's entries to ChatGPT and get an estimated calorie and macro breakdown.",
+        "update.notice.body": "We added GPT nutrition analysis — send the day's entries to ChatGPT and get an estimated calorie and macro breakdown",
         "update.notice.ok": "OK",
-        "export.noData": "No meals yet to export.",
+        "export.noData": "No meals yet to export",
+        "reset.empty": "There is no meal history to reset yet",
         "no.description": "(no description)",
-        "interval.first": "First recorded meal (no previous entries).",
+        "interval.first": "First recorded meal (no previous entries)",
         "interval.sincePrev": "Interval since previous meal: ",
         "last.meal": "Last meal at ",
-        "history.empty": "No data for the selected period yet."
+        "history.empty": "No data yet",
+        "history.emptyHint": "Start logging meals to see statistics"
         ,
         "edit.title": "Edit meal",
         "edit.save": "Save",
@@ -1774,7 +2197,7 @@
         "placeholder.dayIntMax": ""
       },
       ru: {
-        "stats.retention": "Мы храним данные за 21 день.",
+        "stats.retention": "Мы храним данные за 21 день",
         "tab.today": "Сегодня",
         "tab.stats": "Статистика",
         "tab.goals": "Цели",
@@ -1788,15 +2211,19 @@
         "stat.snacks": "Из них - перекусов",
         "stat.dayInterval": "Интервал между приёмами пищи",
         "stat.sinceLast": "С последнего приёма",
-        "list.empty": "Сегодня пока нет записей.\nНажми «Я ем сейчас», когда начнёшь есть.\nИспользуй 🍽 / 🍪, чтобы отметить перекус.",
-        "chatgpt.btn": "GPT-анализ питания",
-        "chatgpt.hint": "Запрос скопируется автоматически, и откроется ChatGPT. Если текст не появится, нажмите «Вставить».",
+        "sinceLast.inline": "С последнего приёма: ",
+        "list.empty": "Сегодня ещё нет записей",
+        "chatgpt.btn": "Анализ питания за сегодня",
+        "chatgpt.desc": "Сформировать отчёт по питанию для ChatGPT",
+        "chatgpt.hint": "Откроется ChatGPT. Если текст не появился — нажмите «Вставить»",
         "chatgpt.preparing": "Готовлю запрос…",
         "chatgpt.ready": "Запрос готов",
-        "chatgpt.noData": "За сегодня ещё нет записей.",
-        "chatgpt.copyError": "Не удалось автоматически скопировать запрос.",
-        "period.stats": "Статистика за период",
+        "chatgpt.noData": "За сегодня ещё нет записей",
+        "chatgpt.copyError": "Не удалось автоматически скопировать запрос",
+        "period.stats": "Период",
         "daily.breakdown": "Детализация по дням",
+        "data.storage": "Данные и хранение",
+        "period.today": "Сегодня",
         "stat.sleep": "Ночной интервал без еды",
         "table.date": "Дата",
         "table.meals": "Приёмов пищи",
@@ -1804,13 +2231,18 @@
         "table.sleep": "Ночной<br>интервал<br>без еды",
         "table.dayInterval": "Интервал<br>между<br>приёмами&nbsp;пищи",
         "export.btn": "Скачать данные",
-        "export.hint": "Скачивается в формате CSV",
+        "export.desc": "Скачать всю историю приёмов пищи и статистику одним файлом",
+        "reset.btn": "Сбросить историю",
+        "reset.hint": "Удалит все записи о еде",
+        "reset.note": "Это действие нельзя отменить",
+        "reset.confirm": "Удалить всю историю приёмов пищи и начать заново?",
+        "reset.confirmOk": "Сбросить",
         "period.7": "7 дней",
         "period.14": "14 дней",
         "period.21": "21 день",
-        "period.all": "All",
+        "period.all": "Все",
         "goals.title": "Цели на день",
-        "goals.desc": "Если цель выполнена, день подсветится зелёным в статистике.",
+        "goals.desc": "Если цель выполнена, день подсветится зелёным в статистике",
         "goals.sectionFood": "Питание",
         "goals.sectionMeals": "Приёмы пищи",
         "goals.sectionSnacks": "Перекусы",
@@ -1836,7 +2268,7 @@
         "footer.line1": "EatLog",
         "footer.line2": "Маленький шаг к осознанному питанию",
         "detail.back": "← Назад",
-        "detail.noEntries": "Для этого дня пока нет записей.",
+        "detail.noEntries": "Для этого дня пока нет записей",
         "confirm.delete": "Удалить приём пищи {txt}?",
         "prompt.editNote": "Изменить описание приёма пищи:",
         "prompt.newTime": "Новое время (формат ЧЧ:ММ, 24 часа):",
@@ -1844,16 +2276,18 @@
         "prompt.ok": "OK",
         "confirm.ok": "Удалить",
         "alert.invalidTime": "Неверный формат. Введи, например: 08:30 или 22:05",
-        "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59.",
+        "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59",
         "update.notice.title": "Что нового",
-        "update.notice.body": "Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ.",
+        "update.notice.body": "Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ",
         "update.notice.ok": "Понятно",
-        "export.noData": "Пока нет ни одного приёма пищи для выгрузки.",
+        "export.noData": "Пока нет ни одного приёма пищи для выгрузки",
+        "reset.empty": "Сбрасывать пока нечего: история приёмов пищи пустая",
         "no.description": "(без описания)",
-        "interval.first": "Первый зафиксированный приём (раньше записей нет).",
+        "interval.first": "Первый зафиксированный приём (раньше записей нет)",
         "interval.sincePrev": "Интервал с прошлого приёма: ",
         "last.meal": "Последний приём в ",
-        "history.empty": "Пока нет данных за выбранный период."
+        "history.empty": "Пока нет данных",
+        "history.emptyHint": "Начните записывать приёмы пищи, чтобы увидеть статистику"
         ,
         "edit.title": "Редактировать приём пищи",
         "edit.save": "Сохранить",
@@ -1945,6 +2379,10 @@
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
     const STORAGE_KEY_UPDATE_NOTICE_VERSION = 'meal_tracker_update_notice_version';
     const CURRENT_UPDATE_NOTICE_VERSION = 'gpt_analysis_v1';
+    const IS_EMBED_PREVIEW = false;
+    if (IS_EMBED_PREVIEW) {
+      document.body.classList.add('embed-preview');
+    }
     function loadMeals() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_MEALS);
@@ -1996,6 +2434,7 @@
     const mealNoteEl = document.getElementById('mealNote');
     const addMealBtn = document.getElementById('addMealBtn');
     const mealListEl = document.getElementById('mealList');
+    const chatGptCtaEl = document.querySelector('.chatgpt-cta');
 
     const statMealsTodayEl = document.getElementById('statMealsToday');
     const statSnacksTodayEl = document.getElementById('statSnacksToday');
@@ -2005,7 +2444,9 @@
     const sendToChatGptBtn = document.getElementById('sendToChatGptBtn');
 
     const historyBodyEl = document.getElementById('historyBody');
+    const historyWrapperEl = document.getElementById('historyWrapper');
     const exportMealsBtn = document.getElementById('exportMealsBtn');
+    const resetMealsBtn = document.getElementById('resetMealsBtn');
 
     const tabTodayBtn = document.getElementById('tabToday');
     const tabStatsBtn = document.getElementById('tabStats');
@@ -2057,7 +2498,7 @@
     let currentDetailDayKey = null;
 
     // default to 21 days (remove "All" option)
-    let currentPeriod = '21';
+    let currentPeriod = 'today';
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
       const d2 = new Date(refDate);
@@ -2101,6 +2542,11 @@
         if (h > 0) return `${h}h`;
         return `${m}m`;
       }
+    }
+
+    function formatMealIntervalStat(ms) {
+      if (ms == null || !isFinite(ms) || ms < 60000) return '–';
+      return formatInterval(ms);
     }
 
     function formatNumberPerDay(value) {
@@ -2281,6 +2727,27 @@
       refreshDetailIfOpen();
     }
 
+    async function resetMeals() {
+      if (meals.length === 0) {
+        alert(t('reset.empty'));
+        return;
+      }
+
+      const confirmed = await openConfirmPrompt(t('reset.confirm'), {
+        confirmText: t('reset.confirmOk')
+      });
+      if (!confirmed) return;
+
+      meals = [];
+      saveMeals(meals);
+      mealNoteEl.value = '';
+      renderMeals();
+      renderStats();
+      renderPeriodSummary();
+      renderHistory();
+      refreshDetailIfOpen();
+    }
+
     async function editMealNote(id) {
       const entry = meals.find(m => m.id === id);
       if (!entry) return;
@@ -2394,10 +2861,12 @@
       });
     }
 
-    function openConfirmPrompt(message) {
+    function openConfirmPrompt(message, options = {}) {
       return new Promise(resolve => {
         const prevFocused = document.activeElement;
         confirmPromptMessage.textContent = message || '';
+        const previousConfirmText = confirmPromptOk.textContent;
+        confirmPromptOk.textContent = options.confirmText || t('confirm.ok');
         confirmPromptBackdrop.hidden = false;
 
         const cleanup = () => {
@@ -2405,6 +2874,7 @@
           confirmPromptOk.removeEventListener('click', onOk);
           confirmPromptBackdrop.removeEventListener('click', onBackdropClick);
           document.removeEventListener('keydown', onKeyDown);
+          confirmPromptOk.textContent = previousConfirmText;
         };
 
         const done = (result) => {
@@ -2543,6 +3013,9 @@
     function renderMeals() {
       const todayMeals = getTodayMeals();
       mealListEl.innerHTML = '';
+      if (chatGptCtaEl) {
+        chatGptCtaEl.hidden = todayMeals.length === 0;
+      }
 
       if (todayMeals.length === 0) {
         mealListEl.innerHTML = '<div class="subtle">' + t('list.empty') + '</div>';
@@ -2635,11 +3108,6 @@
         mealListEl.appendChild(row);
       }
 
-      if (todayMeals.length > 0) {
-        lastMealInfoEl.textContent = t('last.meal') + formatTimeHM(todayMeals[todayMeals.length - 1].ts);
-      } else {
-        lastMealInfoEl.textContent = '';
-      }
     }
 
     function getTodayIntervalsWithinDay() {
@@ -2658,16 +3126,16 @@
       const count = todayMeals.length;
       const snacksCount = todayMeals.filter(m => m.isSnack).length;
 
-      statMealsTodayEl.textContent = String(count);
-      statSnacksTodayEl.textContent = String(snacksCount);
+      if (statMealsTodayEl) statMealsTodayEl.textContent = String(count);
+      if (statSnacksTodayEl) statSnacksTodayEl.textContent = String(snacksCount);
 
       const intervals = getTodayIntervalsWithinDay();
       if (intervals.length === 0) {
-        statAvgIntervalEl.textContent = '–';
+        if (statAvgIntervalEl) statAvgIntervalEl.textContent = '–';
       } else {
         const sum = intervals.reduce((a, b) => a + b, 0);
         const avg = sum / intervals.length;
-        statAvgIntervalEl.textContent = formatInterval(avg);
+        if (statAvgIntervalEl) statAvgIntervalEl.textContent = formatInterval(avg);
       }
 
       // 🔽 Новая логика для "С момента последнего"
@@ -2675,16 +3143,17 @@
 
       if (allSorted.length === 0) {
         // Вообще ещё ни одного приёма не было
-        statSinceLastEl.textContent = '–';
-        lastMealInfoEl.textContent = '';
+        if (statSinceLastEl) statSinceLastEl.textContent = '–';
+        lastMealInfoEl.textContent = t('sinceLast.inline') + '–';
         return;
       }
 
       // Берём самый последний приём (вчера/сегодня — не важно)
       const last = allSorted[allSorted.length - 1];
       const diff = Date.now() - last.ts;
-      statSinceLastEl.textContent = formatInterval(diff);
-      lastMealInfoEl.textContent = t('last.meal') + formatTimeHM(last.ts);
+      const sinceLastText = formatInterval(diff);
+      if (statSinceLastEl) statSinceLastEl.textContent = sinceLastText;
+      lastMealInfoEl.textContent = t('sinceLast.inline') + sinceLastText;
     }
 
     function getSleepIntervalForDay(dayMeals, allMeals) {
@@ -2750,6 +3219,10 @@
 
     function getFilteredDailyStats() {
       const all = computeDailyStats();
+      if (currentPeriod === 'today') {
+        const todayKey = getDayKey(new Date());
+        return all.filter(d => d.key === todayKey);
+      }
       const days = parseInt(currentPeriod, 10);
       const useDays = (isFinite(days) && days > 0) ? days : RETENTION_DAYS;
       const cutoff = Date.now() - useDays * 24 * 60 * 60 * 1000;
@@ -2853,6 +3326,9 @@
     }
 
     function renderPeriodSummary() {
+      if (!statPeriodMealsPerDayEl || !statPeriodSnacksPerDayEl || !statPeriodSleepIntervalEl || !statPeriodAvgIntervalEl) {
+        return;
+      }
       const stats = getFilteredDailyStats();
 
       const daysCount = stats.length;
@@ -2891,20 +3367,26 @@
       } else {
         const sum = dayAvgIntervals.reduce((a, b) => a + b, 0);
         const avg = sum / dayAvgIntervals.length;
-        statPeriodAvgIntervalEl.textContent = formatInterval(avg);
+        statPeriodAvgIntervalEl.textContent = formatMealIntervalStat(avg);
       }
     }
 
     function renderHistory() {
       const stats = getFilteredDailyStats();
       historyBodyEl.innerHTML = '';
+      if (historyWrapperEl) historyWrapperEl.classList.toggle('is-empty', stats.length === 0);
 
       if (stats.length === 0) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
         td.colSpan = 5;
-        td.className = 'subtle';
-        td.textContent = t('history.empty');
+        td.className = 'history-empty-cell';
+        td.innerHTML = `
+          <div class="history-empty-state">
+            <div class="history-empty-title">${t('history.empty')}</div>
+            <div class="history-empty-text">${t('history.emptyHint')}</div>
+          </div>
+        `;
         tr.appendChild(td);
         historyBodyEl.appendChild(tr);
         return;
@@ -2935,7 +3417,7 @@
 
         const tdAvg = document.createElement('td');
         tdAvg.textContent =
-          day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
+          formatMealIntervalStat(day.avgInterval);
 
         tr.appendChild(tdDate);
         tr.appendChild(tdCount);
@@ -3329,6 +3811,9 @@
     if (exportMealsBtn) {
       exportMealsBtn.addEventListener('click', exportMealsCsv);
     }
+    if (resetMealsBtn) {
+      resetMealsBtn.addEventListener('click', resetMeals);
+    }
     if (sendToChatGptBtn) {
       sendToChatGptBtn.addEventListener('click', sendTodayMealsToChatGpt);
     }
@@ -3338,7 +3823,11 @@
     renderStats();
     renderPeriodSummary();
     renderHistory();
-    if (shouldShowUpdateNotice()) openUpdateNotice();
+    if (IS_EMBED_PREVIEW) {
+      markUpdateNoticeSeen();
+    } else if (shouldShowUpdateNotice()) {
+      openUpdateNotice();
+    }
   </script>
 </body>
 

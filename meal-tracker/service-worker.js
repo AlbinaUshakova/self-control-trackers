@@ -1,10 +1,11 @@
 // EatLog — simple offline-first Service Worker
 // Note: Service Workers require HTTPS (or http://localhost)
 
-const CACHE_VERSION = 'eatlog-v3';
+const CACHE_VERSION = 'eatlog-v4';
 const CORE_ASSETS = [
-    './',
+  './',
   './index.html',
+  './app.html',
   './manifest.json',
   './service-worker.js',
   './icons/icon-192.png',
