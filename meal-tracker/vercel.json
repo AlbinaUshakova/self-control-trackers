@@ -1,0 +1,16 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/app",
+      "permanent": false
+    },
+    {
+      "source": "/index.html",
+      "destination": "/app",
+      "permanent": false
+    }
+  ]
+}
