@@ -1,4 +1,4 @@
-const CACHE_VERSION = "eatlog-landing-v2";
+const CACHE_VERSION = "eatlog-landing-v3";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -15,6 +15,15 @@ const CORE_ASSETS = [
   "/icons/icon-120.png",
   "/icons/favicon-32.png"
 ];
+
+const NETWORK_FIRST_PATHS = new Set([
+  "/",
+  "/index.html",
+  "/app",
+  "/app.html",
+  "/app-preview.html",
+  "/manifest.json"
+]);
 
 self.addEventListener("install", function (event) {
   event.waitUntil(
@@ -48,8 +57,31 @@ self.addEventListener("fetch", function (event) {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(function () {
-        return caches.match("/index.html");
+      fetch(request).then(function (networkResponse) {
+        const responseCopy = networkResponse.clone();
+        caches.open(CACHE_VERSION).then(function (cache) {
+          cache.put(request, responseCopy);
+        });
+        return networkResponse;
+      }).catch(function () {
+        return caches.match(request).then(function (cachedResponse) {
+          return cachedResponse || caches.match("/index.html");
+        });
+      })
+    );
+    return;
+  }
+
+  if (NETWORK_FIRST_PATHS.has(url.pathname)) {
+    event.respondWith(
+      fetch(request).then(function (networkResponse) {
+        const responseCopy = networkResponse.clone();
+        caches.open(CACHE_VERSION).then(function (cache) {
+          cache.put(request, responseCopy);
+        });
+        return networkResponse;
+      }).catch(function () {
+        return caches.match(request);
       })
     );
     return;
