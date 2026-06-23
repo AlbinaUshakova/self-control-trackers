@@ -1,81 +1,73 @@
-// EatLog — simple offline-first Service Worker
-// Note: Service Workers require HTTPS (or http://localhost)
-
-const CACHE_VERSION = 'eatlog-v3';
+const CACHE_VERSION = "eatlog-landing-v2";
 const CORE_ASSETS = [
-    './',
-  './index.html',
-  './manifest.json',
-  './service-worker.js',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-180.png',
-  './icons/icon-167.png',
-  './icons/icon-152.png',
-  './icons/icon-120.png',
-  './icons/favicon-32.png'
+  "/",
+  "/index.html",
+  "/app",
+  "/app.html",
+  "/app-preview.html",
+  "/manifest.json",
+  "/service-worker.js",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/icons/icon-180.png",
+  "/icons/icon-167.png",
+  "/icons/icon-152.png",
+  "/icons/icon-120.png",
+  "/icons/favicon-32.png"
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener("install", function (event) {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(CORE_ASSETS))
+    caches.open(CACHE_VERSION).then(function (cache) {
+      return cache.addAll(CORE_ASSETS);
+    })
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", function (event) {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k === CACHE_VERSION ? null : caches.delete(k))))
-    )
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.map(function (key) {
+          return key === CACHE_VERSION ? null : caches.delete(key);
+        })
+      );
+    })
   );
   self.clients.claim();
 });
 
-// Cache-first for static assets, network-first for navigations
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
+self.addEventListener("fetch", function (event) {
+  const request = event.request;
+  const url = new URL(request.url);
 
-  // Only handle same-origin
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
-  // Navigations: network-first (so you get updates), fallback to cache
-  if (req.mode === 'navigate') {
+  if (request.mode === "navigate") {
     event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', copy));
-          return res;
-        })
-        .catch(() => caches.match('./index.html'))
+      fetch(request).catch(function () {
+        return caches.match("/index.html");
+      })
     );
     return;
   }
 
-  // Everything else: cache-first
   event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_VERSION).then((cache) => cache.put(req, copy));
-        return res;
-      });
-    })
-  );
-});
-
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-      for (const client of clients) {
-        if ('focus' in client) return client.focus();
+    caches.match(request).then(function (cachedResponse) {
+      if (cachedResponse) {
+        return cachedResponse;
       }
-      if (self.clients.openWindow) return self.clients.openWindow('./');
-      return undefined;
+
+      return fetch(request).then(function (networkResponse) {
+        const responseCopy = networkResponse.clone();
+        caches.open(CACHE_VERSION).then(function (cache) {
+          cache.put(request, responseCopy);
+        });
+        return networkResponse;
+      });
     })
   );
 });

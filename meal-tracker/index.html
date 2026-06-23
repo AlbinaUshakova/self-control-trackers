@@ -1,3345 +1,1137 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EatLog — привычки питания без подсчёта калорий</title>
+  <meta name="description" content="EatLog помогает замечать перекусы, интервалы между едой и привычки питания без подсчёта калорий. Открывается сразу в браузере.">
+  <meta name="theme-color" content="#FAFAF8">
+  <meta property="og:title" content="EatLog — привычки питания без подсчёта калорий">
+  <meta property="og:description" content="Замечайте, а не считайте. EatLog показывает реальные паттерны питания без КБЖУ и ограничений.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/icons/icon-512.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
-    /* Critical: prevent white flash on app launch */
-    html,
-    body {
-      background: #020617;
-    }
-  </style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <meta charset="UTF-8" />
-  <meta name="google-site-verification" content="DIEjG1KJAKMRZcO0IhGHHjHVpjYuYUvos7rULW_0690" />
-  <title>EatLog — трекер приемов пищи, дневник питания и контроль перекусов</title>
-
-  <meta name="description"
-    content="EatLog — простой трекер приемов пищи и дневник питания. Помогает контролировать перекусы, отслеживать интервалы между едой. Работает офлайн, без регистрации." />
-
-  <meta name="keywords"
-    content="EatLog, трекер питания, дневник питания, трекер приемов пищи, контроль перекусов, перекусы, интервалы между едой, осознанное питание" />
-
-  <meta name="author" content="EatLog" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-
-  <link rel="canonical" href="https://albinaushakova.github.io/self-control-trackers/meal-tracker/" />
-  <meta property="og:title" content="EatLog — трекер приемов пищи и контроль перекусов" />
-  <meta property="og:description"
-    content="Простой дневник питания: приемы пищи, перекусы, интервалы, статистика. Можно установить как приложение." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://albinaushakova.github.io/self-control-trackers/meal-tracker/" />
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#020617" />
-
-  <!-- iOS (Add to Home Screen) -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
-  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
-  <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png" />
-
-  <!-- Android / Chrome -->
-  <meta name="mobile-web-app-capable" content="yes" />
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
-  <style>
     :root {
-      color-scheme: dark;
+      --white:    #FAFAF8;
+      --off:      #F2EFE8;
+      --line:     #E4DDD2;
+      --mid:      #A89E92;
+      --text:     #1A1917;
+      --dim:      #6B6560;
+      --sage:     #4A7052;
+      --sage-lt:  #EBF1EC;
+      --terra:    #C04E2A;
+      --terra-lt: #FAF0EB;
+      --gold:     #B8853A;
+      --gold-lt:  #FBF5E8;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      padding: 16px 12px;
-      text-align: left;
+      font-family: 'EB Garamond', Georgia, serif;
+      background: var(--white);
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
-    h1,
-    h2,
-    p,
-    label,
-    .subtle,
-    .card,
-    .card *,
-    .stats-grid,
-    .stats-grid *,
-    .history-wrapper,
-    .history-wrapper *,
-    .period-controls,
-    .period-controls *,
-    .list,
-    .list *,
-    .meal-row,
-    .meal-row *,
-    .goal-row,
-    .goal-row *,
-    table,
-    table * {
-      text-align: left !important;
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(250,250,248,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(24px, 5vw, 80px);
+      height: 56px;
     }
 
-    .app-shell {
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      border-radius: 28px;
-      padding: 12px 14px 20px;
-      background: rgba(15, 23, 42, 0.96);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+    .nav-logo {
+      font-size: 17px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      font-style: italic;
+    }
+
+    .nav-open {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--terra);
+      text-decoration: none;
+      border-bottom: 1px solid var(--terra);
+      padding-bottom: 1px;
+      transition: color .2s, border-color .2s;
+    }
+
+    .nav-open:hover { color: var(--dim); border-color: var(--dim); }
+
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 0;
+      padding-top: 56px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-copy {
+      padding: clamp(48px, 7vw, 88px) clamp(24px, 5vw, 80px);
       display: flex;
       flex-direction: column;
-      max-height: 100%;
+      justify-content: center;
     }
 
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 2px;
+    .hero-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .hero-label::before {
+      content: '';
+      width: 20px; height: 1px;
+      background: var(--sage);
     }
 
     h1 {
-      font-size: 22px;
-      margin: 0;
-      letter-spacing: 0.02em;
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 400;
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      max-width: 14ch;
+      margin-bottom: 24px;
     }
 
-    .subtle {
-      font-size: 11px;
-      color: #607086;
-      line-height: 1.3;
-      margin: 4px 2px 10px;
+    h1 em {
+      font-style: italic;
+      color: var(--terra);
     }
 
-    /* Вкладки */
-    .view-tabs-wrapper {
-      margin: 2px 0 6px;
-    }
-
-    .view-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      padding: 5px;
-      border-radius: 18px;
-      background: rgba(2, 6, 23, 0.72);
-      border: 1px solid rgba(51, 65, 85, 0.42);
-      box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.03);
-    }
-
-    .view-tabs .tab-btn {
-      flex: 1;
-      width: 100%;
-      min-height: 42px;
-      margin: 0;
-      padding: 0 12px;
-      border-radius: 14px;
-      border: none;
-      background: transparent;
-      color: #cbd5e1;
-      font-size: 14px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
-    }
-
-    .view-tabs .tab-btn:not(.active) {
-      background: rgba(15, 23, 42, 0.18);
-    }
-
-    .view-tabs .tab-btn.active {
-      background: #22c55e;
-      color: #052e16;
-    }
-
-    #langToggleBtn {
-      min-height: 36px;
-      margin: 0;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: transparent;
-      color: #9ca3af;
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .app-content {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 2px;
-      padding-bottom: 4px;
-      margin-top: 2px;
-    }
-
-    .app-shell.goals-active {
-      max-height: none;
-      padding-bottom: 12px;
-    }
-
-    .app-shell.goals-active .app-content {
-      flex: 0 0 auto;
-      overflow-y: visible;
-      padding-bottom: 0;
-    }
-
-    h2 {
-      font-size: 17px;
-      margin-top: 0;
-      margin-bottom: 6px;
-      letter-spacing: 0.01em;
-    }
-
-    .card {
-      background: #020617;
-      border-radius: 16px;
-      padding: 12px 12px 10px;
-      margin-bottom: 10px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-      border: none;
-    }
-
-    .card-compact {
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 4px;
-      color: #9ca3af;
-    }
-
-    textarea {
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 12px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      color: #e5e7eb;
-      padding: 9px 11px;
-      font-size: 14px;
-      margin-bottom: 10px;
-      resize: vertical;
-      min-height: 52px;
-      outline: none;
-      transition: border-color 0.12s ease, background 0.12s ease;
-    }
-
-    textarea:focus {
-      border-color: #22c55e;
-      background: #020617;
-    }
-
-    button {
-      border-radius: 999px;
-      border: none;
-      padding: 9px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-right: 6px;
-      margin-top: 4px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: background 0.15s ease, transform 0.08s ease;
-      white-space: nowrap;
-    }
-
-    button:active {
-      transform: translateY(1px);
-    }
-
-    .btn-primary {
-      background: #22c55e;
-      color: #022c22;
-      font-weight: 600;
-      width: 100%;
-      box-shadow: none;
-    }
-
-    .btn-primary:hover {
-      background: #16a34a;
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: #e5e7eb;
-      border: 1px solid #4b5563;
-    }
-
-    .btn-outline:hover {
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .btn-danger {
-      background: transparent;
-      color: #fca5a5;
-      border: none;
-      padding: 4px 10px;
-      font-size: 12px;
-    }
-
-    .btn-danger:hover {
-      background: rgba(127, 29, 29, 0.3);
-    }
-
-    .btn-ghost {
-      background: rgba(15, 23, 42, 0.9);
-      color: #e5e7eb;
-      border: none;
-      padding: 4px 10px;
-      font-size: 12px;
-    }
-
-    .btn-ghost:hover {
-      background: rgba(31, 41, 55, 1);
-    }
-
-    .list {
-      max-height: 360px;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    .meal-row {
-      border-bottom: 1px solid #111827;
-      padding: 7px 0;
-      font-size: 14px;
-    }
-
-    .meal-row:last-child {
-      border-bottom: none;
-    }
-
-    .row-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .meal-time {
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      font-size: 14px;
-    }
-
-    .meal-note {
-      color: #e5e7eb;
-      word-break: break-word;
-      font-size: 13px;
-    }
-
-    .meal-interval {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 2px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .stat-box {
-      background: #020617;
-      border-radius: 12px;
-      padding: 8px 9px;
-      font-size: 13px;
-      border: none;
-      box-shadow: none;
-      min-height: 52px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .stat-label {
-      color: #9ca3af;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 2px;
-    }
-
-    .stat-value {
+    .hero-desc {
       font-size: 18px;
-      font-weight: 600;
+      color: var(--dim);
+      line-height: 1.7;
+      max-width: 38ch;
+      margin-bottom: 36px;
     }
 
-    .history-wrapper {
-      max-height: 260px;
-      overflow-y: auto;
-      border-radius: 12px;
-      margin-top: 4px;
-      background: #020617;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(107, 114, 128, 0.34) transparent;
-      -webkit-overflow-scrolling: touch;
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 14px;
+      text-decoration: none;
+      color: #fff;
+      background: var(--terra);
+      font-family: 'EB Garamond', serif;
+      font-size: 18px;
+      padding: 13px 28px;
+      border-radius: 2px;
+      transition: background .2s;
+      margin-bottom: 24px;
+      align-self: flex-start;
     }
 
-    .history-wrapper::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
+    .hero-cta:hover { background: #a84022; }
+
+    .hero-cta-arr { font-size: 22px; line-height: 1; }
+
+    .hero-meta {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--mid);
+      line-height: 2.2;
+      text-transform: uppercase;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
     }
 
-    .history-wrapper::-webkit-scrollbar-track {
+
+    .hero-phone-side {
+      height: 100%;
+      min-height: calc(100svh - 56px);
+      background: var(--off);
+      border-left: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-phone-side::before {
+      content: '';
+      position: absolute;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(196,82,42,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(74,112,82,0.07) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .phone-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    .phone-note {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .phone-body {
+      width: 280px;
+      height: 560px;
+      background: #18160F;
+      border-radius: 40px;
+      position: relative;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.22),
+        0 0 0 1px rgba(255,255,255,0.07) inset;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    .phone-screen {
+      position: absolute;
+      inset: 4px;
+      border-radius: 37px;
+      background: #0D0C09;
+      overflow: hidden;
+    }
+
+    .app-frame {
+      width: 100%; height: 100%;
+      border: 0; display: block;
+      pointer-events: auto;
+    }
+
+    .hero-bg-num {
+      position: absolute;
+      right: -0.06em;
+      bottom: -0.15em;
+      font-size: clamp(180px, 22vw, 320px);
+      line-height: 1;
+      color: rgba(228,221,210,0.6);
+      font-style: italic;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    .phone-badge {
+      position: absolute;
+      right: -60px;
+      top: 42%;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      font-size: 13px;
+      line-height: 1.4;
+      width: 176px;
+      z-index: 2;
+      animation: badgeFloatA 4.6s ease-in-out infinite;
+    }
+
+    .phone-badge-val {
+      font-size: 24px;
+      color: var(--sage);
+      font-weight: 400;
+      display: block;
+      font-style: italic;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .phone-badge-2 {
+      position: absolute;
+      left: -60px;
+      bottom: 25%;
+      background: var(--terra);
+      border-radius: 16px;
+      padding: 14px 18px;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.4;
+      width: 176px;
+      box-shadow: 0 10px 32px rgba(196,82,42,0.26);
+      z-index: 2;
+      animation: badgeFloatB 4.9s ease-in-out infinite;
+    }
+
+    .badge-close {
+      position: absolute;
+      top: 7px;
+      right: 8px;
+      width: 18px;
+      height: 18px;
+      border: none;
       background: transparent;
+      color: inherit;
+      opacity: 0.45;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      font-family: 'Geist Mono', monospace;
     }
 
-    .history-wrapper::-webkit-scrollbar-thumb {
-      background: rgba(107, 114, 128, 0.34);
-      border-radius: 999px;
+    .badge-close:hover {
+      opacity: 0.8;
     }
 
-    .history-wrapper::-webkit-scrollbar-thumb:hover {
-      background: rgba(107, 114, 128, 0.5);
+    .phone-badge.is-hidden,
+    .phone-badge-2.is-hidden {
+      display: none;
     }
 
-    /* ТАБЛИЦА СТАТИСТИКИ */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      font-size: 12px;
-      background: transparent;
+    .ticker {
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 14px 0;
     }
 
-    th,
-    td {
-      padding: 8px 4px;
-      border-bottom: 1px solid #111827;
+    .ticker-inner {
+      display: inline-flex;
+      animation: ticker 28s linear infinite;
+      gap: 0;
+    }
+
+    .ticker-item {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding: 0 40px;
+    }
+
+    .ticker-dot {
+      color: var(--line);
+      font-size: 18px;
+      line-height: 1;
       vertical-align: middle;
     }
 
-    th:nth-child(1),
-    td:nth-child(1) {
-      width: 16%;
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
 
-    th:nth-child(2),
-    td:nth-child(2),
-    th:nth-child(3),
-    td:nth-child(3),
-    th:nth-child(4),
-    td:nth-child(4),
-    th:nth-child(5),
-    td:nth-child(5) {
-      width: 21%;
+    @keyframes badgeFloatA {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
-    td:nth-child(4),
-    td:nth-child(5) {
-      white-space: nowrap;
+    @keyframes badgeFloatB {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
     }
 
-    .history-sleep-col {
-      white-space: normal;
-      overflow-wrap: normal;
-      word-break: keep-all;
-      hyphens: none;
-    }
-
-    .history-day-interval-col {
-      white-space: normal;
-      overflow-wrap: normal;
-      word-break: keep-all;
-      hyphens: none;
-    }
-
-    th {
-      /* заголовки столбцов должны влезать полностью (и на RU, и на EN) */
-      font-size: 10px;
-      color: #9ca3af;
-      font-weight: 500;
-      /* uppercase сильно «раздувает» ширину и часто обрезает подписи */
-      text-transform: none;
-      letter-spacing: 0.02em;
-      background: #020617;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      white-space: pre-line;
-      line-height: 1.15;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      hyphens: auto;
-    }
-
-    /* на очень узких экранах делаем заголовки компактнее */
-    @media (max-width: 380px) {
-      th {
-        font-size: 9px;
-        letter-spacing: 0.01em;
-        padding-top: 6px;
-        padding-bottom: 6px;
-      }
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tbody tr {
-      transition: background 0.12s ease;
-    }
-
-    tbody tr:hover {
-      background: #020617;
-    }
-
-    /* Период */
-    .period-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 6px 0 6px;
-    }
-
-    .period-btn {
-      padding: 5px 10px;
-      font-size: 12px;
-      border-radius: 999px;
-    }
-
-    .period-btn.active {
-      background: #e5e7eb;
-      color: #020617;
-      border-color: transparent;
-    }
-
-    .goals-card {
-      padding: 12px 12px 10px;
-    }
-
-    .goals-card h2 {
-      font-size: 17px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .goals-intro {
-      font-size: 11px;
-      color: #607086;
-      line-height: 1.3;
-      margin-bottom: 8px;
-      max-width: none;
-    }
-
-    .goal-section {
-      position: relative;
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: none;
-    }
-
-    .goal-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 2px;
-      right: 2px;
-      height: 1px;
-      background: rgba(51, 65, 85, 0.42);
-    }
-
-    .goal-section:first-of-type {
-      margin-top: 0;
-      padding-top: 0;
-    }
-
-    .goal-section:first-of-type::before {
-      display: none;
-    }
-
-    .goal-section-title {
-      font-size: 17px;
-      color: #e5e7eb;
-      letter-spacing: 0.01em;
-      text-transform: none;
-      margin: 0 0 6px;
-      font-weight: 600;
-    }
-
-    .goal-item {
-      margin-bottom: 18px;
-      padding: 0;
-      border-radius: 0;
-      background: transparent;
-      border: none;
-    }
-
-    .goal-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .goal-item-sub {
-      margin-top: 18px;
-      padding-top: 0;
-      padding-left: 6px;
-    }
-
-    .goal-label {
-      color: #f8fafc;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .goal-item-sub .goal-label {
-      color: #8693a5;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.01em;
-      margin-bottom: 10px;
-    }
-
-    .goal-hint {
-      color: #607086;
-      font-size: 11px;
-      margin: 8px 0 0;
-      font-weight: 400;
-    }
-
-    .goal-hint-persistent {
-      display: block;
-      margin-top: 8px;
-    }
-
-    .goal-item-interval .goal-hint-persistent {
-      margin-top: 4px;
-      margin-bottom: 16px;
-      color: #7a8798;
-      font-size: 11px;
-    }
-
-    .field-stack {
-      width: 72px;
-    }
-
-    .range-row {
+    .why {
       display: grid;
-      align-items: center;
-      gap: 7px;
-      justify-content: start;
+      grid-template-columns: 280px 1fr;
+      border-bottom: 1px solid var(--line);
     }
 
-    .range-row--pair {
-      grid-template-columns: 72px 14px 72px;
+    .why-aside {
+      padding: clamp(40px, 5vw, 72px) clamp(24px, 3vw, 48px);
+      border-right: 1px solid var(--line);
     }
 
-    .range-row--pair-unit {
-      grid-template-columns: 72px 14px 72px 42px;
-    }
-
-    .goal-item-interval .range-row--pair-unit {
-      grid-template-columns: 72px 14px 72px 42px;
-    }
-
-    .range-row--single {
-      grid-template-columns: 72px 14px 72px;
-    }
-
-    .goal-item-sub .field-stack {
-      width: 72px;
-    }
-
-    .goal-item-sub .range-row--single {
-      grid-template-columns: 72px 14px 72px;
-    }
-
-    .range-dash {
-      color: #6b7280;
-      font-size: 16px;
-      line-height: 1;
-      text-align: center;
-      width: 14px;
-      justify-self: center;
-    }
-
-    .unit-label {
-      color: #9ca3af;
-      font-size: 13px;
-    }
-
-    .single-input {
-      width: 100% !important;
-    }
-
-    .range-spacer {
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .goal-number-input,
-    .computed-value {
-      width: 100%;
-      box-sizing: border-box;
-      height: 38px;
-      min-height: 38px;
-      padding: 0;
-      border-radius: 12px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .computed-value {
-      padding: 0;
-      cursor: default;
-      text-align: center;
-      text-align-last: center;
-    }
-
-    .goal-inline-unit {
-      color: #94a3b8;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      font-weight: 500;
-      width: 42px;
-      min-height: 38px;
-      text-align: left;
-      line-height: 1;
-      justify-self: start;
-      padding-left: 4px;
-    }
-
-    #view-goals .savebtn {
-      display: inline-flex;
-      margin-top: 28px;
-      width: 100%;
-    }
-
-    @media (max-height: 820px) {
-      .goal-section {
-        margin-top: 16px;
-        padding-top: 12px;
-      }
-
-      .goal-section-title {
-        margin-bottom: 9px;
-      }
-
-      .goal-item {
-        margin-bottom: 14px;
-        padding: 0;
-      }
-
-      .goal-hint {
-        display: none;
-      }
-
-      .goal-hint-persistent {
-        display: block;
-      }
-
-    }
-
-    @media (max-height: 920px) {
-      .goals-card {
-        padding: 12px 12px 10px;
-      }
-
-      .goals-card h2 {
-        font-size: 17px;
-        margin-bottom: 4px;
-      }
-
-      .goal-section-title,
-      .goal-hint {
-        display: none;
-      }
-
-      .goal-hint-persistent {
-        display: block;
-        font-size: 11px;
-        margin-top: 6px;
-      }
-
-      .goal-section {
-        margin-top: 12px !important;
-        padding-top: 8px;
-      }
-
-      .goal-item {
-        margin-bottom: 10px;
-        padding: 0;
-      }
-
-      .goal-item-sub {
-        margin-top: 12px;
-        padding-top: 2px;
-        padding-left: 6px;
-      }
-
-      .goal-label {
-        font-size: 13px;
-        margin-bottom: 6px;
-      }
-
-      .range-row {
-        gap: 6px;
-      }
-
-      .field-stack {
-        width: 84px;
-      }
-
-      .goal-item-sub .field-stack {
-        width: 94px;
-      }
-
-      .range-row--pair {
-        grid-template-columns: 84px 16px 84px;
-      }
-
-      .range-row--pair-unit {
-        grid-template-columns: 84px 16px 84px 44px;
-      }
-
-      .goal-item-interval .range-row--pair-unit {
-        grid-template-columns: 84px 16px 84px 44px;
-      }
-
-      .range-row--single {
-        grid-template-columns: 84px 16px 84px;
-      }
-
-      .goal-item-sub .range-row--single {
-        grid-template-columns: 94px 16px 84px;
-      }
-
-      .goal-number-input {
-        font-size: 13px;
-        min-height: 44px;
-        padding: 0 14px;
-      }
-
-      .unit-label {
-        font-size: 12px;
-      }
-
-      #view-goals .savebtn {
-        display: flex;
-        margin-top: 6px;
-        width: min(100%, 286px);
-        min-height: 34px;
-        padding-left: 24px;
-        padding-right: 24px;
-        padding-top: 7px;
-        padding-bottom: 7px;
-      }
-    }
-
-    @media (max-height: 700px) {
-      .app-shell {
-        padding-top: 10px;
-        padding-bottom: 14px;
-      }
-
-      .app-header {
-        margin-bottom: 0;
-      }
-
-      h1 {
-        font-size: 20px;
-      }
-
-      .view-tabs-wrapper {
-        margin: 1px 0 4px;
-      }
-
-      .view-tabs {
-        gap: 4px;
-        padding: 4px;
-      }
-
-      .view-tabs .tab-btn {
-        min-height: 38px;
-        font-size: 13px;
-      }
-
-      .app-content {
-        margin-top: 0;
-        padding-bottom: 0;
-      }
-
-      #view-today .card {
-        padding: 10px 10px 8px;
-        margin-bottom: 8px;
-      }
-
-      #view-today h2 {
-        margin-bottom: 4px;
-      }
-
-      #view-today textarea {
-        min-height: 44px;
-        padding: 8px 10px;
-        margin-bottom: 8px;
-      }
-
-      #view-today .btn-primary {
-        min-height: 42px;
-      }
-
-      #view-today .card-compact {
-        padding-top: 8px;
-        padding-bottom: 8px;
-      }
-
-      #view-today .stats-grid {
-        gap: 6px;
-        margin-top: 4px;
-      }
-
-      #view-today .stat-box {
-        min-height: 46px;
-        padding: 7px 8px;
-      }
-
-      #view-today .stat-label {
-        font-size: 10px;
-      }
-
-      #view-today .stat-value {
-        font-size: 17px;
-      }
-
-      #view-today .list {
-        max-height: 300px;
-      }
-    }
-
-    .goal-number-input {
-      width: 100%;
-      display: block;
-      appearance: none;
-      -webkit-appearance: none;
-      line-height: 1;
-      outline: none;
-      direction: ltr;
-      text-align: center;
-      text-align-last: center;
-      text-indent: 0;
-      font-variant-numeric: tabular-nums;
-      transition: border-color 0.12s ease, background 0.12s ease;
-    }
-
-    /* hide native spinner arrows so users type values manually */
-    .goal-number-input::-webkit-outer-spin-button,
-    .goal-number-input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    /* firefox */
-    .goal-number-input {
-      -moz-appearance: textfield;
-    }
-
-    .goal-number-input:focus {
-      border-color: #22c55e;
-      background: #020617;
-    }
-
-    .day-ok td {
-      background: rgba(22, 163, 74, 0.22);
-    }
-
-    .app-footer {
-      margin-top: 2px;
+    .why-aside-label,
+    .steps-label,
+    .result-label,
+    .install-aside-label,
+    .cta-label {
+      font-family: 'Geist Mono', monospace;
       font-size: 11px;
-      color: #6b7280;
-      display: flex;
-      flex-direction: column;
-      line-height: 1.15;
-      gap: 1px;
-    }
-
-    /* FULLSCREEN DETAIL */
-    #detailScreen {
-      display: none;
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: #020617;
-      z-index: 200;
-      padding: 16px;
-      overflow-y: auto;
-    }
-
-    #btnDetailBack {
-      background: none;
-      border: none;
-      color: #e5e7eb;
-      font-size: 18px;
-      margin-bottom: 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #detailTitle {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 18px;
-    }
-
-    @media (max-width: 480px) {
-      .app-shell {
-        border-radius: 24px;
-        padding-inline: 12px;
-      }
-    }
-
-    /* Save goals button feedback */
-    #view-goals .savebtn {
-      display: flex;
-      margin-top: 22px;
-      width: min(100%, 300px);
-      padding-left: 32px;
-      padding-right: 32px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .savebtn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      overflow: hidden;
-      transition: transform .12s ease, filter .2s ease;
-      min-height: 48px;
-      border-radius: 15px;
-      font-size: 13px;
       font-weight: 300;
-      letter-spacing: 0.005em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mid);
     }
 
-    .savebtn:active {
-      transform: scale(.98);
-    }
+    .why-aside-label { margin-bottom: 20px; }
 
-    .savebtn.is-saving,
-    .savebtn.is-saved {
-      pointer-events: none;
-      filter: saturate(.92) brightness(.98);
-    }
-
-    .savebtn__spinner {
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      border: 2px solid currentColor;
-      border-top-color: transparent;
-      display: none;
-      animation: savebtnspin .8s linear infinite;
-      opacity: .9;
-    }
-
-    .savebtn__check {
-      display: none;
-      font-weight: 800;
-      transform: translateY(1px);
-    }
-
-    .savebtn.is-saving .savebtn__spinner {
-      display: inline-block;
-    }
-
-    .savebtn.is-saved .savebtn__check {
-      display: inline-block;
-    }
-
-    @keyframes savebtnspin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-
-
-    /* Export button feedback */
-    .exportbtn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      overflow: hidden;
-      transition: transform .12s ease, filter .2s ease, background .15s ease, border-color .15s ease;
-      min-height: 42px;
-      width: auto;
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: 28px;
-      padding-right: 28px;
-      border-radius: 999px;
-      border: 1px solid rgba(107, 114, 128, 0.54);
-      background: transparent;
-      color: #e5e7eb;
-      font-size: 13px;
+    .why-aside h2,
+    .install-aside h2 {
+      font-size: clamp(24px, 2.4vw, 34px);
       font-weight: 400;
-      letter-spacing: 0.005em;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
     }
 
-    .export-cta {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .why-aside h2 em { font-style: italic; color: var(--dim); }
+
+    .why-items {
+      padding: clamp(40px, 5vw, 72px) clamp(24px, 4vw, 64px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
     }
 
-    .export-cta .subtle {
-      margin-top: 6px;
-      margin-bottom: 0;
-      text-align: center;
-      font-size: 10px;
-      color: #748297;
+    .why-item {
+      padding: 32px 32px 32px 0;
+      border-bottom: 1px solid var(--line);
     }
 
-    .exportbtn:active {
-      transform: scale(.98);
+    .why-item:nth-child(2n) {
+      padding-left: 32px;
+      border-left: 1px solid var(--line);
+      padding-right: 0;
     }
 
-    .exportbtn:hover {
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(148, 163, 184, 0.46);
-    }
+    .why-item:nth-last-child(-n+2) { border-bottom: none; }
 
-    .exportbtn.is-saving,
-    .exportbtn.is-saved {
-      pointer-events: none;
-      filter: saturate(.92) brightness(.98);
-    }
-
-    .exportbtn__spinner {
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      border: 2px solid currentColor;
-      border-top-color: transparent;
-      display: none;
-      animation: exportbtnspin .8s linear infinite;
-      opacity: .9;
-    }
-
-    .exportbtn__check {
-      display: none;
-      font-weight: 800;
-      transform: translateY(1px);
-    }
-
-    .exportbtn.is-saving .exportbtn__spinner {
-      display: inline-block;
-    }
-
-    .exportbtn.is-saved .exportbtn__check {
-      display: inline-block;
-    }
-
-    @keyframes exportbtnspin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .chatgpt-cta {
-      margin-top: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 7px;
-      width: 100%;
-    }
-
-    .chatgpt-cta .subtle {
-      margin-bottom: 0;
-      text-align: center;
+    .why-num {
+      font-family: 'Geist Mono', monospace;
       font-size: 11px;
-      color: rgba(148, 163, 184, 0.7);
-      white-space: normal;
-      overflow-wrap: anywhere;
-      line-height: 1.35;
-      max-width: 100%;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: var(--sage);
+      margin-bottom: 14px;
     }
 
-    .chatgpt-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      overflow: hidden;
-      transition: transform .12s ease, filter .2s ease, background .15s ease, border-color .15s ease;
-      min-height: 42px;
-      width: auto;
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: 18px;
-      padding-right: 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(74, 222, 128, 0.18);
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(2, 6, 23, 0.9) 100%);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      color: #ecfdf5;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        0 8px 20px rgba(0, 0, 0, 0.24),
-        0 0 16px rgba(34, 197, 94, 0.08);
-    }
-
-    .chatgpt-btn:active {
-      transform: scale(.98);
-    }
-
-    .chatgpt-btn:hover {
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(3, 7, 18, 0.96) 100%);
-      border-color: rgba(74, 222, 128, 0.26);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        0 10px 24px rgba(0, 0, 0, 0.28),
-        0 0 22px rgba(34, 197, 94, 0.11);
-    }
-
-    .chatgpt-btn.is-saving,
-    .chatgpt-btn.is-saved {
-      pointer-events: none;
-      filter: saturate(.92) brightness(.98);
-    }
-
-    .chatgpt-btn__spinner {
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      border: 2px solid currentColor;
-      border-top-color: transparent;
-      display: none;
-      animation: exportbtnspin .8s linear infinite;
-      opacity: .9;
-    }
-
-    .chatgpt-btn__check {
-      display: none;
-      font-weight: 800;
-      transform: translateY(1px);
-    }
-
-    .chatgpt-btn.is-saving .chatgpt-btn__spinner {
-      display: inline-block;
-    }
-
-    .chatgpt-btn.is-saved .chatgpt-btn__check {
-      display: inline-block;
-    }
-
-    .chatgpt-btn__sparkle {
-      font-size: 13px;
-      line-height: 1;
-      transform: translateY(-0.5px);
-      filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.18));
-    }
-
-    .prompt-backdrop[hidden] {
-      display: none !important;
-    }
-
-    .prompt-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.7);
-      z-index: 320;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .prompt-dialog {
-      width: 100%;
-      max-width: 420px;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
-    }
-
-    .prompt-label {
-      display: block;
-      color: #f3f4f6;
-      font-size: 14px;
+    .why-item h3,
+    .step-item h3 {
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
       margin-bottom: 10px;
+      line-height: 1.2;
     }
 
-    .prompt-body {
-      color: #cbd5e1;
-      font-size: 13px;
-      line-height: 1.45;
-      margin: 0;
-    }
-
-    .prompt-input {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: #f3f4f6;
-      padding: 10px 12px;
-      font-size: 32px;
-      line-height: 1.1;
-      letter-spacing: 0.03em;
-      font-variant-numeric: tabular-nums;
-      outline: none;
-      text-align: left;
-    }
-
-    .prompt-input:focus {
-      border-color: #60a5fa;
-    }
-
-    .prompt-textarea {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: #f3f4f6;
-      padding: 10px 12px;
+    .why-item p,
+    .step-item p,
+    .result-text p,
+    .i-step p {
       font-size: 16px;
-      line-height: 1.35;
-      min-height: 96px;
-      resize: vertical;
-      outline: none;
+      color: var(--dim);
+      line-height: 1.7;
     }
 
-    .prompt-textarea:focus {
-      border-color: #60a5fa;
+    .steps {
+      border-bottom: 1px solid var(--line);
+      padding: clamp(48px, 6vw, 80px) clamp(24px, 5vw, 80px);
     }
 
-    .prompt-actions {
+    .steps-label { margin-bottom: 56px; }
+
+    .steps-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .step-item {
+      padding-right: 48px;
+      border-right: 1px solid var(--line);
+    }
+
+    .step-item:not(:first-child) { padding-left: 48px; }
+    .step-item:last-child { border-right: none; }
+
+    .step-n {
+      font-size: clamp(56px, 7vw, 96px);
+      font-style: italic;
+      color: var(--terra);
+      opacity: 0.25;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .result {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .result-left {
+      padding: clamp(48px, 6vw, 80px) clamp(24px, 4vw, 64px);
+      border-right: 1px solid var(--line);
       display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 12px;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .prompt-btn {
-      background: transparent;
-      color: #60a5fa;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 10px;
+    .result-label { margin-bottom: 20px; }
+
+    .result-text h2 {
+      font-size: clamp(26px, 2.8vw, 40px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .result-big {
+      margin-top: 48px;
+    }
+
+    .result-big-num {
+      font-size: clamp(72px, 9vw, 120px);
+      font-style: italic;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--sage);
+    }
+
+    .result-big-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-top: 8px;
+      max-width: 26ch;
+      line-height: 1.6;
+    }
+
+    .result-right {
+      padding: clamp(48px, 6vw, 80px) clamp(24px, 4vw, 64px);
+      display: grid;
+      grid-template-rows: 1fr auto 1fr;
+      gap: 0;
+    }
+
+    .result-col-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    .result-entries {
+      list-style: none;
+      display: grid;
+      gap: 0;
+    }
+
+    .result-entry {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 16px;
+    }
+
+    .result-entry:last-child { border-bottom: none; }
+
+    .entry-time {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--sage);
+      letter-spacing: 0.04em;
+      min-width: 38px;
+    }
+
+    .entry-name { color: var(--text); }
+
+    .entry-cross {
+      margin-left: auto;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--terra);
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    .result-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+      font-size: 28px;
+      color: var(--mid);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
       margin: 0;
-      font-size: 14px;
-      font-weight: 600;
+    }
+
+    .install {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    .install-aside {
+      padding: clamp(40px, 5vw, 72px) clamp(24px, 3vw, 48px);
+      border-right: 1px solid var(--line);
+    }
+
+    .install-aside-label { margin-bottom: 20px; }
+
+    .install-main {
+      padding: clamp(40px, 5vw, 72px) clamp(24px, 4vw, 64px);
+    }
+
+    .install-tabs {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      width: fit-content;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .install-tab {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      border: none;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--mid);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+
+    .install-tab:last-child { border-right: none; }
+    .install-tab.active { background: var(--terra); color: #fff; }
+    .install-tab:not(.active):hover { background: var(--off); color: var(--text); }
+
+    .install-steps { display: none; }
+    .install-steps.active { display: block; }
+
+    .i-step {
+      display: flex;
+      gap: 24px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: flex-start;
+    }
+
+    .i-step:last-child { border-bottom: none; }
+
+    .i-step-n {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--mid);
+      letter-spacing: 0.1em;
+      padding-top: 4px;
+      min-width: 20px;
+    }
+
+    .i-step h4 {
+      font-size: 17px;
+      font-weight: 400;
+      margin-bottom: 5px;
+      letter-spacing: -0.01em;
+    }
+
+    .step-link { color: var(--terra); }
+
+    .cta {
+      padding: clamp(64px, 9vw, 120px) clamp(24px, 5vw, 80px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .cta-label { margin-bottom: 24px; }
+
+    .cta h2 {
+      font-size: clamp(36px, 5vw, 72px);
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      max-width: 18ch;
+      margin-bottom: 40px;
+    }
+
+    .cta h2 em { font-style: italic; }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      background: var(--terra);
+      font-family: 'EB Garamond', serif;
+      font-size: 18px;
+      padding: 14px 32px;
+      border-radius: 2px;
+      transition: background .2s;
+    }
+
+    .cta-btn:hover { background: #a84022; }
+
+    .cta-note {
+      font-size: 15px;
+      color: var(--mid);
+    }
+
+    .cta-attrs {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      width: 100%;
+    }
+
+    .cta-attr {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .cta-attr::before { content: '—'; color: var(--line); }
+
+    footer {
+      padding: 24px clamp(24px, 5vw, 80px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo {
+      font-style: italic;
+      font-size: 16px;
+      color: var(--dim);
+    }
+
+    footer small {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in { opacity: 0; }
+    .fade-in.visible { animation: fadeIn .7s ease both; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-phone-side {
+        min-height: auto;
+        border-left: none;
+        border-top: 1px solid var(--line);
+        padding: 40px 24px;
+        order: -1;
+      }
+      .hero-copy { padding: 36px clamp(24px,5vw,48px) 48px; }
+      .why { grid-template-columns: 1fr; }
+      .why-aside { border-right: none; border-bottom: 1px solid var(--line); }
+      .why-items { padding-top: 32px; }
+      .steps-list { grid-template-columns: 1fr; gap: 40px; }
+      .step-item { border: none !important; padding: 0 0 32px !important; border-bottom: 1px solid var(--line) !important; }
+      .step-item:last-child { border-bottom: none !important; }
+      .result { grid-template-columns: 1fr; }
+      .result-left { border-right: none; border-bottom: 1px solid var(--line); }
+      .install { grid-template-columns: 1fr; }
+      .install-aside { border-right: none; border-bottom: 1px solid var(--line); }
+    }
+
+    @media (max-width: 600px) {
+      .why-items { grid-template-columns: 1fr; }
+      .why-item { border-left: none !important; padding-left: 0 !important; }
+      .why-item:nth-last-child(-n+2) { border-bottom: 1px solid var(--line) !important; }
+      .why-item:last-child { border-bottom: none !important; }
+      .install-tabs { width: 100%; }
+      .install-tab { flex: 1; font-size: 10px; padding: 9px 12px; }
+      .cta-attrs { gap: 16px; }
+      .hero-bg-num { font-size: 160px; }
+      .phone-body { width: 240px; height: 480px; }
+      .phone-badge,
+      .phone-badge-2 {
+        transform: scale(.88);
+      }
+      .phone-badge { right: -16px; top: 36%; }
+      .phone-badge-2 { left: -16px; bottom: 22%; }
     }
   </style>
 </head>
-
 <body>
-  <div class="app-shell">
-    <header class="app-header">
-      <div>
-        <h1>EatLog</h1>
-      </div>
-      <!-- language switch -->
-      <div style="display:flex; gap:6px; align-items:center;">
-        <button id="langToggleBtn" class="tab-btn" style="padding:6px 10px;" aria-label="Switch language">EN</button>
-      </div>
-    </header>
 
-    <div class="view-tabs-wrapper">
-      <div class="view-tabs">
-        <button id="tabToday" class="tab-btn active" data-i18n="tab.today">Сегодня</button>
-        <button id="tabStats" class="tab-btn" data-i18n="tab.stats">Статистика</button>
-        <button id="tabGoals" class="tab-btn" data-i18n="tab.goals">Цели</button>
+<nav>
+  <a href="#" class="nav-logo">EatLog</a>
+  <a href="/app.html" class="nav-open" data-app-link>Открыть →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="hero-label">Дневник питания · Без калорий</div>
+    <h1>Замечайте, а не<br><em>считайте</em></h1>
+    <p class="hero-desc">
+      EatLog показывает реальные паттерны вашего питания — когда едите, как часто перекусываете, сколько времени между приёмами. Без весов, КБЖУ и ограничений.
+    </p>
+    <a href="#install" class="hero-cta">
+      Установить приложение
+      <span class="hero-cta-arr">→</span>
+    </a>
+    <div class="hero-meta">
+      Без регистрации<br>
+      Данные хранятся локально<br>
+      Работает в браузере
+    </div>
+  </div>
+
+  <div class="hero-phone-side">
+    <div class="hero-bg-num" aria-hidden="true">7</div>
+    <div class="phone-wrap">
+      <div class="phone-note">Живой экран — попробуйте прямо здесь</div>
+      <div class="phone-body">
+        <div class="phone-screen">
+          <iframe class="app-frame" src="/app-preview.html" title="EatLog Preview" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </div>
+      <div class="phone-badge">
+        <button class="badge-close" type="button" aria-label="Скрыть подсказку">×</button>
+        <span class="phone-badge-val">−2</span>
+        перекуса в день
+      </div>
+      <div class="phone-badge-2">
+        <button class="badge-close" type="button" aria-label="Скрыть подсказку">×</button>
+        <strong style="display:block;font-size:15px;margin-bottom:3px;">7 дней</strong>
+        и картина станет ясной
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="app-content">
-      <!-- СЕГОДНЯ -->
-      <div id="view-today">
-        <div class="card">
-          <h2 data-i18n="h.newMeal">Новый приём пищи</h2>
-          <textarea id="mealNote" data-i18n-placeholder="textarea.placeholder"
-            placeholder="овсянка, 2 варёных яйца, кофе с печеньем"></textarea>
-          <button id="addMealBtn" class="btn-primary">
-            <span id="addMealMain" data-i18n="btn.eating">Я ем сейчас</span>
-            <span id="addMealSub" data-i18n="btn.eatingSub">🍽 или 🍪</span>
-          </button>
-          <p class="subtle" id="lastMealInfo"></p>
-        </div>
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner">
+    <span class="ticker-item">Без калорий <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без регистрации <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">10 секунд на запись <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Данные у вас <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Работает офлайн <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Бесплатно <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без весов <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без диет <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без калорий <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без регистрации <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">10 секунд на запись <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Данные у вас <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Работает офлайн <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Бесплатно <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без весов <span class="ticker-dot">·</span></span>
+    <span class="ticker-item">Без диет <span class="ticker-dot">·</span></span>
+  </div>
+</div>
 
-        <div class="card card-compact">
-          <h2 data-i18n="stats.today">Статистика за сегодня</h2>
-          <div class="stats-grid">
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.meals">Приёмов пищи</div>
-              <div class="stat-value" id="statMealsToday">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.snacks">Перекусы</div>
-              <div class="stat-value" id="statSnacksToday">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.dayInterval">Дневной <br> интервал</div>
-              <div class="stat-value" id="statAvgInterval">–</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.sinceLast">С последнего <br> приёма</div>
-              <div class="stat-value" id="statSinceLast">–</div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <h2 data-i18n="today.list">Сегодняшние приёмы пищи</h2>
-          <div class="list" id="mealList"></div>
-          <div class="chatgpt-cta">
-            <button id="sendToChatGptBtn" class="chatgpt-btn">
-              <span class="chatgpt-btn__sparkle" aria-hidden="true">✨</span>
-              <span class="chatgpt-btn__label" data-i18n="chatgpt.btn" data-default-key="chatgpt.btn">GPT-анализ питания</span>
-              <span class="chatgpt-btn__spinner" aria-hidden="true"></span>
-              <span class="chatgpt-btn__check" aria-hidden="true">✓</span>
-            </button>
-            <div class="subtle" data-i18n="chatgpt.hint">Запрос скопируется автоматически, и откроется ChatGPT. Если текст не появится, нажмите «Вставить».</div>
-          </div>
+<section class="why">
+  <div class="why-aside">
+    <div class="why-aside-label">Почему работает</div>
+    <h2>Видеть —<br>значит <em>понимать</em></h2>
+  </div>
+  <div class="why-items">
+    <div class="why-item fade-in">
+      <div class="why-num">01</div>
+      <h3>Не нужно считать</h3>
+      <p>Только фиксируете факт: что и когда. Никаких граммов, КБЖУ и таблиц питательности.</p>
+    </div>
+    <div class="why-item fade-in">
+      <div class="why-num">02</div>
+      <h3>Реальные интервалы</h3>
+      <p>Видите, сколько времени прошло с последнего приёма. Понимаете, где настоящий голод, а где привычка.</p>
+    </div>
+    <div class="why-item fade-in">
+      <div class="why-num">03</div>
+      <h3>Паттерны за неделю</h3>
+      <p>Скрытые перекусы, вечерняя еда, пропущенный завтрак — всё становится видно без усилий.</p>
+    </div>
+    <div class="why-item fade-in">
+      <div class="why-num">04</div>
+      <h3>Осознанность меняет</h3>
+      <p>Когда видишь привычки — начинаешь их менять. Без запретов и силы воли.</p>
+    </div>
+  </div>
+</section>
+
+<section class="steps">
+  <div class="steps-label">Как это работает</div>
+  <div class="steps-list">
+    <div class="step-item fade-in">
+      <div class="step-n">1</div>
+      <h3>Откройте и записывайте</h3>
+      <p>Нажмите кнопку, напишите пару слов. EatLog сохраняет время автоматически. Меньше 10 секунд.</p>
+    </div>
+    <div class="step-item fade-in">
+      <div class="step-n">2</div>
+      <h3>Смотрите на шкалу дня</h3>
+      <p>Все приёмы пищи на временной линии. Сразу видно: сколько перекусов, как часто, что происходит вечером.</p>
+    </div>
+    <div class="step-item fade-in">
+      <div class="step-n">3</div>
+      <h3>Меняйте то, что видите</h3>
+      <p>Через неделю наблюдений лишние перекусы становятся очевидны — и уходят сами.</p>
+    </div>
+  </div>
+</section>
+
+<section class="result">
+  <div class="result-left">
+    <div class="result-text">
+      <div class="result-label">Через неделю</div>
+      <h2>Лишнее становится<br>очевидным</h2>
+      <p>Когда вся еда оказывается перед глазами — случайные перекусы невозможно не заметить. Никакой математики, только наблюдение.</p>
+    </div>
+    <div class="result-big">
+      <div class="result-big-num">−2</div>
+      <div class="result-big-label">незаметных перекуса в день в среднем после недели</div>
+    </div>
+  </div>
+  <div class="result-right">
+    <div>
+      <div class="result-col-label">До</div>
+      <ul class="result-entries">
+        <li class="result-entry"><span class="entry-time">08:00</span><span class="entry-name">Завтрак</span></li>
+        <li class="result-entry"><span class="entry-time">10:15</span><span class="entry-name">Печенье</span><span class="entry-cross">незаметно</span></li>
+        <li class="result-entry"><span class="entry-time">12:00</span><span class="entry-name">Кофе с молоком</span><span class="entry-cross">это тоже еда</span></li>
+        <li class="result-entry"><span class="entry-time">13:00</span><span class="entry-name">Обед</span></li>
+        <li class="result-entry"><span class="entry-time">16:30</span><span class="entry-name">Орешки</span><span class="entry-cross">«чуть-чуть»</span></li>
+        <li class="result-entry"><span class="entry-time">19:00</span><span class="entry-name">Ужин</span></li>
+        <li class="result-entry"><span class="entry-time">22:00</span><span class="entry-name">Что-то из холодильника</span></li>
+      </ul>
+    </div>
+    <div class="result-arrow" aria-hidden="true">↓</div>
+    <div>
+      <div class="result-col-label">После</div>
+      <ul class="result-entries">
+        <li class="result-entry"><span class="entry-time">08:00</span><span class="entry-name">Завтрак</span></li>
+        <li class="result-entry"><span class="entry-time">13:00</span><span class="entry-name">Обед</span></li>
+        <li class="result-entry"><span class="entry-time">19:00</span><span class="entry-name">Ужин</span></li>
+        <li class="result-entry"><span class="entry-time">—</span><span class="entry-name">Меньше случайных перекусов</span></li>
+        <li class="result-entry"><span class="entry-time">—</span><span class="entry-name">Длиннее интервалы между едой</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="install" id="install">
+  <div class="install-aside">
+    <div class="install-aside-label">Установка</div>
+    <h2>Добавьте на экран как приложение</h2>
+  </div>
+  <div class="install-main">
+    <div class="install-tabs">
+      <button class="install-tab active" data-tab="ios">iPhone / iPad</button>
+      <button class="install-tab" data-tab="android">Android</button>
+      <button class="install-tab" data-tab="desktop">Компьютер</button>
+    </div>
+
+    <div class="install-steps active" id="tab-ios">
+      <div class="i-step">
+        <div class="i-step-n">01</div>
+        <div>
+          <h4>Откройте ссылку на телефоне</h4>
+          <p>Перейдите по ссылке <a href="https://eatlog-tracker.vercel.app/app" class="step-link">eatlog-tracker.vercel.app/app</a> в Safari на iPhone или iPad.</p>
         </div>
       </div>
-
-      <!-- СТАТИСТИКА -->
-      <div id="view-stats" style="display: none;">
-        <div class="card">
-          <h2 data-i18n="period.stats">Статистика за период</h2>
-          <div class="period-controls">
-            <button class="btn-outline period-btn" data-period="7" data-i18n="period.7">7 дней</button>
-            <button class="btn-outline period-btn" data-period="14" data-i18n="period.14">14 дней</button>
-            <button class="btn-outline period-btn active" data-period="21" data-i18n="period.21">21 день</button>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.meals">Приёмов пищи</div>
-              <div class="stat-value" id="statPeriodMealsPerDay">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.snacks">Из них перекусов</div>
-              <div class="stat-value" id="statPeriodSnacksPerDay">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.sleep">Интервал сна</div>
-              <div class="stat-value" id="statPeriodSleepInterval">–</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label" data-i18n="stat.dayInterval">Интервал между приёмами</div>
-              <div class="stat-value" id="statPeriodAvgInterval">–</div>
-            </div>
-          </div>
-
-          <!-- пояснение про ретеншн и мотивация -->
-          <div class="subtle" style="margin-top:10px;" data-i18n="stats.retention"></div>
-
-        </div>
-
-        <div class="card">
-          <h2 data-i18n="daily.breakdown">Детализация по дням</h2>
-          <div class="history-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th data-i18n="table.date">Дата</th>
-                  <th data-i18n="table.meals">Приёмы пищи</th>
-                  <th data-i18n="table.snacks">Перекусы</th>
-                  <th class="history-sleep-col" data-i18n-html="table.sleep">Ночной интервал<br>без еды</th>
-                  <th class="history-day-interval-col" data-i18n-html="table.dayInterval">Интервал<br>между приёмами</th>
-                </tr>
-              </thead>
-              <tbody id="historyBody"></tbody>
-            </table>
-          </div>
-
-          <!-- КНОПКА ВЫГРУЗКИ CSV -->
-          <div class="export-cta">
-            <button id="exportMealsBtn" class="exportbtn">
-              <span class="exportbtn__label" data-i18n="export.btn" data-default-key="export.btn">Скачать данные</span>
-              <span class="exportbtn__spinner" aria-hidden="true"></span>
-              <span class="exportbtn__check" aria-hidden="true">✓</span>
-            </button>
-            <div class="subtle" id="exportHint" data-i18n="export.hint">Скачивается в формате CSV</div>
-          </div>
+      <div class="i-step">
+        <div class="i-step-n">02</div>
+        <div>
+          <h4>Нажмите кнопку «Поделиться»</h4>
+          <p>Найдите иконку со стрелкой вверх в нижней панели Safari. Нажмите её — откроется меню действий.</p>
         </div>
       </div>
-
-      <!-- ЦЕЛИ -->
-      <div id="view-goals" style="display: none;">
-        <div class="card goals-card">
-          <h2 data-i18n="goals.title">Цели на день</h2>
-          <p class="subtle goals-intro">
-            <span data-i18n="goals.desc">Если цель выполнена, день подсветится зелёным в статистике.</span>
-          </p>
-
-          <section class="goal-section">
-            <div class="goal-item">
-              <div class="goal-label" data-i18n="goals.mealsLabel">Приёмов пищи</div>
-              <div class="range-row range-row--pair">
-                <div class="field-stack">
-                  <input type="text" id="goalMealsMin" class="goal-number-input" inputmode="numeric"
-                    autocomplete="off" data-i18n-placeholder="placeholder.mealsMin" aria-label="Минимум приёмов пищи">
-                </div>
-                <span class="range-dash">—</span>
-                <div class="field-stack">
-                  <input type="text" id="goalMealsMax" class="goal-number-input" inputmode="numeric"
-                    autocomplete="off" data-i18n-placeholder="placeholder.mealsMax" aria-label="Максимум приёмов пищи">
-                </div>
-              </div>
-              <div class="goal-hint" data-i18n="goals.mealsHint">Сколько раз вы планируете есть в день</div>
-            </div>
-            <div class="goal-item goal-item-sub">
-              <div class="goal-label" data-i18n="goals.snacksLabel">Из них - перекусов</div>
-              <div class="range-row range-row--single">
-                <div class="field-stack">
-                  <input type="text" id="goalSnacksMax" class="goal-number-input single-input" inputmode="numeric"
-                    autocomplete="off" data-i18n-placeholder="placeholder.snacksMax" aria-label="Максимум перекусов в день">
-                </div>
-                <span class="range-dash range-spacer">—</span>
-                <div class="field-stack range-spacer" aria-hidden="true"></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="goal-section">
-            <div class="goal-item goal-item-interval">
-              <div class="goal-label" data-i18n="goals.dayIntervalLabel">Интервал между приёмами пищи</div>
-              <div class="range-row range-row--pair-unit">
-                <div class="field-stack">
-                  <input type="text" id="goalDayIntMin" class="goal-number-input" inputmode="decimal"
-                    autocomplete="off" data-i18n-placeholder="placeholder.dayIntMin"
-                    aria-label="Минимальный интервал между приёмами">
-                </div>
-                <span class="range-dash">—</span>
-                <div class="field-stack">
-                  <input type="text" id="goalDayIntMax" class="goal-number-input" inputmode="decimal"
-                    autocomplete="off" data-i18n-placeholder="placeholder.dayIntMax"
-                    aria-label="Максимальный интервал между приёмами">
-                </div>
-                <span class="goal-inline-unit" data-i18n="unit.hours">часов</span>
-              </div>
-            </div>
-            <div class="goal-item goal-item-interval">
-              <div class="goal-label" data-i18n="goals.sleepLabel">Интервал сна</div>
-              <div class="goal-hint goal-hint-persistent" id="goalSleepAutoText" data-i18n="goals.sleepAutoHint">Рассчитывается автоматически</div>
-              <div class="range-row range-row--pair-unit">
-                <div class="field-stack">
-                  <input type="text" id="goalSleepMinValue" class="goal-number-input computed-value" readonly aria-label="Минимальный ночной интервал без еды">
-                </div>
-                <span class="range-dash">—</span>
-                <div class="field-stack">
-                  <input type="text" id="goalSleepMaxValue" class="goal-number-input computed-value" readonly aria-label="Максимальный ночной интервал без еды">
-                </div>
-                <span class="goal-inline-unit" data-i18n="unit.hours">часов</span>
-              </div>
-            </div>
-          </section>
-
-          <button id="saveGoalsBtn" class="btn-primary savebtn">
-            <span class="savebtn__label" data-i18n="goals.save" data-default-key="goals.save">Сохранить</span>
-            <span class="savebtn__spinner" aria-hidden="true"></span>
-            <span class="savebtn__check" aria-hidden="true">✓</span>
-          </button>
+      <div class="i-step">
+        <div class="i-step-n">03</div>
+        <div>
+          <h4>Выберите «На экран Домой»</h4>
+          <p>В меню прокрутите вниз и найдите «Добавить на экран "Домой"». Нажмите «Добавить» в правом верхнем углу.</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">04</div>
+        <div>
+          <h4>Готово — EatLog на вашем экране</h4>
+          <p>Иконка появилась. Приложение запускается без адресной строки, во весь экран, работает даже без интернета.</p>
         </div>
       </div>
     </div>
 
-    <footer class="app-footer">
-      <span data-i18n="footer.line1">EatLog</span>
-      <span data-i18n="footer.line2">Маленький шаг к осознанному питанию</span>
-    </footer>
-  </div>
+    <div class="install-steps" id="tab-android">
+      <div class="i-step">
+        <div class="i-step-n">01</div>
+        <div>
+          <h4>Откройте ссылку на телефоне</h4>
+          <p>Перейдите по ссылке <a href="https://eatlog-tracker.vercel.app/app" class="step-link">eatlog-tracker.vercel.app/app</a> в Chrome на Android.</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">02</div>
+        <div>
+          <h4>Откройте меню браузера</h4>
+          <p>Нажмите кнопку с тремя точками в правом верхнем углу — откроется меню Chrome.</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">03</div>
+        <div>
+          <h4>Выберите «Добавить на главный экран»</h4>
+          <p>Найдите пункт «Добавить на главный экран» или «Установить приложение». Подтвердите нажатием «Добавить».</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">04</div>
+        <div>
+          <h4>Открывайте как обычное приложение</h4>
+          <p>Иконка EatLog появилась на рабочем столе. Работает в полноэкранном режиме без интерфейса браузера.</p>
+        </div>
+      </div>
+    </div>
 
-  <!-- FULLSCREEN ДЕТАЛИЗАЦИЯ ДНЯ -->
-  <div id="detailScreen">
-    <button id="btnDetailBack">
-      <span data-i18n="detail.back">← Назад</span>
-    </button>
-    <h2 id="detailTitle"></h2>
-    <div id="detailContent"></div>
-  </div>
-
-  <div id="timePromptBackdrop" class="prompt-backdrop" hidden>
-    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="timePromptLabel">
-      <label id="timePromptLabel" class="prompt-label" for="timePromptInput" data-i18n="prompt.newTime">
-        Новое время (формат ЧЧ:ММ, 24 часа):
-      </label>
-      <input id="timePromptInput" class="prompt-input" type="text" inputmode="numeric" autocomplete="off" />
-      <div class="prompt-actions">
-        <button id="timePromptCancel" type="button" class="prompt-btn" data-i18n="prompt.cancel">Отмена</button>
-        <button id="timePromptOk" type="button" class="prompt-btn" data-i18n="prompt.ok">OK</button>
+    <div class="install-steps" id="tab-desktop">
+      <div class="i-step">
+        <div class="i-step-n">01</div>
+        <div>
+          <h4>Откройте сайт в Chrome или Edge</h4>
+          <p>Перейдите по ссылке <a href="https://eatlog-tracker.vercel.app/app" class="step-link">eatlog-tracker.vercel.app/app</a> на компьютере.</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">02</div>
+        <div>
+          <h4>Найдите иконку установки</h4>
+          <p>В правой части адресной строки появится иконка монитора или «+». Нажмите на неё.</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">03</div>
+        <div>
+          <h4>Подтвердите установку</h4>
+          <p>В диалоговом окне нажмите «Установить». Приложение откроется в отдельном окне — как обычная программа.</p>
+        </div>
+      </div>
+      <div class="i-step">
+        <div class="i-step-n">04</div>
+        <div>
+          <h4>EatLog в меню приложений</h4>
+          <p>Ярлык появится в списке приложений Windows, Launchpad macOS или меню Linux. Обновляется автоматически.</p>
+        </div>
       </div>
     </div>
   </div>
+</section>
 
-  <div id="notePromptBackdrop" class="prompt-backdrop" hidden>
-    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="notePromptLabel">
-      <label id="notePromptLabel" class="prompt-label" for="notePromptInput" data-i18n="prompt.editNote">
-        Изменить описание приёма пищи:
-      </label>
-      <textarea id="notePromptInput" class="prompt-textarea" autocomplete="off"></textarea>
-      <div class="prompt-actions">
-        <button id="notePromptCancel" type="button" class="prompt-btn" data-i18n="prompt.cancel">Отмена</button>
-        <button id="notePromptOk" type="button" class="prompt-btn" data-i18n="prompt.ok">OK</button>
-      </div>
-    </div>
+<section class="cta">
+  <div class="cta-label">Открыть сейчас</div>
+  <h2>Начните замечать<br><em>уже сегодня</em></h2>
+  <div class="cta-row">
+    <a href="#install" class="cta-btn">Установить приложение →</a>
+    <div class="cta-note">Без регистрации. Без калорий. Без таблиц.</div>
   </div>
-
-  <div id="confirmPromptBackdrop" class="prompt-backdrop" hidden>
-    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmPromptMessage">
-      <div id="confirmPromptMessage" class="prompt-label"></div>
-      <div class="prompt-actions">
-        <button id="confirmPromptCancel" type="button" class="prompt-btn" data-i18n="prompt.cancel">Отмена</button>
-        <button id="confirmPromptOk" type="button" class="prompt-btn" data-i18n="confirm.ok">Удалить</button>
-      </div>
-    </div>
+  <div class="cta-attrs">
+    <div class="cta-attr">Запись за 10 секунд</div>
+    <div class="cta-attr">Данные у вас</div>
+    <div class="cta-attr">Работает в браузере</div>
   </div>
+</section>
 
-  <div id="updateNoticeBackdrop" class="prompt-backdrop" hidden>
-    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="updateNoticeTitle">
-      <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.notice.title">Что нового</div>
-      <p class="prompt-body" data-i18n="update.notice.body">Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ.</p>
-      <div class="prompt-actions">
-        <button id="updateNoticeOk" type="button" class="prompt-btn" data-i18n="update.notice.ok">Понятно</button>
-      </div>
-    </div>
-  </div>
+<footer>
+  <div class="footer-logo">EatLog</div>
+  <small>Работает в браузере · Данные хранятся локально · Без регистрации</small>
+</footer>
 
-  <script>
-    // Service Worker (offline) — works only over https or http://localhost (not file://)
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js').catch(() => { });
-      });
-    }
-  </script>
-
-  <script>
-    // --- i18n support ---
-    const LANG_KEY = 'eatlog_lang';
-    const savedLang = localStorage.getItem(LANG_KEY);
-    const deviceLang = (navigator.languages && navigator.languages[0]) ? navigator.languages[0] : (navigator.language || 'en');
-    const detectedLang = /^ru/i.test(deviceLang) ? 'ru' : 'en';
-    const defaultLang = savedLang || detectedLang;
-    const translations = {
-      en: {
-        "stats.retention": "We keep data for 21 days.",
-        "tab.today": "Today",
-        "tab.stats": "Statistics",
-        "tab.goals": "Goals",
-        "h.newMeal": "New meal",
-        "textarea.placeholder": "oatmeal, 2 boiled eggs, coffee with cookies",
-        "btn.eating": "I'm eating now",
-        "btn.eatingSub": "🍽 / 🍪",
-        "stats.today": "Today's stats",
-        "today.list": "Today's meals",
-        "stat.meals": "Meals",
-        "stat.snacks": "Snacks within that",
-        "stat.dayInterval": "Interval between meals",
-        "stat.sinceLast": "Since last meal",
-        "list.empty": "No entries for today yet.\nTap \"I'm eating now\" when you start your meal.\nUse 🍽 / 🍪 to mark a snack.",
-        "chatgpt.btn": "GPT nutrition analysis",
-        "chatgpt.hint": "The prompt will be copied automatically, and ChatGPT will open. If the text does not appear, tap Paste.",
-        "chatgpt.preparing": "Preparing prompt…",
-        "chatgpt.ready": "Prompt ready",
-        "chatgpt.noData": "There are no meals for today yet.",
-        "chatgpt.copyError": "Couldn't copy the prompt automatically.",
-        "period.stats": "Period stats",
-        "daily.breakdown": "Daily breakdown",
-        "stat.sleep": "Night fasting interval",
-        "table.date": "Date",
-        "table.meals": "Meals per day",
-        "table.snacks": "Snacks\nwithin that",
-        "table.sleep": "Night<br>fasting<br>interval",
-        "table.dayInterval": "Interval<br>between<br>meals",
-        "export.btn": "Download data",
-        "export.hint": "Downloads as CSV",
-        "export.downloading": "Preparing file…",
-        "export.done": "File ready",
-        "period.7": "7 days",
-        "period.14": "14 days",
-        "period.21": "21 days",
-        "period.all": "All",
-        "goals.title": "Daily goals",
-        "goals.desc": "If a goal is met, the day is highlighted green in statistics.",
-        "goals.sectionFood": "Nutrition",
-        "goals.sectionMeals": "Meals",
-        "goals.sectionSnacks": "Snacks",
-        "goals.sectionIntervals": "Intervals",
-        "goals.sectionSleep": "Sleep",
-        "goals.mealsLabel": "Meals per day",
-        "goals.mealsHint": "How many times you plan to eat during the day",
-        "goals.snacksLabel": "Of these — snacks",
-        "goals.sleepLabel": "Night fasting interval",
-        "goals.sleepAutoHint": "Calculated automatically.",
-        "goals.sleepComputed": "{from}–{to} hours",
-        "goals.sleepHint": "Can help improve metabolic health",
-        "goals.dayIntervalLabel": "Interval between meals",
-        "goals.previewTitle": "Today:",
-        "range.from": "from",
-        "range.to": "to",
-        "unit.hours": "hours",
-        "goals.save": "Save",
-        "goals.saved": "Saved",
-        "goal.preview.meals": "🍽 {from}–{to} meals",
-        "goal.preview.interval": "⏱ {from}–{to} hours between meals",
-        "goal.preview.sleep": "🌙 {from}–{to} hours",
-        "footer.line1": "EatLog",
-        "footer.line2": "Small step to mindful eating",
-        "detail.back": "← Back",
-        "detail.noEntries": "No entries for this day yet.",
-        "confirm.delete": "Delete meal {txt}?",
-        "prompt.editNote": "Edit meal note:",
-        "prompt.newTime": "New time (format HH:MM, 24-hour):",
-        "prompt.cancel": "Cancel",
-        "prompt.ok": "OK",
-        "confirm.ok": "Delete",
-        "alert.invalidTime": "Invalid format. Enter, for example: 08:30 or 22:05",
-        "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59.",
-        "update.notice.title": "What's new",
-        "update.notice.body": "We added GPT nutrition analysis — send the day's entries to ChatGPT and get an estimated calorie and macro breakdown.",
-        "update.notice.ok": "OK",
-        "export.noData": "No meals yet to export.",
-        "no.description": "(no description)",
-        "interval.first": "First recorded meal (no previous entries).",
-        "interval.sincePrev": "Interval since previous meal: ",
-        "last.meal": "Last meal at ",
-        "history.empty": "No data for the selected period yet."
-        ,
-        "edit.title": "Edit meal",
-        "edit.save": "Save",
-        "edit.cancel": "Cancel",
-        "placeholder.mealsMin": "",
-        "placeholder.mealsMax": "",
-        "placeholder.snacksMax": "",
-        "placeholder.sleepMin": "",
-        "placeholder.sleepMax": "",
-        "placeholder.dayIntMin": "",
-        "placeholder.dayIntMax": ""
-      },
-      ru: {
-        "stats.retention": "Мы храним данные за 21 день.",
-        "tab.today": "Сегодня",
-        "tab.stats": "Статистика",
-        "tab.goals": "Цели",
-        "h.newMeal": "Новый приём пищи",
-        "textarea.placeholder": "овсянка, 2 варёных яйца, кофе с печеньем",
-        "btn.eating": "Я ем сейчас",
-        "btn.eatingSub": "🍽 / 🍪",
-        "stats.today": "Статистика за сегодня",
-        "today.list": "Сегодняшние приёмы пищи",
-        "stat.meals": "Приёмов пищи",
-        "stat.snacks": "Из них - перекусов",
-        "stat.dayInterval": "Интервал между приёмами пищи",
-        "stat.sinceLast": "С последнего приёма",
-        "list.empty": "Сегодня пока нет записей.\nНажми «Я ем сейчас», когда начнёшь есть.\nИспользуй 🍽 / 🍪, чтобы отметить перекус.",
-        "chatgpt.btn": "GPT-анализ питания",
-        "chatgpt.hint": "Запрос скопируется автоматически, и откроется ChatGPT. Если текст не появится, нажмите «Вставить».",
-        "chatgpt.preparing": "Готовлю запрос…",
-        "chatgpt.ready": "Запрос готов",
-        "chatgpt.noData": "За сегодня ещё нет записей.",
-        "chatgpt.copyError": "Не удалось автоматически скопировать запрос.",
-        "period.stats": "Статистика за период",
-        "daily.breakdown": "Детализация по дням",
-        "stat.sleep": "Ночной интервал без еды",
-        "table.date": "Дата",
-        "table.meals": "Приёмов пищи",
-        "table.snacks": "Из них -\nперекусов",
-        "table.sleep": "Ночной<br>интервал<br>без еды",
-        "table.dayInterval": "Интервал<br>между<br>приёмами&nbsp;пищи",
-        "export.btn": "Скачать данные",
-        "export.hint": "Скачивается в формате CSV",
-        "period.7": "7 дней",
-        "period.14": "14 дней",
-        "period.21": "21 день",
-        "period.all": "All",
-        "goals.title": "Цели на день",
-        "goals.desc": "Если цель выполнена, день подсветится зелёным в статистике.",
-        "goals.sectionFood": "Питание",
-        "goals.sectionMeals": "Приёмы пищи",
-        "goals.sectionSnacks": "Перекусы",
-        "goals.sectionIntervals": "Интервалы",
-        "goals.sectionSleep": "Сон",
-        "goals.mealsLabel": "Приёмов пищи",
-        "goals.mealsHint": "Сколько раз вы планируете есть в день",
-        "goals.snacksLabel": "Из них — перекусов",
-        "goals.sleepLabel": "Ночной интервал без еды",
-        "goals.sleepAutoHint": "Рассчитывается автоматически",
-        "goals.sleepComputed": "{from}–{to} часов",
-        "goals.sleepHint": "Помогает улучшить метаболизм",
-        "goals.dayIntervalLabel": "Интервал между приёмами пищи",
-        "goals.previewTitle": "Сегодня:",
-        "range.from": "от",
-        "range.to": "до",
-        "unit.hours": "часов",
-        "goals.save": "Сохранить",
-        "goals.saved": "Сохранено",
-        "goal.preview.meals": "🍽 {from}–{to} приёма пищи",
-        "goal.preview.interval": "⏱ {from}–{to} часов между приёмами",
-        "goal.preview.sleep": "🌙 {from}–{to} часов",
-        "footer.line1": "EatLog",
-        "footer.line2": "Маленький шаг к осознанному питанию",
-        "detail.back": "← Назад",
-        "detail.noEntries": "Для этого дня пока нет записей.",
-        "confirm.delete": "Удалить приём пищи {txt}?",
-        "prompt.editNote": "Изменить описание приёма пищи:",
-        "prompt.newTime": "Новое время (формат ЧЧ:ММ, 24 часа):",
-        "prompt.cancel": "Отмена",
-        "prompt.ok": "OK",
-        "confirm.ok": "Удалить",
-        "alert.invalidTime": "Неверный формат. Введи, например: 08:30 или 22:05",
-        "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59.",
-        "update.notice.title": "Что нового",
-        "update.notice.body": "Добавили GPT-анализ питания — отправьте записи за день в ChatGPT и получите примерный расчёт КБЖУ.",
-        "update.notice.ok": "Понятно",
-        "export.noData": "Пока нет ни одного приёма пищи для выгрузки.",
-        "no.description": "(без описания)",
-        "interval.first": "Первый зафиксированный приём (раньше записей нет).",
-        "interval.sincePrev": "Интервал с прошлого приёма: ",
-        "last.meal": "Последний приём в ",
-        "history.empty": "Пока нет данных за выбранный период."
-        ,
-        "edit.title": "Редактировать приём пищи",
-        "edit.save": "Сохранить",
-        "edit.cancel": "Отмена",
-        "placeholder.mealsMin": "",
-        "placeholder.mealsMax": "",
-        "placeholder.snacksMax": "",
-        "placeholder.sleepMin": "",
-        "placeholder.sleepMax": "",
-        "placeholder.dayIntMin": "",
-        "placeholder.dayIntMax": ""
-      }
-    };
-
-    function t(key, params) { // get translation with simple {var} substitution
-      const dict = translations[window._eatlogLang || defaultLang] || translations[defaultLang];
-      let txt = dict && dict[key] != null ? dict[key] : key;
-      if (params) {
-        for (const k in params) txt = txt.replace('{' + k + '}', params[k]);
-      }
-      return txt;
-    }
-
-    function applyTranslations(lang) {
-      window._eatlogLang = lang;
-      document.documentElement.lang = lang;
-      localStorage.setItem(LANG_KEY, lang);
-      // simple elements
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (!key) return;
-        el.textContent = t(key);
-      });
-      document.querySelectorAll('[data-i18n-html]').forEach(el => {
-        const key = el.getAttribute('data-i18n-html');
-        if (!key) return;
-        el.innerHTML = t(key).replace(/\n/g, '<br>');
-      });
-      // placeholders
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (!key) return;
-        el.placeholder = t(key);
-      });
-      // special spans inside add button
-      const main = document.getElementById('addMealMain');
-      const sub = document.getElementById('addMealSub');
-      if (main) main.textContent = t('btn.eating');
-      if (sub) sub.textContent = t('btn.eatingSub');
-      // Data-driven UI strings are rendered by functions declared later in another <script> tag.
-      // When running in the browser, script tags do NOT share hoisting, so guard calls here.
-      if (typeof renderMeals === 'function') renderMeals();
-      if (typeof renderStats === 'function') renderStats();
-      if (typeof renderPeriodSummary === 'function') renderPeriodSummary();
-      if (typeof renderHistory === 'function') renderHistory();
-      if (typeof renderGoalsPreview === 'function') renderGoalsPreview();
-      syncLangToggleLabel();
-    }
-
-    // language toggle button (single)
-    const langToggleBtn = document.getElementById('langToggleBtn');
-    function syncLangToggleLabel() {
-      if (!langToggleBtn) return;
-      const current = window._eatlogLang || defaultLang;
-      // Icon shows CURRENT app language
-      langToggleBtn.textContent = current.toUpperCase();
-      langToggleBtn.title = current === 'ru'
-        ? 'Язык приложения: Русский'
-        : 'App language: English';
-    }
-
-    if (langToggleBtn) {
-      langToggleBtn.addEventListener('click', () => {
-        const current = window._eatlogLang || defaultLang;
-        const next = current === 'ru' ? 'en' : 'ru';
-        applyTranslations(next);
-      });
-    }
-
-    // apply initial language after all scripts are loaded (so render* functions exist)
-    window.addEventListener('DOMContentLoaded', () => {
-      applyTranslations(window._eatlogLang || defaultLang);
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/service-worker.js").catch(function () {});
     });
-    // --- end i18n ---
-  </script>
-
-  <script>
-    const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
-    const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
-    const STORAGE_KEY_UPDATE_NOTICE_VERSION = 'meal_tracker_update_notice_version';
-    const CURRENT_UPDATE_NOTICE_VERSION = 'gpt_analysis_v1';
-    function loadMeals() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY_MEALS);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) return [];
-        return parsed;
-      } catch (e) {
-        console.error('Failed to parse meals', e);
-        return [];
-      }
-    }
-
-    function saveMeals(meals) {
-      localStorage.setItem(STORAGE_KEY_MEALS, JSON.stringify(meals));
-    }
-
-    function loadGoals() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY_GOALS);
-        if (!raw) return {};
-        const parsed = JSON.parse(raw);
-        return parsed && typeof parsed === 'object' ? parsed : {};
-      } catch (e) {
-        console.error('Failed to parse goals', e);
-        return {};
-      }
-    }
-
-    function saveGoals(goals) {
-      localStorage.setItem(STORAGE_KEY_GOALS, JSON.stringify(goals));
-    }
-
-    let meals = loadMeals();
-    let goals = loadGoals();
-    // retention: keep only last RETENTION_DAYS days of data
-    const RETENTION_DAYS = 21;
-    function pruneOldMeals() {
-      const cutoff = Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000;
-      const filtered = meals.filter(m => m.ts >= cutoff);
-      if (filtered.length !== meals.length) {
-        meals = filtered;
-        saveMeals(meals);
-      }
-    }
-    // prune on load
-    pruneOldMeals();
-
-    const mealNoteEl = document.getElementById('mealNote');
-    const addMealBtn = document.getElementById('addMealBtn');
-    const mealListEl = document.getElementById('mealList');
-
-    const statMealsTodayEl = document.getElementById('statMealsToday');
-    const statSnacksTodayEl = document.getElementById('statSnacksToday');
-    const statAvgIntervalEl = document.getElementById('statAvgInterval');
-    const statSinceLastEl = document.getElementById('statSinceLast');
-    const lastMealInfoEl = document.getElementById('lastMealInfo');
-    const sendToChatGptBtn = document.getElementById('sendToChatGptBtn');
-
-    const historyBodyEl = document.getElementById('historyBody');
-    const exportMealsBtn = document.getElementById('exportMealsBtn');
-
-    const tabTodayBtn = document.getElementById('tabToday');
-    const tabStatsBtn = document.getElementById('tabStats');
-    const tabGoalsBtn = document.getElementById('tabGoals');
-    const viewTodayEl = document.getElementById('view-today');
-    const viewStatsEl = document.getElementById('view-stats');
-    const viewGoalsEl = document.getElementById('view-goals');
-    const appShellEl = document.querySelector('.app-shell');
-    const appFooterEl = document.querySelector('.app-footer');
-
-    const periodButtons = document.querySelectorAll('.period-btn');
-    const statPeriodMealsPerDayEl = document.getElementById('statPeriodMealsPerDay');
-    const statPeriodSnacksPerDayEl = document.getElementById('statPeriodSnacksPerDay');
-    const statPeriodSleepIntervalEl = document.getElementById('statPeriodSleepInterval');
-    const statPeriodAvgIntervalEl = document.getElementById('statPeriodAvgInterval');
-
-    const goalMealsMinEl = document.getElementById('goalMealsMin');
-    const goalMealsMaxEl = document.getElementById('goalMealsMax');
-    const goalSnacksMaxEl = document.getElementById('goalSnacksMax');
-    const goalSleepMinValueEl = document.getElementById('goalSleepMinValue');
-    const goalSleepMaxValueEl = document.getElementById('goalSleepMaxValue');
-    const goalSleepAutoTextEl = document.getElementById('goalSleepAutoText');
-    const goalDayIntMinEl = document.getElementById('goalDayIntMin');
-    const goalDayIntMaxEl = document.getElementById('goalDayIntMax');
-    const goalPreviewMealsEl = document.getElementById('goalPreviewMeals');
-    const goalPreviewIntervalEl = document.getElementById('goalPreviewInterval');
-    const goalPreviewSleepEl = document.getElementById('goalPreviewSleep');
-    const saveGoalsBtn = document.getElementById('saveGoalsBtn');
-    const goalsStatusEl = document.getElementById('goalsStatus');
-
-    const detailScreen = document.getElementById('detailScreen');
-    const btnDetailBack = document.getElementById('btnDetailBack');
-    const detailTitle = document.getElementById('detailTitle');
-    const detailContent = document.getElementById('detailContent');
-    const timePromptBackdrop = document.getElementById('timePromptBackdrop');
-    const timePromptInput = document.getElementById('timePromptInput');
-    const timePromptCancel = document.getElementById('timePromptCancel');
-    const timePromptOk = document.getElementById('timePromptOk');
-    const notePromptBackdrop = document.getElementById('notePromptBackdrop');
-    const notePromptInput = document.getElementById('notePromptInput');
-    const notePromptCancel = document.getElementById('notePromptCancel');
-    const notePromptOk = document.getElementById('notePromptOk');
-    const confirmPromptBackdrop = document.getElementById('confirmPromptBackdrop');
-    const confirmPromptMessage = document.getElementById('confirmPromptMessage');
-    const confirmPromptCancel = document.getElementById('confirmPromptCancel');
-    const confirmPromptOk = document.getElementById('confirmPromptOk');
-    const updateNoticeBackdrop = document.getElementById('updateNoticeBackdrop');
-    const updateNoticeOk = document.getElementById('updateNoticeOk');
-    let currentDetailDayKey = null;
-
-    // default to 21 days (remove "All" option)
-    let currentPeriod = '21';
-    function isSameDay(ts, refDate) {
-      const d1 = new Date(ts);
-      const d2 = new Date(refDate);
-      return d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate();
-    }
-
-    function getDayKey(dateOrTs) {
-      const d = dateOrTs instanceof Date ? dateOrTs : new Date(dateOrTs);
-      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-    }
-
-    function formatTimeHM(ts) {
-      const lang = window._eatlogLang === 'ru' ? 'ru-RU' : undefined;
-      const d = new Date(ts);
-      return d.toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function formatDateDMY(ts) {
-      const lang = window._eatlogLang === 'ru' ? 'ru-RU' : undefined;
-      const d = new Date(ts);
-      return d.toLocaleDateString(lang, { day: '2-digit', month: '2-digit' });
-    }
-
-    function formatInterval(ms) {
-      if (ms == null || isNaN(ms)) return '–';
-
-      const totalMin = Math.floor(ms / 60000);
-      const h = Math.floor(totalMin / 60);
-      const m = totalMin % 60;
-      const lang = window._eatlogLang || defaultLang;
-
-      if (lang === 'ru') {
-        if (h > 0 && m > 0) return `${h} ч ${m} м`;
-        if (h > 0) return `${h} ч`;
-        return `${m} м`;
-      } else {
-        // English / fallback: use short "h" / "m"
-        if (h > 0 && m > 0) return `${h}h ${m}m`;
-        if (h > 0) return `${h}h`;
-        return `${m}m`;
-      }
-    }
-
-    function formatNumberPerDay(value) {
-      if (!isFinite(value)) return '0';
-      const fixed = value.toFixed(1);
-      if (fixed.endsWith('.0')) return fixed.slice(0, -2);
-      return fixed;
-    }
-
-    function roundToHalfHour(value) {
-      if (!isFinite(value)) return null;
-      return Math.round(value * 2) / 2;
-    }
-
-    const GOAL_INPUT_CARET_SENTINEL = '\u200B';
-
-    function normalizeGoalInputValue(raw) {
-      return String(raw || '').replaceAll(GOAL_INPUT_CARET_SENTINEL, '').trim();
-    }
-
-    function readGoalInputs() {
-      function numOrNull(el) {
-        const v = normalizeGoalInputValue(el?.value || '');
-        if (!v) return null;
-        const n = Number(v.replace(',', '.'));
-        return isNaN(n) ? null : n;
-      }
-
-      return {
-        minMeals: numOrNull(goalMealsMinEl),
-        maxMeals: numOrNull(goalMealsMaxEl),
-        maxSnacks: numOrNull(goalSnacksMaxEl),
-        minDayIntHours: numOrNull(goalDayIntMinEl),
-        maxDayIntHours: numOrNull(goalDayIntMaxEl)
-      };
-    }
-
-    function computeSleepRangeFromGoalInputs(values) {
-      const mealsMin = values?.minMeals;
-      const mealsMax = values?.maxMeals;
-      const intervalMin = values?.minDayIntHours;
-      const intervalMax = values?.maxDayIntHours;
-
-      const minSleepHours = (mealsMax != null && intervalMax != null)
-        ? roundToHalfHour(24 - Math.max(0, mealsMax - 1) * intervalMax)
-        : null;
-      const maxSleepHours = (mealsMin != null && intervalMin != null)
-        ? roundToHalfHour(24 - Math.max(0, mealsMin - 1) * intervalMin)
-        : null;
-
-      return {
-        minSleepHours,
-        maxSleepHours
-      };
-    }
-
-    function getAllMealsSorted() {
-      return [...meals].sort((a, b) => a.ts - b.ts);
-    }
-
-    function renderGoalsPreview() {
-      const inputValues = readGoalInputs();
-      const sleepRange = computeSleepRangeFromGoalInputs(inputValues);
-
-      if (goalPreviewMealsEl) {
-        goalPreviewMealsEl.textContent = t('goal.preview.meals', {
-          from: inputValues.minMeals != null ? inputValues.minMeals : (goals.minMealsPerDay != null ? goals.minMealsPerDay : '…'),
-          to: inputValues.maxMeals != null ? inputValues.maxMeals : (goals.maxMealsPerDay != null ? goals.maxMealsPerDay : '…')
-        });
-      }
-      if (goalPreviewIntervalEl) {
-        goalPreviewIntervalEl.textContent = t('goal.preview.interval', {
-          from: inputValues.minDayIntHours != null ? inputValues.minDayIntHours : (goals.minDayIntervalMinutes != null ? (goals.minDayIntervalMinutes / 60) : '…'),
-          to: inputValues.maxDayIntHours != null ? inputValues.maxDayIntHours : (goals.maxDayIntervalMinutes != null ? (goals.maxDayIntervalMinutes / 60) : '…')
-        });
-      }
-      if (goalPreviewSleepEl) {
-        goalPreviewSleepEl.textContent = t('goal.preview.sleep', {
-          from: sleepRange.minSleepHours != null ? sleepRange.minSleepHours : (goals.minSleepHours != null ? goals.minSleepHours : '…'),
-          to: sleepRange.maxSleepHours != null ? sleepRange.maxSleepHours : (goals.maxSleepHours != null ? goals.maxSleepHours : '…')
-        });
-      }
-      const from = sleepRange.minSleepHours != null ? sleepRange.minSleepHours : (goals.minSleepHours != null ? goals.minSleepHours : null);
-      const to = sleepRange.maxSleepHours != null ? sleepRange.maxSleepHours : (goals.maxSleepHours != null ? goals.maxSleepHours : null);
-      if (goalSleepMinValueEl) {
-        goalSleepMinValueEl.value = from != null ? String(from) : '';
-      }
-      if (goalSleepMaxValueEl) {
-        goalSleepMaxValueEl.value = to != null ? String(to) : '';
-      }
-      if (goalSleepAutoTextEl) {
-        goalSleepAutoTextEl.textContent = t('goals.sleepAutoHint');
-      }
-    }
-
-    function getTodayMeals() {
-      const now = new Date();
-      return meals
-        .filter(m => isSameDay(m.ts, now))
-        .sort((a, b) => a.ts - b.ts);
-    }
-
-    function buildTodayNutritionPrompt() {
-      const todayMeals = getTodayMeals();
-      const currentLang = window._eatlogLang || defaultLang;
-      const locale = currentLang === 'ru' ? 'ru-RU' : 'en-US';
-      const dateLabel = new Date().toLocaleDateString(locale, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
-      const mealLines = todayMeals.map((meal, index) => {
-        const mealType = currentLang === 'ru'
-          ? (meal.isSnack ? 'перекус' : 'основной приём')
-          : (meal.isSnack ? 'snack' : 'main meal');
-        const note = (meal.note || t('no.description')).trim();
-        return `${index + 1}. ${formatTimeHM(meal.ts)} | ${mealType} | ${note}`;
-      });
-
-      if (currentLang === 'ru') {
-        return [
-          `Дневник питания за ${dateLabel}.`,
-          '',
-          'Записи:',
-          ...mealLines,
-          '',
-          'Для каждой записи оцени: ккал, белки, жиры и углеводы.',
-          'Если вес или порция неизвестны, используй типичную порцию и помечай такую оценку знаком "~".',
-          'Если можно сделать разумную оценку, не задавай уточняющих вопросов.',
-          'Ответ дай на русском в таблице: | время | запись | ккал | б | ж | у |',
-          'После таблицы добавь: итог за день; какие оценки самые неточные и почему.'
-        ].join('\n');
-      }
-
-      return [
-        `Food log for ${dateLabel}.`,
-        '',
-        'Entries:',
-        ...mealLines,
-        '',
-        'For each entry, estimate: kcal, protein, fat, and carbs.',
-        'If weight or portion size is unknown, use a typical serving and mark that estimate with "~".',
-        "If a reasonable estimate is possible, don't ask follow-up questions.",
-        'Reply in English as a table: | time | entry | kcal | p | f | c |',
-        'After the table add: daily total; which estimates are the least certain and why.'
-      ].join('\n');
-    }
-
-    async function copyTextToClipboard(text) {
-      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
-        return false;
-      }
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch (_) {
-        return false;
-      }
-    }
-
-    function shouldOpenChatGptInSameTab() {
-      return window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    }
-
-    async function deleteMeal(id) {
-      const entry = meals.find(m => m.id === id);
-      const preview = entry ? ('"' + (entry.note || '').slice(0, 30) + (entry.note && entry.note.length > 30 ? '…' : '') + '"') : '';
-      if (!await openConfirmPrompt(t('confirm.delete', { txt: preview }))) return;
-
-      meals = meals.filter(m => m.id !== id);
-      saveMeals(meals);
-      pruneOldMeals();
-      renderMeals();
-      renderStats();
-      renderPeriodSummary();
-      renderHistory();
-      refreshDetailIfOpen();
-    }
-
-    async function editMealNote(id) {
-      const entry = meals.find(m => m.id === id);
-      if (!entry) return;
-      const currentNote = entry.note || '';
-      const updated = await openNotePrompt(currentNote);
-      if (updated === null) return;
-      entry.note = updated.trim();
-      saveMeals(meals);
-      pruneOldMeals();
-      renderMeals();
-      renderHistory();
-      renderPeriodSummary();
-      refreshDetailIfOpen();
-    }
-
-    function openTimePrompt(initialValue) {
-      return new Promise(resolve => {
-        const prevFocused = document.activeElement;
-        timePromptInput.value = initialValue || '';
-        timePromptBackdrop.hidden = false;
-
-        const cleanup = () => {
-          timePromptCancel.removeEventListener('click', onCancel);
-          timePromptOk.removeEventListener('click', onOk);
-          timePromptBackdrop.removeEventListener('click', onBackdropClick);
-          document.removeEventListener('keydown', onKeyDown);
-        };
-
-        const done = (result) => {
-          cleanup();
-          timePromptBackdrop.hidden = true;
-          if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
-          resolve(result);
-        };
-
-        const onCancel = () => done(null);
-        const onOk = () => done(timePromptInput.value);
-        const onBackdropClick = (e) => {
-          if (e.target === timePromptBackdrop) done(null);
-        };
-        const onKeyDown = (e) => {
-          if (e.key === 'Escape') {
-            e.preventDefault();
-            done(null);
-            return;
-          }
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            done(timePromptInput.value);
-          }
-        };
-
-        timePromptCancel.addEventListener('click', onCancel);
-        timePromptOk.addEventListener('click', onOk);
-        timePromptBackdrop.addEventListener('click', onBackdropClick);
-        document.addEventListener('keydown', onKeyDown);
-
-        setTimeout(() => {
-          timePromptInput.focus();
-          timePromptInput.select();
-        }, 0);
-      });
-    }
-
-    function openNotePrompt(initialValue) {
-      return new Promise(resolve => {
-        const prevFocused = document.activeElement;
-        notePromptInput.value = initialValue || '';
-        notePromptBackdrop.hidden = false;
-
-        const cleanup = () => {
-          notePromptCancel.removeEventListener('click', onCancel);
-          notePromptOk.removeEventListener('click', onOk);
-          notePromptBackdrop.removeEventListener('click', onBackdropClick);
-          document.removeEventListener('keydown', onKeyDown);
-        };
-
-        const done = (result) => {
-          cleanup();
-          notePromptBackdrop.hidden = true;
-          if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
-          resolve(result);
-        };
-
-        const onCancel = () => done(null);
-        const onOk = () => done(notePromptInput.value);
-        const onBackdropClick = (e) => {
-          if (e.target === notePromptBackdrop) done(null);
-        };
-        const onKeyDown = (e) => {
-          if (e.key === 'Escape') {
-            e.preventDefault();
-            done(null);
-            return;
-          }
-          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            e.preventDefault();
-            done(notePromptInput.value);
-          }
-        };
-
-        notePromptCancel.addEventListener('click', onCancel);
-        notePromptOk.addEventListener('click', onOk);
-        notePromptBackdrop.addEventListener('click', onBackdropClick);
-        document.addEventListener('keydown', onKeyDown);
-
-        setTimeout(() => {
-          notePromptInput.focus();
-          notePromptInput.setSelectionRange(notePromptInput.value.length, notePromptInput.value.length);
-        }, 0);
-      });
-    }
-
-    function openConfirmPrompt(message) {
-      return new Promise(resolve => {
-        const prevFocused = document.activeElement;
-        confirmPromptMessage.textContent = message || '';
-        confirmPromptBackdrop.hidden = false;
-
-        const cleanup = () => {
-          confirmPromptCancel.removeEventListener('click', onCancel);
-          confirmPromptOk.removeEventListener('click', onOk);
-          confirmPromptBackdrop.removeEventListener('click', onBackdropClick);
-          document.removeEventListener('keydown', onKeyDown);
-        };
-
-        const done = (result) => {
-          cleanup();
-          confirmPromptBackdrop.hidden = true;
-          if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
-          resolve(result);
-        };
-
-        const onCancel = () => done(false);
-        const onOk = () => done(true);
-        const onBackdropClick = (e) => {
-          if (e.target === confirmPromptBackdrop) done(false);
-        };
-        const onKeyDown = (e) => {
-          if (e.key === 'Escape') {
-            e.preventDefault();
-            done(false);
-            return;
-          }
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            done(true);
-          }
-        };
-
-        confirmPromptCancel.addEventListener('click', onCancel);
-        confirmPromptOk.addEventListener('click', onOk);
-        confirmPromptBackdrop.addEventListener('click', onBackdropClick);
-        document.addEventListener('keydown', onKeyDown);
-
-        setTimeout(() => {
-          confirmPromptOk.focus();
-        }, 0);
-      });
-    }
-
-    function shouldShowUpdateNotice() {
-      return localStorage.getItem(STORAGE_KEY_UPDATE_NOTICE_VERSION) !== CURRENT_UPDATE_NOTICE_VERSION;
-    }
-
-    function markUpdateNoticeSeen() {
-      localStorage.setItem(STORAGE_KEY_UPDATE_NOTICE_VERSION, CURRENT_UPDATE_NOTICE_VERSION);
-    }
-
-    function openUpdateNotice() {
-      if (!updateNoticeBackdrop || !updateNoticeOk) return;
-      const prevFocused = document.activeElement;
-      updateNoticeBackdrop.hidden = false;
-
-      const cleanup = () => {
-        updateNoticeOk.removeEventListener('click', onOk);
-        updateNoticeBackdrop.removeEventListener('click', onBackdropClick);
-        document.removeEventListener('keydown', onKeyDown);
-      };
-
-      const done = () => {
-        cleanup();
-        updateNoticeBackdrop.hidden = true;
-        markUpdateNoticeSeen();
-        if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
-      };
-
-      const onOk = () => done();
-      const onBackdropClick = (e) => {
-        if (e.target === updateNoticeBackdrop) done();
-      };
-      const onKeyDown = (e) => {
-        if (e.key === 'Escape' || e.key === 'Enter') {
-          e.preventDefault();
-          done();
-        }
-      };
-
-      updateNoticeOk.addEventListener('click', onOk);
-      updateNoticeBackdrop.addEventListener('click', onBackdropClick);
-      document.addEventListener('keydown', onKeyDown);
-
-      setTimeout(() => {
-        updateNoticeOk.focus();
-      }, 0);
-    }
-
-    async function editMealTime(id) {
-      const entry = meals.find(m => m.id === id);
-      if (!entry) return;
-      const d = new Date(entry.ts);
-      const currentHH = String(d.getHours()).padStart(2, '0');
-      const currentMM = String(d.getMinutes()).padStart(2, '0');
-      const current = currentHH + ':' + currentMM;
-
-      const input = await openTimePrompt(current);
-      if (input === null) return;
-
-      const trimmed = input.trim();
-      const match = /^([0-9]{1,2}):([0-9]{2})$/.exec(trimmed);
-      if (!match) {
-        alert(t('alert.invalidTime'));
-        return;
-      }
-
-      let hh = parseInt(match[1], 10);
-      let mm = parseInt(match[2], 10);
-
-      if (hh < 0 || hh > 23 || mm < 0 || mm > 59) {
-        alert(t('alert.invalidTimeRange'));
-        return;
-      }
-
-      const newDate = new Date(entry.ts);
-      newDate.setHours(hh, mm, 0, 0);
-      entry.ts = newDate.getTime();
-
-      saveMeals(meals);
-      pruneOldMeals();
-      renderMeals();
-      renderStats();
-      renderHistory();
-      renderPeriodSummary();
-      refreshDetailIfOpen();
-    }
-
-    function toggleSnack(id) {
-      const entry = meals.find(m => m.id === id);
-      if (!entry) return;
-      entry.isSnack = !entry.isSnack;
-      saveMeals(meals);
-      pruneOldMeals();
-      renderMeals();
-      renderStats();
-      renderHistory();
-      renderPeriodSummary();
-      refreshDetailIfOpen();
-    }
-
-    function renderMeals() {
-      const todayMeals = getTodayMeals();
-      mealListEl.innerHTML = '';
-
-      if (todayMeals.length === 0) {
-        mealListEl.innerHTML = '<div class="subtle">' + t('list.empty') + '</div>';
-        lastMealInfoEl.textContent = '';
-        return;
-      }
-
-      const allSorted = getAllMealsSorted();
-      const firstToday = todayMeals[0];
-      const firstIndex = allSorted.findIndex(m => m.id === firstToday.id);
-
-      let globalPrevTs = null;
-      if (firstIndex > 0) {
-        globalPrevTs = allSorted[firstIndex - 1].ts;
-      }
-
-      let prevTs = globalPrevTs;
-
-      for (const meal of todayMeals) {
-        const row = document.createElement('div');
-        row.className = 'meal-row';
-
-        const top = document.createElement('div');
-        top.className = 'row-top';
-
-        const leftWrap = document.createElement('div');
-        const timeEl = document.createElement('span');
-        timeEl.className = 'meal-time';
-        timeEl.textContent = formatTimeHM(meal.ts);
-
-        leftWrap.appendChild(timeEl);
-
-        const actions = document.createElement('div');
-        actions.className = 'actions';
-
-        const snackBtn = document.createElement('button');
-        snackBtn.className = 'btn-ghost';
-        snackBtn.textContent = meal.isSnack ? '🍪' : '🍽';
-        snackBtn.title = meal.isSnack
-          ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
-          : 'Обычный приём пищи (нажми, чтобы отметить как перекус)';
-        snackBtn.onclick = () => toggleSnack(meal.id);
-
-        const editTimeBtn = document.createElement('button');
-        editTimeBtn.className = 'btn-ghost';
-        editTimeBtn.textContent = '⏰';
-        editTimeBtn.title = 'Изменить время';
-        editTimeBtn.onclick = () => editMealTime(meal.id);
-
-        const editBtn = document.createElement('button');
-        editBtn.className = 'btn-ghost';
-        editBtn.textContent = '✏️';
-        editBtn.title = 'Редактировать описание';
-        editBtn.onclick = () => editMealNote(meal.id);
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'btn-danger';
-        delBtn.textContent = '🗑';
-        delBtn.title = 'Удалить приём';
-        delBtn.onclick = () => deleteMeal(meal.id);
-
-        actions.appendChild(snackBtn);
-        actions.appendChild(editTimeBtn);
-        actions.appendChild(editBtn);
-        actions.appendChild(delBtn);
-
-        top.appendChild(leftWrap);
-        top.appendChild(actions);
-
-        const noteEl = document.createElement('div');
-        noteEl.className = 'meal-note';
-        noteEl.textContent = meal.note || t('no.description');
-
-        const intervalEl = document.createElement('div');
-        intervalEl.className = 'meal-interval';
-
-        if (prevTs == null) {
-          intervalEl.textContent = t('interval.first');
-        } else {
-          const diff = meal.ts - prevTs;
-          intervalEl.textContent = t('interval.sincePrev') + formatInterval(diff);
-        }
-
-        prevTs = meal.ts;
-
-        row.appendChild(top);
-        row.appendChild(noteEl);
-        row.appendChild(intervalEl);
-
-        mealListEl.appendChild(row);
-      }
-
-      if (todayMeals.length > 0) {
-        lastMealInfoEl.textContent = t('last.meal') + formatTimeHM(todayMeals[todayMeals.length - 1].ts);
-      } else {
-        lastMealInfoEl.textContent = '';
-      }
-    }
-
-    function getTodayIntervalsWithinDay() {
-      const todayMeals = getTodayMeals();
-      if (todayMeals.length <= 1) return [];
-
-      const intervals = [];
-      for (let i = 1; i < todayMeals.length; i++) {
-        intervals.push(todayMeals[i].ts - todayMeals[i - 1].ts);
-      }
-      return intervals;
-    }
-
-    function renderStats() {
-      const todayMeals = getTodayMeals();
-      const count = todayMeals.length;
-      const snacksCount = todayMeals.filter(m => m.isSnack).length;
-
-      statMealsTodayEl.textContent = String(count);
-      statSnacksTodayEl.textContent = String(snacksCount);
-
-      const intervals = getTodayIntervalsWithinDay();
-      if (intervals.length === 0) {
-        statAvgIntervalEl.textContent = '–';
-      } else {
-        const sum = intervals.reduce((a, b) => a + b, 0);
-        const avg = sum / intervals.length;
-        statAvgIntervalEl.textContent = formatInterval(avg);
-      }
-
-      // 🔽 Новая логика для "С момента последнего"
-      const allSorted = getAllMealsSorted();
-
-      if (allSorted.length === 0) {
-        // Вообще ещё ни одного приёма не было
-        statSinceLastEl.textContent = '–';
-        lastMealInfoEl.textContent = '';
-        return;
-      }
-
-      // Берём самый последний приём (вчера/сегодня — не важно)
-      const last = allSorted[allSorted.length - 1];
-      const diff = Date.now() - last.ts;
-      statSinceLastEl.textContent = formatInterval(diff);
-      lastMealInfoEl.textContent = t('last.meal') + formatTimeHM(last.ts);
-    }
-
-    function getSleepIntervalForDay(dayMeals, allMeals) {
-      const first = dayMeals[0];
-      let prev = null;
-      for (const m of allMeals) {
-        if (m.ts < first.ts) {
-          if (!prev || m.ts > prev.ts) {
-            prev = m;
-          }
-        }
-      }
-      if (!prev) return null;
-      return first.ts - prev.ts;
-    }
-
-    function computeDailyStats() {
-      if (meals.length === 0) return [];
-
-      const byDayKey = {};
-      for (const m of meals) {
-        const dKey = getDayKey(m.ts);
-        if (!byDayKey[dKey]) byDayKey[dKey] = [];
-        byDayKey[dKey].push(m);
-      }
-
-      const allSorted = getAllMealsSorted();
-      const result = [];
-
-      for (const key in byDayKey) {
-        const dayMeals = byDayKey[key].sort((a, b) => a.ts - b.ts);
-        const count = dayMeals.length;
-        const snacksCount = dayMeals.filter(m => m.isSnack).length;
-
-        let intervals = [];
-        if (count > 1) {
-          for (let i = 1; i < dayMeals.length; i++) {
-            intervals.push(dayMeals[i].ts - dayMeals[i - 1].ts);
-          }
-        }
-
-        let avg = null;
-        if (intervals.length > 0) {
-          const sum = intervals.reduce((a, b) => a + b, 0);
-          avg = sum / intervals.length;
-        }
-
-        const sleepInterval = getSleepIntervalForDay(dayMeals, allSorted);
-
-        result.push({
-          key,
-          ts: dayMeals[0].ts,
-          count,
-          snacksCount,
-          sleepInterval,
-          avgInterval: avg
-        });
-      }
-
-      result.sort((a, b) => b.ts - a.ts);
-      return result;
-    }
-
-    function getFilteredDailyStats() {
-      const all = computeDailyStats();
-      const days = parseInt(currentPeriod, 10);
-      const useDays = (isFinite(days) && days > 0) ? days : RETENTION_DAYS;
-      const cutoff = Date.now() - useDays * 24 * 60 * 60 * 1000;
-      return all.filter(d => d.ts >= cutoff);
-    }
-
-    // ВЫГРУЗКА ВСЕХ ПРИЁМОВ ПИЩИ В CSV
-    function exportMealsCsv() {
-      const all = getAllMealsSorted();
-      if (!all.length) {
-        alert(t('export.noData'));
-        return;
-      }
-
-      function escapeCsvField(value) {
-        if (value == null) return '';
-        const str = String(value);
-        if (/[;"\n]/.test(str)) {
-          return '"' + str.replace(/"/g, '""') + '"';
-        }
-        return str;
-      }
-
-      const headers = ['day_key', 'date', 'time', 'type', 'note'];
-      const lines = [headers.join(';')];
-
-      for (const m of all) {
-        const d = new Date(m.ts);
-        const dayKey = getDayKey(m.ts);
-        const dateStr = d.toLocaleDateString('ru-RU', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit'
-        });
-        const timeStr = d.toLocaleTimeString('ru-RU', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        const typeStr = m.isSnack ? 'перекус' : 'основной приём';
-        const noteStr = m.note || '';
-
-        lines.push([
-          escapeCsvField(dayKey),
-          escapeCsvField(dateStr),
-          escapeCsvField(timeStr),
-          escapeCsvField(typeStr),
-          escapeCsvField(noteStr)
-        ].join(';'));
-      }
-
-      const csv = lines.join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'eatlog_meals_' + new Date().toISOString().slice(0, 10) + '.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function hasAnyGoal() {
-      return (
-        goals.minMealsPerDay != null ||
-        goals.maxMealsPerDay != null ||
-        goals.maxSnacksPerDay != null ||
-        goals.minSleepHours != null ||
-        goals.maxSleepHours != null ||
-        goals.minDayIntervalMinutes != null ||
-        goals.maxDayIntervalMinutes != null
-      );
-    }
-
-    function isDayInTarget(day) {
-      if (!hasAnyGoal()) return false;
-
-      if (goals.minMealsPerDay != null && day.count < goals.minMealsPerDay) return false;
-      if (goals.maxMealsPerDay != null && day.count > goals.maxMealsPerDay) return false;
-
-      if (goals.maxSnacksPerDay != null && (day.snacksCount || 0) > goals.maxSnacksPerDay) return false;
-
-      if (day.sleepInterval != null) {
-        const sleepHours = day.sleepInterval / (60 * 60 * 1000);
-        if (goals.minSleepHours != null && sleepHours < goals.minSleepHours) return false;
-        if (goals.maxSleepHours != null && sleepHours > goals.maxSleepHours) return false;
-      } else {
-        if (goals.minSleepHours != null || goals.maxSleepHours != null) return false;
-      }
-
-      if (day.avgInterval != null) {
-        const dayIntervalMinutes = day.avgInterval / 60000;
-        if (goals.minDayIntervalMinutes != null && dayIntervalMinutes < goals.minDayIntervalMinutes) return false;
-        if (goals.maxDayIntervalMinutes != null && dayIntervalMinutes > goals.maxDayIntervalMinutes) return false;
-      } else {
-        if (goals.minDayIntervalMinutes != null || goals.maxDayIntervalMinutes != null) return false;
-      }
-
-      return true;
-    }
-
-    function renderPeriodSummary() {
-      const stats = getFilteredDailyStats();
-
-      const daysCount = stats.length;
-      let totalMeals = 0;
-      let totalSnacks = 0;
-      const sleepIntervals = [];
-      const dayAvgIntervals = [];
-
-      for (const d of stats) {
-        totalMeals += d.count;
-        totalSnacks += d.snacksCount || 0;
-        if (d.sleepInterval != null) sleepIntervals.push(d.sleepInterval);
-        if (d.avgInterval != null) dayAvgIntervals.push(d.avgInterval);
-      }
-
-      if (daysCount === 0) {
-        statPeriodMealsPerDayEl.textContent = '0';
-        statPeriodSnacksPerDayEl.textContent = '0';
-      } else {
-        const avgMealsPerDay = totalMeals / daysCount;
-        const avgSnacksPerDay = totalSnacks / daysCount;
-        statPeriodMealsPerDayEl.textContent = formatNumberPerDay(avgMealsPerDay);
-        statPeriodSnacksPerDayEl.textContent = formatNumberPerDay(avgSnacksPerDay);
-      }
-
-      if (sleepIntervals.length === 0) {
-        statPeriodSleepIntervalEl.textContent = '–';
-      } else {
-        const sumSleep = sleepIntervals.reduce((a, b) => a + b, 0);
-        const avgSleep = sumSleep / sleepIntervals.length;
-        statPeriodSleepIntervalEl.textContent = formatInterval(avgSleep);
-      }
-
-      if (dayAvgIntervals.length === 0) {
-        statPeriodAvgIntervalEl.textContent = '–';
-      } else {
-        const sum = dayAvgIntervals.reduce((a, b) => a + b, 0);
-        const avg = sum / dayAvgIntervals.length;
-        statPeriodAvgIntervalEl.textContent = formatInterval(avg);
-      }
-    }
-
-    function renderHistory() {
-      const stats = getFilteredDailyStats();
-      historyBodyEl.innerHTML = '';
-
-      if (stats.length === 0) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = 5;
-        td.className = 'subtle';
-        td.textContent = t('history.empty');
-        tr.appendChild(td);
-        historyBodyEl.appendChild(tr);
-        return;
-      }
-
-      for (const day of stats) {
-        const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-
-        if (isDayInTarget(day)) {
-          tr.className = 'day-ok';
-        }
-
-        tr.onclick = () => openDayDetail(day);
-
-        const tdDate = document.createElement('td');
-        tdDate.textContent = formatDateDMY(day.ts);
-
-        const tdCount = document.createElement('td');
-        tdCount.textContent = day.count;
-
-        const tdSnacks = document.createElement('td');
-        tdSnacks.textContent = day.snacksCount || 0;
-
-        const tdSleep = document.createElement('td');
-        tdSleep.textContent =
-          day.sleepInterval != null ? formatInterval(day.sleepInterval) : '–';
-
-        const tdAvg = document.createElement('td');
-        tdAvg.textContent =
-          day.avgInterval != null ? formatInterval(day.avgInterval) : '–';
-
-        tr.appendChild(tdDate);
-        tr.appendChild(tdCount);
-        tr.appendChild(tdSnacks);
-        tr.appendChild(tdSleep);
-        tr.appendChild(tdAvg);
-
-        historyBodyEl.appendChild(tr);
-      }
-    }
-
-    function openDayDetail(day) {
-      currentDetailDayKey = day.key;
-      detailTitle.textContent = formatDateDMY(day.ts);
-
-      const allSorted = getAllMealsSorted();
-      const dayMeals = allSorted.filter(m => getDayKey(m.ts) === day.key);
-
-      if (dayMeals.length === 0) {
-        detailContent.innerHTML = '<p class="subtle">' + t('detail.noEntries') + '</p>';
-        detailScreen.style.display = 'block';
-        return;
-      }
-
-      let html = '';
-      const firstDay = dayMeals[0];
-      const firstIndex = allSorted.findIndex(m => m.id === firstDay.id);
-      let prevTs = null;
-      if (firstIndex > 0) {
-        prevTs = allSorted[firstIndex - 1].ts;
-      }
-
-      for (const meal of dayMeals) {
-        const intervalText = prevTs == null
-          ? t('interval.first')
-          : t('interval.sincePrev') + formatInterval(meal.ts - prevTs);
-
-        prevTs = meal.ts;
-
-        html += `
-              <div class="meal-row">
-                <div class="row-top">
-                  <div>
-                    <span class="meal-time">${formatTimeHM(meal.ts)}</span>
-                  </div>
-                  <div class="actions">
-                    <button class="btn-ghost"
-                      title="${meal.isSnack
-            ? 'Отмечен как перекус (нажми, чтобы сделать обычным приёмом)'
-            : 'Обычный приём пищи (нажми, чтобы отметить как перекус)'}"
-                      onclick="toggleSnack('${meal.id}')">
-                      ${meal.isSnack ? '🍪' : '🍽'}
-                    </button>
-                    <button class="btn-ghost" title="Изменить время"
-                      onclick="editMealTime('${meal.id}')">⏰</button>
-                    <button class="btn-ghost" title="Редактировать описание"
-                      onclick="editMealNote('${meal.id}')">✏️</button>
-                    <button class="btn-danger" title="Удалить приём"
-                      onclick="deleteMeal('${meal.id}')">🗑</button>
-                  </div>
-                </div>
-                <div class="meal-note">${meal.note || t('no.description')}</div>
-                <div class="meal-interval">${intervalText}</div>
-              </div>
-            `;
-      }
-
-      detailContent.innerHTML = html;
-      detailScreen.style.display = 'block';
-    }
-
-    function refreshDetailIfOpen() {
-      if (!currentDetailDayKey || detailScreen.style.display !== 'block') return;
-      const allStats = computeDailyStats();
-      const day = allStats.find(d => d.key === currentDetailDayKey);
-      if (!day) {
-        detailScreen.style.display = 'none';
-        currentDetailDayKey = null;
-        return;
-      }
-      openDayDetail(day);
-    }
-
-    btnDetailBack.addEventListener('click', () => {
-      detailScreen.style.display = 'none';
-      currentDetailDayKey = null;
+  }
+
+  document.querySelectorAll('.install-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.install-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.install-steps').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
     });
+  });
 
-    function tickSinceLast() {
-      renderStats();
-    }
+  const appHref = /^(localhost|127\\.0\\.0\\.1)$/.test(window.location.hostname) ? '/app.html' : '/app';
+  document.querySelectorAll('[data-app-link]').forEach(link => {
+    link.setAttribute('href', appHref);
+  });
 
-    setInterval(tickSinceLast, 60000);
-
-    addMealBtn.addEventListener('click', () => {
-      const note = (mealNoteEl.value || '').trim();
-      const now = Date.now();
-
-      const newMeal = {
-        id: 'm_' + now + '_' + Math.random().toString(36).slice(2, 8),
-        ts: now,
-        note,
-        isSnack: false
-      };
-
-      meals.push(newMeal);
-      saveMeals(meals);
-      // prune after adding
-      pruneOldMeals();
-
-      mealNoteEl.value = '';
-
-      renderMeals();
-      renderStats();
-      renderPeriodSummary();
-      renderHistory();
-      refreshDetailIfOpen();
+  document.querySelectorAll('.badge-close').forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      const badge = event.currentTarget.closest('.phone-badge, .phone-badge-2');
+      if (badge) badge.classList.add('is-hidden');
     });
+  });
 
-    function switchView(view) {
-      if (view === 'today') {
-        viewTodayEl.style.display = '';
-        viewStatsEl.style.display = 'none';
-        viewGoalsEl.style.display = 'none';
-        if (appShellEl) appShellEl.classList.remove('goals-active');
-        if (appFooterEl) appFooterEl.style.display = '';
-        tabTodayBtn.classList.add('active');
-        tabStatsBtn.classList.remove('active');
-        tabGoalsBtn.classList.remove('active');
-      } else if (view === 'stats') {
-        viewTodayEl.style.display = 'none';
-        viewStatsEl.style.display = '';
-        viewGoalsEl.style.display = 'none';
-        if (appShellEl) appShellEl.classList.remove('goals-active');
-        if (appFooterEl) appFooterEl.style.display = '';
-        tabTodayBtn.classList.remove('active');
-        tabStatsBtn.classList.add('active');
-        tabGoalsBtn.classList.remove('active');
-      } else {
-        viewTodayEl.style.display = 'none';
-        viewStatsEl.style.display = 'none';
-        viewGoalsEl.style.display = '';
-        if (appShellEl) appShellEl.classList.remove('goals-active');
-        if (appFooterEl) appFooterEl.style.display = '';
-        tabTodayBtn.classList.remove('active');
-        tabStatsBtn.classList.remove('active');
-        tabGoalsBtn.classList.add('active');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
       }
-    }
-
-    tabTodayBtn.addEventListener('click', () => switchView('today'));
-    tabStatsBtn.addEventListener('click', () => switchView('stats'));
-    tabGoalsBtn.addEventListener('click', () => switchView('goals'));
-
-    periodButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        periodButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentPeriod = btn.dataset.period;
-        renderPeriodSummary();
-        renderHistory();
-        refreshDetailIfOpen();
-      });
     });
+  }, { threshold: 0.12 });
 
-    function loadGoalsIntoUI() {
-      if (goals.minMealsPerDay != null) goalMealsMinEl.value = goals.minMealsPerDay;
-      if (goals.maxMealsPerDay != null) goalMealsMaxEl.value = goals.maxMealsPerDay;
-      if (goals.maxSnacksPerDay != null) goalSnacksMaxEl.value = goals.maxSnacksPerDay;
-      if (goals.minDayIntervalMinutes != null) goalDayIntMinEl.value = goals.minDayIntervalMinutes / 60;
-      if (goals.maxDayIntervalMinutes != null) goalDayIntMaxEl.value = goals.maxDayIntervalMinutes / 60;
-      renderGoalsPreview();
-    }
-
-    [
-      goalMealsMinEl,
-      goalMealsMaxEl,
-      goalSnacksMaxEl,
-      goalDayIntMinEl,
-      goalDayIntMaxEl
-    ].forEach((el) => {
-      if (!el) return;
-      el.addEventListener('focus', () => {
-        const current = normalizeGoalInputValue(el.value);
-        if (current) return;
-        el.value = GOAL_INPUT_CARET_SENTINEL;
-        requestAnimationFrame(() => {
-          try {
-            el.setSelectionRange(1, 1);
-          } catch (_) { }
-        });
-      });
-      el.addEventListener('blur', () => {
-        if (normalizeGoalInputValue(el.value)) return;
-        el.value = '';
-      });
-      el.addEventListener('input', () => renderGoalsPreview());
-      el.addEventListener('input', () => {
-        const cleaned = String(el.value || '').replaceAll(GOAL_INPUT_CARET_SENTINEL, '');
-        if (cleaned !== el.value) {
-          const pos = cleaned.length;
-          el.value = cleaned;
-          try {
-            el.setSelectionRange(pos, pos);
-          } catch (_) { }
-        }
-      });
-    });
-
-
-    function animateSaveGoalsButton(btn) {
-      if (!btn) return;
-      const label = btn.querySelector('.savebtn__label');
-
-      // If animation is already running, restart cleanly
-      if (btn._saveAnimTimers) {
-        btn._saveAnimTimers.forEach(id => clearTimeout(id));
-      }
-      btn._saveAnimTimers = [];
-
-      // Ensure default label is correct for current language
-      const defaultKey = label?.dataset.defaultKey || 'goals.save';
-      const defaultText = t(defaultKey);
-
-      // Stage 1: saving (spinner)
-      btn.classList.remove('is-saved');
-      btn.classList.add('is-saving');
-      btn.disabled = true;
-      if (label) label.textContent = defaultText;
-
-      // Stage 2: saved (checkmark + short label)
-      const t1 = setTimeout(() => {
-        btn.classList.remove('is-saving');
-        btn.classList.add('is-saved');
-        if (label) label.textContent = t('goals.saved');
-      }, 350);
-
-      // Stage 3: back to normal
-      const t2 = setTimeout(() => {
-        btn.classList.remove('is-saved');
-        btn.disabled = false;
-        if (label) label.textContent = defaultText;
-      }, 2350);
-
-      btn._saveAnimTimers.push(t1, t2);
-    }
-
-    saveGoalsBtn.addEventListener('click', () => {
-      const {
-        minMeals,
-        maxMeals,
-        maxSnacks,
-        minDayIntHours,
-        maxDayIntHours
-      } = readGoalInputs();
-      const {
-        minSleepHours,
-        maxSleepHours
-      } = computeSleepRangeFromGoalInputs({
-        minMeals,
-        maxMeals,
-        minDayIntHours,
-        maxDayIntHours
-      });
-
-      if (minMeals != null && maxMeals != null && minMeals > maxMeals) {
-        alert('Минимум приёмов не может быть больше максимума.');
-        return;
-      }
-      if (minDayIntHours != null && maxDayIntHours != null && minDayIntHours > maxDayIntHours) {
-        alert('Минимальный интервал между приёмами больше максимального.');
-        return;
-      }
-      if (maxSnacks != null && maxMeals != null && maxSnacks > maxMeals) {
-        if (!confirm('Максимум перекусов больше максимума приёмов пищи. Продолжить?')) return;
-      }
-      if ((minSleepHours != null && minSleepHours < 0) || (maxSleepHours != null && maxSleepHours < 0)) {
-        alert('С такими целями в 24 часа не помещается ночной интервал без еды. Уменьшите число приёмов пищи или интервал между ними.');
-        return;
-      }
-
-      goals = {
-        minMealsPerDay: minMeals != null ? minMeals : null,
-        maxMealsPerDay: maxMeals != null ? maxMeals : null,
-        maxSnacksPerDay: maxSnacks != null ? maxSnacks : null,
-        minSleepHours: minSleepHours != null ? minSleepHours : null,
-        maxSleepHours: maxSleepHours != null ? maxSleepHours : null,
-        minDayIntervalMinutes: minDayIntHours != null ? minDayIntHours * 60 : null,
-        maxDayIntervalMinutes: maxDayIntHours != null ? maxDayIntHours * 60 : null
-      };
-
-      saveGoals(goals);
-      renderGoalsPreview();
-
-      animateSaveGoalsButton(saveGoalsBtn);
-
-      renderPeriodSummary();
-      renderHistory();
-    });
-
-
-    function animateExportButton(btn) {
-      if (!btn) return;
-      const label = btn.querySelector('.exportbtn__label');
-
-      // Restart cleanly if user taps fast
-      if (btn._exportAnimTimers) {
-        btn._exportAnimTimers.forEach(id => clearTimeout(id));
-      }
-      btn._exportAnimTimers = [];
-
-      const defaultKey = label?.dataset.defaultKey || 'export.btn';
-      const defaultText = t(defaultKey);
-
-      btn.classList.remove('is-saved');
-      btn.classList.add('is-saving');
-      btn.disabled = true;
-      if (label) label.textContent = t('export.downloading');
-
-      const t1 = setTimeout(() => {
-        btn.classList.remove('is-saving');
-        btn.classList.add('is-saved');
-        if (label) label.textContent = t('export.done');
-      }, 450);
-
-      const t2 = setTimeout(() => {
-        btn.classList.remove('is-saved');
-        btn.disabled = false;
-        if (label) label.textContent = defaultText;
-      }, 1550);
-
-      btn._exportAnimTimers.push(t1, t2);
-    }
-
-    function animateChatGptButton(btn) {
-      if (!btn) return;
-      const label = btn.querySelector('.chatgpt-btn__label');
-
-      if (btn._chatGptAnimTimers) {
-        btn._chatGptAnimTimers.forEach(id => clearTimeout(id));
-      }
-      btn._chatGptAnimTimers = [];
-
-      const defaultKey = label?.dataset.defaultKey || 'chatgpt.btn';
-      const defaultText = t(defaultKey);
-
-      btn.classList.remove('is-saved');
-      btn.classList.add('is-saving');
-      btn.disabled = true;
-      if (label) label.textContent = t('chatgpt.preparing');
-
-      const t1 = setTimeout(() => {
-        btn.classList.remove('is-saving');
-        btn.classList.add('is-saved');
-        if (label) label.textContent = t('chatgpt.ready');
-      }, 350);
-
-      const t2 = setTimeout(() => {
-        btn.classList.remove('is-saved');
-        btn.disabled = false;
-        if (label) label.textContent = defaultText;
-      }, 1650);
-
-      btn._chatGptAnimTimers.push(t1, t2);
-    }
-
-    async function sendTodayMealsToChatGpt() {
-      const todayMeals = getTodayMeals();
-      if (!todayMeals.length) {
-        alert(t('chatgpt.noData'));
-        return;
-      }
-
-      const prompt = buildTodayNutritionPrompt();
-      const copied = await copyTextToClipboard(prompt);
-      if (!copied) {
-        alert(t('chatgpt.copyError'));
-        return;
-      }
-
-      animateChatGptButton(sendToChatGptBtn);
-      if (shouldOpenChatGptInSameTab()) {
-        window.location.assign('https://chatgpt.com/');
-      } else {
-        window.open('https://chatgpt.com/', '_blank', 'noopener');
-      }
-    }
-
-
-    // обработчик на выгрузку CSV
-    if (exportMealsBtn) {
-      exportMealsBtn.addEventListener('click', exportMealsCsv);
-    }
-    if (sendToChatGptBtn) {
-      sendToChatGptBtn.addEventListener('click', sendTodayMealsToChatGpt);
-    }
-
-    loadGoalsIntoUI();
-    renderMeals();
-    renderStats();
-    renderPeriodSummary();
-    renderHistory();
-    if (shouldShowUpdateNotice()) openUpdateNotice();
-  </script>
+  document.querySelectorAll('.why-item, .step-item').forEach((el) => {
+    el.classList.add('fade-in');
+    obs.observe(el);
+  });
+</script>
 </body>
-
 </html>
