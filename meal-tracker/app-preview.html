@@ -206,6 +206,13 @@
       margin: 4px 2px 10px;
     }
 
+    .stats-retention {
+      margin: 8px 2px 0;
+      color: #6f7c90;
+      font-size: 10px;
+      line-height: 1.25;
+    }
+
     /* Вкладки */
     .view-tabs-wrapper {
       margin: 3px 0 8px;
@@ -248,11 +255,11 @@
     }
 
     .view-tabs .tab-btn.active {
-      background: linear-gradient(180deg, #31d265 0%, #22c55e 100%);
+      background: linear-gradient(180deg, #2ed184 0%, #25c97a 100%);
       color: #03210f;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        0 8px 18px rgba(34, 197, 94, 0.2);
+        0 8px 18px rgba(37, 201, 122, 0.2);
     }
 
     #langToggleBtn {
@@ -298,13 +305,13 @@
     .card {
       background:
         linear-gradient(180deg, rgba(5, 11, 24, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
-      border-radius: 16px;
-      padding: 12px 12px 10px;
-      margin-bottom: 10px;
+      border-radius: 18px;
+      padding: 13px 13px 11px;
+      margin-bottom: 11px;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.03),
-        0 10px 24px rgba(0, 0, 0, 0.34);
-      border: 1px solid rgba(148, 163, 184, 0.06);
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 14px 30px rgba(0, 0, 0, 0.36);
+      border: 1px solid rgba(148, 163, 184, 0.065);
     }
 
     .card-compact {
@@ -328,8 +335,24 @@
 
     #view-today .today-feed-card {
       background:
+        radial-gradient(circle at top right, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0) 34%),
         linear-gradient(180deg, rgba(4, 10, 22, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
-      border-color: rgba(148, 163, 184, 0.05);
+      border-color: rgba(148, 163, 184, 0.06);
+    }
+
+    .today-feed-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: 0 2px 8px;
+    }
+
+    .today-feed-title {
+      color: #f8fafc;
+      font-size: 15px;
+      font-weight: 680;
+      letter-spacing: -0.02em;
     }
 
     #view-today #lastMealInfo {
@@ -368,9 +391,9 @@
     }
 
     textarea:focus {
-      border-color: #22c55e;
+      border-color: #25c97a;
       background: rgba(3, 10, 24, 0.96);
-      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+      box-shadow: 0 0 0 3px rgba(37, 201, 122, 0.12);
     }
 
     button {
@@ -395,17 +418,17 @@
     }
 
     .btn-primary {
-      background: linear-gradient(180deg, #31d265 0%, #22c55e 100%);
+      background: linear-gradient(180deg, #2ed184 0%, #25c97a 100%);
       color: #03210f;
       font-weight: 600;
       width: 100%;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        0 10px 22px rgba(34, 197, 94, 0.18);
+        0 10px 22px rgba(37, 201, 122, 0.18);
     }
 
     .btn-primary:hover {
-      background: linear-gradient(180deg, #3ade73 0%, #16a34a 100%);
+      background: linear-gradient(180deg, #34d88a 0%, #22bb72 100%);
     }
 
     .btn-outline {
@@ -419,12 +442,19 @@
     }
 
     .btn-danger {
-      background: transparent;
+      background: rgba(15, 23, 42, 0.9);
       color: #fca5a5;
       border: none;
-      padding: 4px 10px;
-      font-size: 12px;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      padding: 0;
+      font-size: 11px;
+      line-height: 1;
+      border-radius: 10px;
       transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+      flex: 0 0 32px;
     }
 
     .btn-danger:hover {
@@ -436,9 +466,16 @@
       background: rgba(15, 23, 42, 0.9);
       color: #e5e7eb;
       border: none;
-      padding: 4px 9px;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      padding: 0;
       font-size: 11px;
+      line-height: 1;
+      border-radius: 10px;
       transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+      flex: 0 0 32px;
     }
 
     .btn-ghost:hover {
@@ -453,8 +490,8 @@
     }
 
     .meal-row {
-      border-bottom: 1px solid #111827;
-      padding: 6px 0;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.72);
+      padding: 8px 0;
       font-size: 13px;
     }
 
@@ -467,28 +504,38 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-bottom: 3px;
+      margin-bottom: 1px;
     }
 
     .actions {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       align-items: center;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
 
     .meal-time {
-      font-weight: 600;
+      font-weight: 650;
       font-variant-numeric: tabular-nums;
       font-size: 13px;
+      letter-spacing: -0.01em;
+      color: #f8fafc;
+    }
+
+    .meal-time--meal {
+      color: #25c97a;
+    }
+
+    .meal-time--snack {
+      color: #d99a3a;
     }
 
     .meal-note {
-      color: #e5e7eb;
+      color: #e7edf5;
       word-break: break-word;
       font-size: 12px;
-      line-height: 1.35;
+      line-height: 1.34;
     }
 
     .meal-type {
@@ -500,16 +547,39 @@
     }
 
     .meal-interval {
-      font-size: 12px;
-      color: #9ca3af;
+      font-size: 10px;
+      color: #78869a;
       margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .today-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      padding: 4px 0 2px;
+    }
+
+    .today-empty-title {
+      color: #e5e7eb;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .today-empty-text {
+      color: #7b8799;
+      font-size: 10px;
+      line-height: 1.35;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 6px;
+      gap: 9px;
+      margin-top: 7px;
     }
 
     .stat-box {
@@ -631,7 +701,7 @@
       position: sticky;
       top: 0;
       z-index: 1;
-      white-space: pre-line;
+      white-space: normal;
       line-height: 1.15;
       overflow-wrap: anywhere;
       word-break: break-word;
@@ -664,8 +734,8 @@
     .period-controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin: 6px 0 6px;
+      gap: 7px;
+      margin: 6px 0 7px;
     }
 
     .period-btn {
@@ -699,14 +769,15 @@
     }
 
     #view-stats .period-btn {
-      min-height: 34px;
-      padding: 0 12px;
+      min-height: 35px;
+      padding: 0 13px;
       border-radius: 999px;
       border: 1px solid rgba(71, 85, 105, 0.62);
       background: rgba(2, 6, 23, 0.48);
       color: #b7c3d4;
       font-size: 12px;
       font-weight: 600;
+      letter-spacing: 0.01em;
       margin-top: 0;
       margin-right: 0;
     }
@@ -729,12 +800,12 @@
     }
 
     #view-stats .stat-box {
-      min-height: 58px;
-      padding: 9px 10px;
+      min-height: 60px;
+      padding: 10px 11px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(148, 163, 184, 0.06);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.024);
+      border: 1px solid rgba(148, 163, 184, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
     }
 
     #view-stats .stat-label {
@@ -1239,23 +1310,23 @@
     }
 
     .goal-number-input:focus {
-      border-color: #22c55e;
+      border-color: #25c97a;
       background: #020617;
     }
 
     .day-ok td {
-      background: rgba(22, 163, 74, 0.22);
+      background: rgba(37, 201, 122, 0.18);
     }
 
     .app-footer {
-      margin-top: 4px;
-      font-size: 11px;
-      color: #708094;
+      margin-top: 2px;
+      font-size: 9px;
+      color: #64748b;
       display: flex;
       flex-direction: column;
-      line-height: 1.15;
-      gap: 1px;
-      opacity: 0.42;
+      line-height: 1.1;
+      gap: 0;
+      opacity: 0.28;
     }
 
     /* FULLSCREEN DETAIL */
@@ -1428,6 +1499,162 @@
       }
     }
 
+    #view-goals .goals-card {
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.06) 0%, rgba(34, 197, 94, 0) 34%),
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.05) 0%, rgba(96, 165, 250, 0) 30%),
+        linear-gradient(180deg, rgba(5, 11, 24, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.06);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 10px 24px rgba(0, 0, 0, 0.34);
+      padding: 12px 12px 12px;
+    }
+
+    #view-goals .goals-card h2 {
+      margin-bottom: 6px;
+      color: #f8fafc;
+      font-weight: 680;
+      letter-spacing: -0.02em;
+    }
+
+    #view-goals .goals-intro {
+      margin: 0 0 12px;
+      color: #7f90a6;
+      line-height: 1.4;
+      font-size: 11px;
+    }
+
+    #view-goals .goal-section {
+      margin-top: 16px;
+      padding-top: 14px;
+    }
+
+    #view-goals .goal-section::before {
+      left: 0;
+      right: 0;
+      background: rgba(71, 85, 105, 0.34);
+    }
+
+    #view-goals .goal-item {
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(148, 163, 184, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    #view-goals .goal-item-sub {
+      margin-top: 10px;
+      padding: 11px 12px;
+      padding-left: 12px;
+      background: rgba(148, 163, 184, 0.025);
+    }
+
+    #view-goals .goal-label {
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 620;
+      margin-bottom: 9px;
+      letter-spacing: -0.01em;
+    }
+
+    #view-goals .goal-item-sub .goal-label {
+      color: #c7d2df;
+      font-size: 12px;
+      font-weight: 560;
+      margin-bottom: 8px;
+    }
+
+    #view-goals .goal-hint,
+    #view-goals .goal-hint-persistent {
+      color: #7f90a6;
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    #view-goals .goal-hint {
+      margin-top: 8px;
+    }
+
+    #view-goals .goal-item-interval .goal-hint-persistent {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #8fa0b5;
+    }
+
+    #view-goals .range-row {
+      gap: 8px;
+    }
+
+    #view-goals .range-dash {
+      color: #6f7f95;
+    }
+
+    #view-goals .goal-number-input,
+    #view-goals .computed-value {
+      height: 40px;
+      min-height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(51, 65, 85, 0.72);
+      background: rgba(2, 6, 23, 0.88);
+      color: #e5e7eb;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    #view-goals .goal-number-input:focus,
+    #view-goals .computed-value:focus {
+      border-color: #22c55e;
+      background: rgba(3, 10, 24, 0.96);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+    }
+
+    #view-goals .computed-value {
+      color: #dbe4ee;
+    }
+
+    #view-goals .goal-inline-unit {
+      color: #9badc1;
+      font-size: 13px;
+      min-height: 40px;
+      width: 42px;
+    }
+
+    #view-goals .savebtn {
+      display: flex;
+      width: auto;
+      min-width: 148px;
+      align-self: flex-start;
+      margin-top: 18px;
+      padding-left: 18px;
+      padding-right: 18px;
+      margin-left: 0;
+      margin-right: 0;
+      min-height: 38px;
+      border-radius: 14px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 8px 18px rgba(34, 197, 94, 0.16);
+    }
+
+    #view-goals .savebtn__label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    @media (max-height: 920px) {
+      #view-goals .goal-item,
+      #view-goals .goal-item-sub {
+        padding: 10px;
+      }
+
+      #view-goals .savebtn {
+        width: auto;
+        margin-top: 14px;
+      }
+    }
+
 
 
     /* Export button feedback */
@@ -1451,6 +1678,7 @@
       font-weight: 400;
       letter-spacing: 0.005em;
       text-align: left;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
 
     .export-cta {
@@ -1484,6 +1712,7 @@
       grid-template-columns: 34px minmax(0, 1fr) 16px;
       gap: 8px;
       text-align: left;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
 
     .exportbtn:active {
@@ -1493,6 +1722,16 @@
     .exportbtn:hover {
       background: linear-gradient(180deg, rgba(12, 20, 42, 0.98), rgba(7, 14, 34, 0.98));
       border-color: rgba(71, 85, 105, 0.82);
+    }
+
+    .exportbtn:focus-visible,
+    .resetbtn:focus-visible,
+    .chatgpt-btn:focus-visible,
+    #view-stats .period-btn:focus-visible,
+    .view-tabs .tab-btn:focus-visible,
+    .btn-primary:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
     }
 
     .resetbtn:hover {
@@ -1507,14 +1746,21 @@
     }
 
     .action-card__icon {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       border-radius: 999px;
       display: grid;
       place-items: center;
       background: rgba(37, 99, 235, 0.14);
       color: #6ea0ff;
       transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      flex: 0 0 34px;
+    }
+
+    .action-card__icon svg {
+      width: 18px;
+      height: 18px;
+      display: block;
     }
 
     .resetbtn .action-card__icon {
@@ -1595,7 +1841,6 @@
       color: #7b8799;
       font-size: 10px;
       line-height: 1.35;
-      max-width: 26ch;
     }
 
     .action-card__chevron,
@@ -1660,10 +1905,13 @@
     }
 
     .chatgpt-cta {
-      margin-top: 12px;
+      margin-top: 8px;
       width: 100%;
-      padding-top: 11px;
-      border-top: 1px solid rgba(118, 138, 206, 0.12);
+      padding: 8px 0 0;
+      border: none;
+      border-top: 1px solid rgba(30, 41, 59, 0.72);
+      border-radius: 0;
+      background: transparent;
     }
 
     .chatgpt-btn {
@@ -1671,29 +1919,34 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
-      transition: color .15s ease, transform .12s ease, opacity .15s ease;
-      min-height: 0;
+      gap: 10px;
+      transition: transform .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+      min-height: 48px;
       width: 100%;
       margin: 0;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: #bcc9f7;
+      padding: 8px 44px 7px;
+      border: 1px solid rgba(51, 65, 85, 0.52);
+      background: rgba(15, 23, 42, 0.42);
+      color: #b9c2f4;
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.01em;
-      text-align: left;
-      border-radius: 12px;
+      text-align: center !important;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
     }
 
     .chatgpt-btn:active {
-      transform: translateX(1px);
+      transform: translateY(1px);
     }
 
     .chatgpt-btn:hover {
-      color: #e7ecff;
-      transform: translateX(2px);
+      transform: translateY(-1px);
+      border-color: rgba(37, 201, 122, 0.28);
+      background: rgba(15, 23, 42, 0.72);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 8px 18px rgba(0, 0, 0, 0.14);
     }
 
     .chatgpt-btn.is-saving,
@@ -1704,7 +1957,7 @@
 
     .chatgpt-btn__spinner {
       position: absolute;
-      right: 0;
+      right: 8px;
       top: 50%;
       width: 14px;
       height: 14px;
@@ -1719,7 +1972,7 @@
 
     .chatgpt-btn__check {
       position: absolute;
-      right: 0;
+      right: 8px;
       top: 50%;
       display: none;
       font-weight: 800;
@@ -1735,20 +1988,24 @@
     }
 
     .chatgpt-btn__sparkle {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       display: grid;
       place-items: center;
       font-size: 14px;
       line-height: 1;
-      transform: translateY(-0.5px);
-      filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.16));
-      opacity: 0.88;
+      transform: translateY(0);
+      border-radius: 999px;
+      background: transparent;
+      color: #25c97a;
+      filter: none;
+      opacity: 1;
       transition: transform 0.15s ease, opacity 0.15s ease;
+      flex: 0 0 auto;
     }
 
     .chatgpt-btn:hover .chatgpt-btn__sparkle {
-      transform: translateY(-0.5px) scale(1.04);
+      transform: scale(1.03);
       opacity: 1;
     }
 
@@ -1756,23 +2013,36 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
       align-items: center;
-      text-align: center;
+      text-align: center !important;
+      padding-right: 0;
+      justify-content: center;
+    }
+
+    .chatgpt-cta,
+    .chatgpt-cta *,
+    .chatgpt-btn,
+    .chatgpt-btn * {
+      text-align: center !important;
     }
 
     .chatgpt-btn__label {
-      color: currentColor;
-      font-size: 11px;
-      font-weight: 600;
+      color: #d3d9e4;
+      font-size: 12px;
+      font-weight: 650;
       line-height: 1.2;
+      letter-spacing: -0.01em;
+      text-rendering: optimizeLegibility;
     }
 
     .chatgpt-btn__desc {
-      color: rgba(138, 152, 174, 0.82);
-      font-size: 8px;
+      color: #8a95a7;
+      font-size: 9px;
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.25;
+      letter-spacing: 0;
+      text-rendering: optimizeLegibility;
     }
 
     .chatgpt-btn__chevron {
@@ -1832,10 +2102,10 @@
       padding: 10px 12px;
       font-size: 32px;
       line-height: 1.1;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.06em;
       font-variant-numeric: tabular-nums;
       outline: none;
-      text-align: left;
+      text-align: center;
     }
 
     .prompt-input:focus {
@@ -1884,6 +2154,50 @@
       border-color: rgba(96, 165, 250, 0.22);
       color: #dbeafe;
     }
+
+    .toast[hidden] {
+      display: none !important;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      width: min(320px, calc(100vw - 28px));
+      padding: 11px 13px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+      z-index: 360;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .toast-title {
+      color: #e5f7eb;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.25;
+    }
+
+    .toast-text {
+      margin-top: 2px;
+      color: #9eb0c8;
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .chatgpt-hint {
+      margin: 0;
+      color: rgba(109, 145, 119, 0.92);
+      font-size: 10px;
+      line-height: 1.28;
+      max-width: 27ch;
+      white-space: normal;
+      text-align: left !important;
+    }
   </style>
 </head>
 
@@ -1921,14 +2235,15 @@
           <p class="subtle" id="lastMealInfo"></p>
         </div>
         <div class="card today-feed-card">
-          <h2 data-i18n="today.list">Сегодняшние приёмы пищи</h2>
+          <div class="today-feed-header">
+            <div class="today-feed-title" id="todayFeedTitle">Дневник за 24 июня</div>
+          </div>
           <div class="list" id="mealList"></div>
           <div class="chatgpt-cta">
             <button id="sendToChatGptBtn" class="chatgpt-btn">
-              <span class="chatgpt-btn__sparkle" aria-hidden="true">✨</span>
               <span class="chatgpt-btn__copy">
-                <span class="chatgpt-btn__label" data-i18n="chatgpt.btn" data-default-key="chatgpt.btn">Анализ питания за сегодня</span>
-                <span class="chatgpt-btn__desc" data-i18n="chatgpt.desc">Сформировать отчёт по питанию для ChatGPT</span>
+                <span class="chatgpt-btn__label" data-i18n="chatgpt.btn" data-default-key="chatgpt.btn">✨ GPT-анализ питания</span>
+                <span class="chatgpt-btn__desc" data-i18n-html="chatgpt.desc">Откроется ChatGPT с готовым запросом<br>Нажмите «Вставить»</span>
               </span>
               <span class="chatgpt-btn__spinner" aria-hidden="true"></span>
               <span class="chatgpt-btn__check" aria-hidden="true">✓</span>
@@ -1965,7 +2280,7 @@
               <div class="stat-value" id="statPeriodAvgInterval">–</div>
             </div>
           </div>
-          <div class="subtle" style="margin-top:10px;" data-i18n="stats.retention"></div>
+          <div class="subtle stats-retention" data-i18n="stats.retention"></div>
         </div>
 
         <div class="card stats-history-card">
@@ -1977,8 +2292,8 @@
                   <th data-i18n="table.date">Дата</th>
                   <th data-i18n="table.meals">Приёмы пищи</th>
                   <th data-i18n="table.snacks">Перекусы</th>
-                  <th class="history-sleep-col" data-i18n-html="table.sleep">Ночной интервал<br>без еды</th>
-                  <th class="history-day-interval-col" data-i18n-html="table.dayInterval">Интервал<br>между приёмами</th>
+                  <th class="history-sleep-col" data-i18n-html="table.sleep">Ночной интервал без еды</th>
+                  <th class="history-day-interval-col" data-i18n-html="table.dayInterval">Интервал между приёмами</th>
                 </tr>
               </thead>
               <tbody id="historyBody"></tbody>
@@ -2158,6 +2473,11 @@
     </div>
   </div>
 
+  <div id="chatGptToast" class="toast" hidden>
+    <div class="toast-title" id="chatGptToastTitle">✓ Скопировано</div>
+    <div class="toast-text" id="chatGptToastText">Открываем ChatGPT</div>
+  </div>
+
   <div id="updateNoticeBackdrop" class="prompt-backdrop" hidden>
     <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="updateNoticeTitle">
       <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.notice.title">Что нового</div>
@@ -2186,13 +2506,13 @@
     const defaultLang = savedLang || detectedLang;
     const translations = {
       en: {
-        "stats.retention": "We keep data for 21 days",
+        "stats.retention": "History is kept for 21 days",
         "tab.today": "Today",
         "tab.stats": "Stats",
         "tab.goals": "Goals",
         "h.newMeal": "New meal",
         "textarea.placeholder": "oatmeal, 2 boiled eggs, coffee with cookies",
-        "btn.eating": "I'm eating now",
+        "btn.eating": "➕ Add meal",
         "btn.eatingSub": "🍽 / 🍪",
         "stats.today": "Today's stats",
         "today.list": "Today's meals",
@@ -2202,13 +2522,14 @@
         "stat.sinceLast": "Since last meal",
         "sinceLast.inline": "Since last meal: ",
         "list.empty": "No meals logged today",
-        "chatgpt.btn": "Analyze today's nutrition",
-        "chatgpt.desc": "Generate a ChatGPT nutrition report",
-        "chatgpt.hint": "The prompt will be copied automatically, and ChatGPT will open. If the text does not appear, tap Paste",
-        "chatgpt.preparing": "Preparing prompt…",
-        "chatgpt.ready": "Prompt ready",
+        "list.emptyHint": "Log your first meal to start the day",
+        "chatgpt.btn": "✨ GPT nutrition analysis",
+        "chatgpt.desc": "ChatGPT will open with a ready prompt\nTap Paste",
+        "chatgpt.hint": "<span style=\"white-space: nowrap;\">The prompt will be copied and ChatGPT will open</span> <span style=\"white-space: nowrap;\">If the text doesn't appear, tap Paste</span>",
         "chatgpt.noData": "There are no meals for today yet",
         "chatgpt.copyError": "Couldn't copy the prompt automatically",
+        "chatgpt.toastTitle": "✓ Copied",
+        "chatgpt.toastText": "Opening ChatGPT",
         "period.stats": "Period",
         "daily.breakdown": "Daily breakdown",
         "data.storage": "Data & Storage",
@@ -2216,9 +2537,9 @@
         "stat.sleep": "Night fasting interval",
         "table.date": "Date",
         "table.meals": "Meals per day",
-        "table.snacks": "Snacks\nwithin that",
-        "table.sleep": "Night<br>fasting<br>interval",
-        "table.dayInterval": "Interval<br>between<br>meals",
+        "table.snacks": "Snacks within that",
+        "table.sleep": "Night fasting interval",
+        "table.dayInterval": "Interval between meals",
         "export.btn": "Download data",
         "export.desc": "Download all meal history and statistics as a file",
         "export.downloading": "Preparing file…",
@@ -2274,8 +2595,8 @@
         "export.noData": "No meals yet to export",
         "reset.empty": "There is no meal history to reset yet",
         "no.description": "(no description)",
-        "interval.first": "First recorded meal (no previous entries)",
-        "interval.sincePrev": "Interval since previous meal: ",
+        "interval.first": "First meal in the log",
+        "interval.sincePrev": "{value} after previous meal",
         "last.meal": "Last meal at ",
         "history.empty": "No data yet",
         "history.emptyHint": "Start logging meals to see statistics"
@@ -2292,13 +2613,13 @@
         "placeholder.dayIntMax": ""
       },
       ru: {
-        "stats.retention": "Мы храним данные за 21 день",
+        "stats.retention": "История хранится 21 день",
         "tab.today": "Сегодня",
         "tab.stats": "Статистика",
         "tab.goals": "Цели",
         "h.newMeal": "Новый приём пищи",
         "textarea.placeholder": "овсянка, 2 варёных яйца, кофе с печеньем",
-        "btn.eating": "Я ем сейчас",
+        "btn.eating": "➕ Добавить приём пищи",
         "btn.eatingSub": "🍽 / 🍪",
         "stats.today": "Статистика за сегодня",
         "today.list": "Сегодняшние приёмы пищи",
@@ -2308,13 +2629,14 @@
         "stat.sinceLast": "С последнего приёма",
         "sinceLast.inline": "С последнего приёма: ",
         "list.empty": "Сегодня ещё нет записей",
-        "chatgpt.btn": "Анализ питания за сегодня",
-        "chatgpt.desc": "Сформировать отчёт по питанию для ChatGPT",
-        "chatgpt.hint": "Откроется ChatGPT. Если текст не появился — нажмите «Вставить»",
-        "chatgpt.preparing": "Готовлю запрос…",
-        "chatgpt.ready": "Запрос готов",
+        "list.emptyHint": "Добавьте первый приём пищи, чтобы начать день",
+        "chatgpt.btn": "✨ GPT-анализ питания",
+        "chatgpt.desc": "Откроется ChatGPT с готовым запросом\nНажмите «Вставить»",
+        "chatgpt.hint": "<span style=\"white-space: nowrap;\">Запрос будет скопирован и откроется ChatGPT</span> <span style=\"white-space: nowrap;\">Если текст не появился — нажмите «Вставить»</span>",
         "chatgpt.noData": "За сегодня ещё нет записей",
         "chatgpt.copyError": "Не удалось автоматически скопировать запрос",
+        "chatgpt.toastTitle": "✓ Скопировано",
+        "chatgpt.toastText": "Открываем ChatGPT",
         "period.stats": "Период",
         "daily.breakdown": "Детализация по дням",
         "data.storage": "Данные и хранение",
@@ -2322,9 +2644,9 @@
         "stat.sleep": "Ночной интервал без еды",
         "table.date": "Дата",
         "table.meals": "Приёмов пищи",
-        "table.snacks": "Из них -\nперекусов",
-        "table.sleep": "Ночной<br>интервал<br>без еды",
-        "table.dayInterval": "Интервал<br>между<br>приёмами&nbsp;пищи",
+        "table.snacks": "Из них - перекусов",
+        "table.sleep": "Ночной интервал без еды",
+        "table.dayInterval": "Интервал между приёмами пищи",
         "export.btn": "Скачать данные",
         "export.desc": "Скачать всю историю приёмов пищи и статистику одним файлом",
         "reset.btn": "Сбросить историю",
@@ -2378,8 +2700,8 @@
         "export.noData": "Пока нет ни одного приёма пищи для выгрузки",
         "reset.empty": "Сбрасывать пока нечего: история приёмов пищи пустая",
         "no.description": "(без описания)",
-        "interval.first": "Первый зафиксированный приём (раньше записей нет)",
-        "interval.sincePrev": "Интервал с прошлого приёма: ",
+        "interval.first": "Первый приём в журнале",
+        "interval.sincePrev": "{value} после прошлого приёма",
         "last.meal": "Последний приём в ",
         "history.empty": "Пока нет данных",
         "history.emptyHint": "Начните записывать приёмы пищи, чтобы увидеть статистику"
@@ -2571,6 +2893,7 @@
     const addMealBtn = document.getElementById('addMealBtn');
     const mealListEl = document.getElementById('mealList');
     const chatGptCtaEl = document.querySelector('.chatgpt-cta');
+    const todayFeedTitleEl = document.getElementById('todayFeedTitle');
 
     const statMealsTodayEl = document.getElementById('statMealsToday');
     const statSnacksTodayEl = document.getElementById('statSnacksToday');
@@ -2629,12 +2952,16 @@
     const confirmPromptMessage = document.getElementById('confirmPromptMessage');
     const confirmPromptCancel = document.getElementById('confirmPromptCancel');
     const confirmPromptOk = document.getElementById('confirmPromptOk');
+    const chatGptToastEl = document.getElementById('chatGptToast');
+    const chatGptToastTitleEl = document.getElementById('chatGptToastTitle');
+    const chatGptToastTextEl = document.getElementById('chatGptToastText');
     const updateNoticeBackdrop = document.getElementById('updateNoticeBackdrop');
     const updateNoticeOk = document.getElementById('updateNoticeOk');
     let currentDetailDayKey = null;
 
     // default to 21 days (remove "All" option)
     let currentPeriod = 'today';
+    let chatGptToastTimer = null;
     function isSameDay(ts, refDate) {
       const d1 = new Date(ts);
       const d2 = new Date(refDate);
@@ -2654,10 +2981,32 @@
       return d.toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
     }
 
+    function getTimeInputDigits(value) {
+      return String(value || '').replace(/\D/g, '').slice(0, 4);
+    }
+
+    function formatTimeInputValue(value) {
+      const digits = getTimeInputDigits(value);
+      const hh = digits.slice(0, 2);
+      const mm = digits.slice(2, 4);
+      return hh + ':' + mm;
+    }
+
     function formatDateDMY(ts) {
       const lang = window._eatlogLang === 'ru' ? 'ru-RU' : undefined;
       const d = new Date(ts);
       return d.toLocaleDateString(lang, { day: '2-digit', month: '2-digit' });
+    }
+
+    function formatTodayFeedTitle() {
+      const locale = window._eatlogLang === 'ru' ? 'ru-RU' : 'en-US';
+      const dateText = new Date().toLocaleDateString(locale, {
+        day: 'numeric',
+        month: 'long'
+      });
+      return window._eatlogLang === 'ru'
+        ? `Дневник за ${dateText}`
+        : `Log for ${dateText}`;
     }
 
     function formatInterval(ms) {
@@ -2810,11 +3159,60 @@
           'Записи:',
           ...mealLines,
           '',
-          'Для каждой записи оцени: ккал, белки, жиры и углеводы.',
+          'Для каждой записи оцени:',
+          '* калории (ккал)',
+          '* белки (г)',
+          '* жиры (г)',
+          '* углеводы (г)',
+          '',
           'Если вес или порция неизвестны, используй типичную порцию и помечай такую оценку знаком "~".',
-          'Если можно сделать разумную оценку, не задавай уточняющих вопросов.',
-          'Ответ дай на русском в таблице: | время | запись | ккал | б | ж | у |',
-          'После таблицы добавь: итог за день; какие оценки самые неточные и почему.'
+          '',
+          'Если разумная оценка возможна, не задавай уточняющих вопросов.',
+          '',
+          'Ответ дай на русском языке.',
+          '',
+          'Сначала выведи таблицу:',
+          '',
+          '| время | запись | ккал | б | ж | у |',
+          '',
+          'После таблицы добавь:',
+          '',
+          '## Итог за день',
+          '',
+          '* Калории: ...',
+          '* Белки: ...',
+          '* Жиры: ...',
+          '* Углеводы: ...',
+          '',
+          '## Анализ режима питания',
+          '',
+          'Оцени:',
+          '* количество основных приёмов пищи;',
+          '* количество перекусов;',
+          '* интервалы между приёмами пищи;',
+          '* регулярность питания;',
+          '* наличие длительных периодов без еды.',
+          '',
+          '## Что получилось хорошо',
+          '',
+          'Кратко перечисли сильные стороны рациона.',
+          '',
+          '## Что можно улучшить',
+          '',
+          'Укажи только самые важные замечания.',
+          '',
+          '## Один главный совет на завтра',
+          '',
+          'Дай только один наиболее полезный и практичный совет.',
+          '',
+          'В конце укажи:',
+          '',
+          'Самые неточные оценки:',
+          '',
+          '* ...',
+          '* ...',
+          '',
+          'И объясни, почему эти оценки имеют наибольшую погрешность.'
         ].join('\n');
       }
 
@@ -2824,11 +3222,60 @@
         'Entries:',
         ...mealLines,
         '',
-        'For each entry, estimate: kcal, protein, fat, and carbs.',
+        'For each entry, estimate:',
+        '* calories (kcal)',
+        '* protein (g)',
+        '* fat (g)',
+        '* carbs (g)',
+        '',
         'If weight or portion size is unknown, use a typical serving and mark that estimate with "~".',
+        '',
         "If a reasonable estimate is possible, don't ask follow-up questions.",
-        'Reply in English as a table: | time | entry | kcal | p | f | c |',
-        'After the table add: daily total; which estimates are the least certain and why.'
+        '',
+        'Reply in English.',
+        '',
+        'First, output a table:',
+        '',
+        '| time | entry | kcal | p | f | c |',
+        '',
+        'After the table add:',
+        '',
+        '## Daily total',
+        '',
+        '* Calories: ...',
+        '* Protein: ...',
+        '* Fat: ...',
+        '* Carbs: ...',
+        '',
+        '## Eating pattern analysis',
+        '',
+        'Assess:',
+        '* the number of main meals;',
+        '* the number of snacks;',
+        '* the intervals between meals;',
+        '* the regularity of eating;',
+        '* whether there are long periods without food.',
+        '',
+        '## What went well',
+        '',
+        'Briefly list the strengths of the day.',
+        '',
+        '## What could be improved',
+        '',
+        'Mention only the most important points.',
+        '',
+        '## One main tip for tomorrow',
+        '',
+        'Give only one most useful and practical tip.',
+        '',
+        'At the end include:',
+        '',
+        'Least certain estimates:',
+        '',
+        '* ...',
+        '* ...',
+        '',
+        'Explain why these estimates have the highest uncertainty.'
       ].join('\n');
     }
 
@@ -2902,7 +3349,7 @@
     function openTimePrompt(initialValue) {
       return new Promise(resolve => {
         const prevFocused = document.activeElement;
-        timePromptInput.value = initialValue || '';
+        timePromptInput.value = formatTimeInputValue(initialValue || '');
         timePromptBackdrop.hidden = false;
 
         const cleanup = () => {
@@ -2910,6 +3357,8 @@
           timePromptOk.removeEventListener('click', onOk);
           timePromptBackdrop.removeEventListener('click', onBackdropClick);
           document.removeEventListener('keydown', onKeyDown);
+          timePromptInput.removeEventListener('input', onInput);
+          timePromptInput.removeEventListener('keydown', onInputKeyDown);
         };
 
         const done = (result) => {
@@ -2921,6 +3370,32 @@
 
         const onCancel = () => done(null);
         const onOk = () => done(timePromptInput.value);
+        const onInput = () => {
+          const digits = getTimeInputDigits(timePromptInput.value);
+          timePromptInput.value = formatTimeInputValue(digits);
+        };
+        const onInputKeyDown = (e) => {
+          if (e.key !== 'Backspace' && e.key !== 'Delete') return;
+          const selectionStart = timePromptInput.selectionStart || 0;
+          const selectionEnd = timePromptInput.selectionEnd || 0;
+          if (selectionStart !== selectionEnd) return;
+          if (e.key === 'Backspace' && selectionStart === 3) {
+            e.preventDefault();
+            const digits = getTimeInputDigits(timePromptInput.value).slice(0, 1) + getTimeInputDigits(timePromptInput.value).slice(2);
+            timePromptInput.value = formatTimeInputValue(digits);
+            requestAnimationFrame(() => {
+              timePromptInput.setSelectionRange(1, 1);
+            });
+          }
+          if (e.key === 'Delete' && selectionStart === 2) {
+            e.preventDefault();
+            const digits = getTimeInputDigits(timePromptInput.value).slice(0, 2) + getTimeInputDigits(timePromptInput.value).slice(3);
+            timePromptInput.value = formatTimeInputValue(digits);
+            requestAnimationFrame(() => {
+              timePromptInput.setSelectionRange(3, 3);
+            });
+          }
+        };
         const onBackdropClick = (e) => {
           if (e.target === timePromptBackdrop) done(null);
         };
@@ -2940,10 +3415,12 @@
         timePromptOk.addEventListener('click', onOk);
         timePromptBackdrop.addEventListener('click', onBackdropClick);
         document.addEventListener('keydown', onKeyDown);
+        timePromptInput.addEventListener('input', onInput);
+        timePromptInput.addEventListener('keydown', onInputKeyDown);
 
         setTimeout(() => {
           timePromptInput.focus();
-          timePromptInput.select();
+          timePromptInput.setSelectionRange(0, timePromptInput.value.length);
         }, 0);
       });
     }
@@ -3106,7 +3583,7 @@
       if (input === null) return;
 
       const trimmed = input.trim();
-      const match = /^([0-9]{1,2}):([0-9]{2})$/.exec(trimmed);
+      const match = /^([0-9]{2}):([0-9]{2})$/.exec(trimmed);
       if (!match) {
         alert(t('alert.invalidTime'));
         return;
@@ -3148,13 +3625,21 @@
 
     function renderMeals() {
       const todayMeals = getTodayMeals();
+      if (todayFeedTitleEl) {
+        todayFeedTitleEl.textContent = formatTodayFeedTitle();
+      }
       mealListEl.innerHTML = '';
       if (chatGptCtaEl) {
         chatGptCtaEl.hidden = todayMeals.length === 0;
       }
 
       if (todayMeals.length === 0) {
-        mealListEl.innerHTML = '<div class="subtle">' + t('list.empty') + '</div>';
+        mealListEl.innerHTML = `
+          <div class="today-empty-state">
+            <div class="today-empty-title">${t('list.empty')}</div>
+            <div class="today-empty-text">${t('list.emptyHint')}</div>
+          </div>
+        `;
         lastMealInfoEl.textContent = '';
         return;
       }
@@ -3170,7 +3655,9 @@
 
       let prevTs = globalPrevTs;
 
-      for (const meal of todayMeals) {
+      for (let i = 0; i < todayMeals.length; i++) {
+        const meal = todayMeals[i];
+        const isLastTodayMeal = i === todayMeals.length - 1;
         const row = document.createElement('div');
         row.className = 'meal-row';
 
@@ -3179,7 +3666,7 @@
 
         const leftWrap = document.createElement('div');
         const timeEl = document.createElement('span');
-        timeEl.className = 'meal-time';
+        timeEl.className = 'meal-time ' + (meal.isSnack ? 'meal-time--snack' : 'meal-time--meal');
         timeEl.textContent = formatTimeHM(meal.ts);
 
         leftWrap.appendChild(timeEl);
@@ -3225,21 +3712,24 @@
         noteEl.className = 'meal-note';
         noteEl.textContent = meal.note || t('no.description');
 
-        const intervalEl = document.createElement('div');
-        intervalEl.className = 'meal-interval';
+        let intervalEl = null;
+        if (!isLastTodayMeal) {
+          intervalEl = document.createElement('div');
+          intervalEl.className = 'meal-interval';
 
-        if (prevTs == null) {
-          intervalEl.textContent = t('interval.first');
-        } else {
-          const diff = meal.ts - prevTs;
-          intervalEl.textContent = t('interval.sincePrev') + formatInterval(diff);
+          if (prevTs == null) {
+            intervalEl.textContent = t('interval.first');
+          } else {
+            const diff = meal.ts - prevTs;
+            intervalEl.textContent = t('interval.sincePrev').replace('{value}', formatInterval(diff));
+          }
         }
 
         prevTs = meal.ts;
 
         row.appendChild(top);
         row.appendChild(noteEl);
-        row.appendChild(intervalEl);
+        if (intervalEl) row.appendChild(intervalEl);
 
         mealListEl.appendChild(row);
       }
@@ -3592,7 +4082,7 @@
       for (const meal of dayMeals) {
         const intervalText = prevTs == null
           ? t('interval.first')
-          : t('interval.sincePrev') + formatInterval(meal.ts - prevTs);
+          : t('interval.sincePrev').replace('{value}', formatInterval(meal.ts - prevTs));
 
         prevTs = meal.ts;
 
@@ -3891,36 +4381,15 @@
       btn._exportAnimTimers.push(t1, t2);
     }
 
-    function animateChatGptButton(btn) {
-      if (!btn) return;
-      const label = btn.querySelector('.chatgpt-btn__label');
-
-      if (btn._chatGptAnimTimers) {
-        btn._chatGptAnimTimers.forEach(id => clearTimeout(id));
-      }
-      btn._chatGptAnimTimers = [];
-
-      const defaultKey = label?.dataset.defaultKey || 'chatgpt.btn';
-      const defaultText = t(defaultKey);
-
-      btn.classList.remove('is-saved');
-      btn.classList.add('is-saving');
-      btn.disabled = true;
-      if (label) label.textContent = t('chatgpt.preparing');
-
-      const t1 = setTimeout(() => {
-        btn.classList.remove('is-saving');
-        btn.classList.add('is-saved');
-        if (label) label.textContent = t('chatgpt.ready');
-      }, 350);
-
-      const t2 = setTimeout(() => {
-        btn.classList.remove('is-saved');
-        btn.disabled = false;
-        if (label) label.textContent = defaultText;
-      }, 1650);
-
-      btn._chatGptAnimTimers.push(t1, t2);
+    function showChatGptToast() {
+      if (!chatGptToastEl || !chatGptToastTitleEl || !chatGptToastTextEl) return;
+      chatGptToastTitleEl.textContent = t('chatgpt.toastTitle');
+      chatGptToastTextEl.textContent = t('chatgpt.toastText');
+      chatGptToastEl.hidden = false;
+      if (chatGptToastTimer) clearTimeout(chatGptToastTimer);
+      chatGptToastTimer = setTimeout(() => {
+        chatGptToastEl.hidden = true;
+      }, 1800);
     }
 
     async function sendTodayMealsToChatGpt() {
@@ -3937,7 +4406,6 @@
         return;
       }
 
-      animateChatGptButton(sendToChatGptBtn);
       if (shouldOpenChatGptInSameTab()) {
         window.location.assign('https://chatgpt.com/');
       } else {
