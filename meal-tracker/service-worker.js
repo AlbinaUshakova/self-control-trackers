@@ -1,7 +1,7 @@
 // EatLog — simple offline-first Service Worker
 // Note: Service Workers require HTTPS (or http://localhost)
 
-const CACHE_VERSION = 'eatlog-v4';
+const CACHE_VERSION = 'eatlog-v5';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -41,16 +41,23 @@ self.addEventListener('fetch', (event) => {
   // Only handle same-origin
   if (url.origin !== self.location.origin) return;
 
-  // Navigations: network-first (so you get updates), fallback to cache
+  // Navigations: network-first (so you get updates), fallback to cached app shell
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', copy));
+          caches.open(CACHE_VERSION).then((cache) => {
+            cache.put(req, copy.clone());
+            cache.put('./app.html', copy);
+          });
           return res;
         })
-        .catch(() => caches.match('./index.html'))
+        .catch(() =>
+          caches.match(req)
+            .then((cached) => cached || caches.match('./app.html'))
+            .then((cached) => cached || caches.match('./index.html'))
+        )
     );
     return;
   }
