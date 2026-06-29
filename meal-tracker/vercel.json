@@ -3,13 +3,18 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/",
-      "destination": "/app",
+      "source": "/app",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/app.html",
+      "destination": "/",
       "permanent": false
     },
     {
       "source": "/index.html",
-      "destination": "/app",
+      "destination": "/",
       "permanent": false
     }
   ]
