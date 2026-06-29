@@ -11,11 +11,12 @@
   </style>
 
   <meta charset="UTF-8" />
-  <meta name="google-site-verification" content="DIEjG1KJAKMRZcO0IhGHHjHVpjYuYUvos7rULW_0690" />
+  <meta name="google-site-verification" content="VyPtpfBm0zbH5ZO_24hQ3i5zH4VDxhDNzDKkArHd_7s" />
   <title>EatLog — трекер приемов пищи, дневник питания и контроль перекусов</title>
 
   <meta name="description"
     content="EatLog — простой трекер приемов пищи и дневник питания. Помогает контролировать перекусы, отслеживать интервалы между едой. Работает офлайн, без регистрации." />
+  <meta name="robots" content="index,follow" />
 
   <meta name="keywords"
     content="EatLog, трекер питания, дневник питания, трекер приемов пищи, контроль перекусов, перекусы, интервалы между едой, осознанное питание" />
@@ -29,8 +30,30 @@
   <meta property="og:title" content="EatLog — трекер приемов пищи и контроль перекусов" />
   <meta property="og:description"
     content="Простой дневник питания: приемы пищи, перекусы, интервалы, статистика. Можно установить как приложение." />
+  <meta property="og:site_name" content="EatLog" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://eatlog-tracker.vercel.app/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="EatLog — трекер приемов пищи и контроль перекусов" />
+  <meta name="twitter:description"
+    content="Простой дневник питания: приемы пищи, перекусы, интервалы, статистика. Можно установить как приложение." />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "EatLog",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "iOS, Android, Web",
+      "url": "https://eatlog-tracker.vercel.app/",
+      "description": "EatLog — трекер приемов пищи, перекусов и интервалов между едой. Работает как веб-приложение и PWA.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
@@ -126,12 +149,24 @@
       margin-bottom: 4px;
     }
 
+    .app-header-copy {
+      min-width: 0;
+    }
+
     h1 {
       font-size: 23px;
       margin: 0;
       letter-spacing: -0.03em;
       font-weight: 750;
       color: #f8fafc;
+    }
+
+    .app-tagline {
+      margin: 4px 0 0;
+      color: #8fa0b5;
+      font-size: 12px;
+      line-height: 1.35;
+      max-width: 34ch;
     }
 
     .subtle {
@@ -2074,8 +2109,9 @@
 <body>
   <div class="app-shell">
     <header class="app-header">
-      <div>
+      <div class="app-header-copy">
         <h1>EatLog</h1>
+        <p class="app-tagline" data-i18n="app.tagline">Meal tracker, food diary, snack control, and meal interval tracking.</p>
       </div>
       <!-- language switch -->
       <div style="display:flex; gap:6px; align-items:center;">
@@ -2388,6 +2424,7 @@
         "tab.today": "Today",
         "tab.stats": "Stats",
         "tab.goals": "Goals",
+        "app.tagline": "Meal tracker, food diary, snack control, and meal interval tracking.",
         "h.newMeal": "New meal",
         "textarea.placeholder": "oatmeal, 2 boiled eggs, coffee with cookies",
         "btn.eating": "➕ Add meal",
@@ -2498,6 +2535,7 @@
         "tab.today": "Сегодня",
         "tab.stats": "Статистика",
         "tab.goals": "Цели",
+        "app.tagline": "Трекер приемов пищи, дневник питания, контроль перекусов и интервалов между едой.",
         "h.newMeal": "Новый приём пищи",
         "textarea.placeholder": "овсянка, 2 варёных яйца, кофе с печеньем",
         "btn.eating": "➕ Добавить приём пищи",
