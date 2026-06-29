@@ -2348,6 +2348,16 @@
     <div class="toast-text" id="chatGptToastText">Открываем ChatGPT</div>
   </div>
 
+  <div id="welcomeNoticeBackdrop" class="prompt-backdrop" hidden>
+    <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="welcomeNoticeTitle">
+      <div id="welcomeNoticeTitle" class="prompt-label" data-i18n="welcome.notice.title">Welcome to EatLog</div>
+      <p class="prompt-body" data-i18n-html="welcome.notice.body">EatLog helps you track meals, snacks, and intervals between them.<br><br>To install on your phone, open the browser menu and choose Add to Home Screen or Install App.</p>
+      <div class="prompt-actions">
+        <button id="welcomeNoticeOk" type="button" class="prompt-btn" data-i18n="welcome.notice.ok">Got it</button>
+      </div>
+    </div>
+  </div>
+
   <div id="updateNoticeBackdrop" class="prompt-backdrop" hidden>
     <div class="prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="updateNoticeTitle">
       <div id="updateNoticeTitle" class="prompt-label" data-i18n="update.notice.title">Что нового</div>
@@ -2398,6 +2408,9 @@
         "chatgpt.copyError": "Couldn't copy the prompt automatically",
         "chatgpt.toastTitle": "✓ Copied",
         "chatgpt.toastText": "Opening ChatGPT",
+        "welcome.notice.title": "Welcome to EatLog",
+        "welcome.notice.body": "EatLog helps you track meals, snacks, and intervals between them.\n\nTo install on your phone, open the browser menu and choose Add to Home Screen or Install App.",
+        "welcome.notice.ok": "Got it",
         "period.stats": "Period",
         "daily.breakdown": "Daily breakdown",
         "data.storage": "Data & Storage",
@@ -2505,6 +2518,9 @@
         "chatgpt.copyError": "Не удалось автоматически скопировать запрос",
         "chatgpt.toastTitle": "✓ Скопировано",
         "chatgpt.toastText": "Открываем ChatGPT",
+        "welcome.notice.title": "Добро пожаловать в EatLog",
+        "welcome.notice.body": "EatLog помогает записывать приёмы пищи, перекусы и видеть интервалы между ними.\nЧтобы установить приложение на телефон, откройте меню браузера и выберите «Добавить на экран домой» или «Установить приложение».",
+        "welcome.notice.ok": "Понятно",
         "period.stats": "Период",
         "daily.breakdown": "Детализация по дням",
         "data.storage": "Данные и хранение",
@@ -2662,6 +2678,7 @@
   <script>
     const STORAGE_KEY_MEALS = 'meal_tracker_entries_v1';
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
+    const STORAGE_KEY_WELCOME_NOTICE_SEEN = 'meal_tracker_welcome_notice_seen_v1';
     const STORAGE_KEY_UPDATE_NOTICE_VERSION = 'meal_tracker_update_notice_version';
     const CURRENT_UPDATE_NOTICE_VERSION = 'gpt_analysis_v1';
     function loadMeals() {
@@ -2775,6 +2792,8 @@
     const confirmPromptMessage = document.getElementById('confirmPromptMessage');
     const confirmPromptCancel = document.getElementById('confirmPromptCancel');
     const confirmPromptOk = document.getElementById('confirmPromptOk');
+    const welcomeNoticeBackdrop = document.getElementById('welcomeNoticeBackdrop');
+    const welcomeNoticeOk = document.getElementById('welcomeNoticeOk');
     const chatGptToastEl = document.getElementById('chatGptToast');
     const chatGptToastTitleEl = document.getElementById('chatGptToastTitle');
     const chatGptToastTextEl = document.getElementById('chatGptToastText');
@@ -3346,6 +3365,52 @@
           confirmPromptOk.focus();
         }, 0);
       });
+    }
+
+    function shouldShowWelcomeNotice() {
+      return localStorage.getItem(STORAGE_KEY_WELCOME_NOTICE_SEEN) !== '1';
+    }
+
+    function markWelcomeNoticeSeen() {
+      localStorage.setItem(STORAGE_KEY_WELCOME_NOTICE_SEEN, '1');
+    }
+
+    function openWelcomeNotice() {
+      if (!welcomeNoticeBackdrop || !welcomeNoticeOk) return;
+      const prevFocused = document.activeElement;
+      welcomeNoticeBackdrop.hidden = false;
+
+      const cleanup = () => {
+        welcomeNoticeOk.removeEventListener('click', onOk);
+        welcomeNoticeBackdrop.removeEventListener('click', onBackdropClick);
+        document.removeEventListener('keydown', onKeyDown);
+      };
+
+      const done = () => {
+        cleanup();
+        welcomeNoticeBackdrop.hidden = true;
+        markWelcomeNoticeSeen();
+        if (prevFocused && typeof prevFocused.focus === 'function') prevFocused.focus();
+      };
+
+      const onOk = () => done();
+      const onBackdropClick = (e) => {
+        if (e.target === welcomeNoticeBackdrop) done();
+      };
+      const onKeyDown = (e) => {
+        if (e.key === 'Escape' || e.key === 'Enter') {
+          e.preventDefault();
+          done();
+        }
+      };
+
+      welcomeNoticeOk.addEventListener('click', onOk);
+      welcomeNoticeBackdrop.addEventListener('click', onBackdropClick);
+      document.addEventListener('keydown', onKeyDown);
+
+      setTimeout(() => {
+        welcomeNoticeOk.focus();
+      }, 0);
     }
 
     function shouldShowUpdateNotice() {
@@ -4246,7 +4311,9 @@
     renderStats();
     renderPeriodSummary();
     renderHistory();
-    if (shouldShowUpdateNotice()) {
+    if (shouldShowWelcomeNotice()) {
+      openWelcomeNotice();
+    } else if (shouldShowUpdateNotice()) {
       openUpdateNotice();
     }
   </script>
