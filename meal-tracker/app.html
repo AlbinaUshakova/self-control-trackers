@@ -74,15 +74,6 @@
       text-align: left;
     }
 
-    body.embed-preview {
-      min-height: 100vh;
-      height: 100vh;
-      padding: 0;
-      display: block;
-      overflow: hidden;
-      background: #020617;
-    }
-
     /* всё текстовое содержимое по левому краю, даже если что-то наследовало центр */
     h1,
     h2,
@@ -125,32 +116,6 @@
       display: flex;
       flex-direction: column;
       max-height: 100%;
-    }
-
-    body.embed-preview .app-shell {
-      max-width: none;
-      width: calc(100% / 0.94);
-      height: calc((100vh + 8px) / 0.94);
-      min-height: calc((100vh + 8px) / 0.94);
-      margin: 0;
-      border-radius: 0;
-      padding: 10px 10px 0;
-      box-shadow: none;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-      transform: scale(0.94);
-      transform-origin: top left;
-    }
-
-    body.embed-preview .app-content {
-      min-height: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 0;
-    }
-
-    body.embed-preview .app-footer {
-      display: none !important;
     }
 
     .app-header {
@@ -2701,10 +2666,6 @@
     const STORAGE_KEY_GOALS = 'meal_tracker_goals_v1';
     const STORAGE_KEY_UPDATE_NOTICE_VERSION = 'meal_tracker_update_notice_version';
     const CURRENT_UPDATE_NOTICE_VERSION = 'gpt_analysis_v1';
-    const IS_EMBED_PREVIEW = false;
-    if (IS_EMBED_PREVIEW) {
-      document.body.classList.add('embed-preview');
-    }
     function loadMeals() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_MEALS);
@@ -4287,9 +4248,7 @@
     renderStats();
     renderPeriodSummary();
     renderHistory();
-    if (IS_EMBED_PREVIEW) {
-      markUpdateNoticeSeen();
-    } else if (shouldShowUpdateNotice()) {
+    if (shouldShowUpdateNotice()) {
       openUpdateNotice();
     }
   </script>

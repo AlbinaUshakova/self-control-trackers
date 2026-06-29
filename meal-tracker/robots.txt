@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://albinaushakova.github.io/self-control-trackers/meal-tracker/sitemap.xml
+Sitemap: https://eatlog-tracker.vercel.app/sitemap.xml
