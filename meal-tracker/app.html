@@ -2371,9 +2371,7 @@
     // --- i18n support ---
     const LANG_KEY = 'eatlog_lang';
     const savedLang = localStorage.getItem(LANG_KEY);
-    const deviceLang = (navigator.languages && navigator.languages[0]) ? navigator.languages[0] : (navigator.language || 'en');
-    const detectedLang = /^ru/i.test(deviceLang) ? 'ru' : 'en';
-    const defaultLang = savedLang || detectedLang;
+    const defaultLang = savedLang || 'en';
     const translations = {
       en: {
         "stats.retention": "History is kept for 21 days",
