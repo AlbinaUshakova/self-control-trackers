@@ -8,7 +8,17 @@
       "permanent": false
     },
     {
+      "source": "/app-preview",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/app.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/app-preview.html",
       "destination": "/",
       "permanent": false
     },
