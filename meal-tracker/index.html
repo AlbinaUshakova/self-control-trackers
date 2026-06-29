@@ -3521,7 +3521,6 @@
 
       for (let i = 0; i < todayMeals.length; i++) {
         const meal = todayMeals[i];
-        const isLastTodayMeal = i === todayMeals.length - 1;
         const row = document.createElement('div');
         row.className = 'meal-row';
 
@@ -3576,24 +3575,21 @@
         noteEl.className = 'meal-note';
         noteEl.textContent = meal.note || t('no.description');
 
-        let intervalEl = null;
-        if (!isLastTodayMeal) {
-          intervalEl = document.createElement('div');
-          intervalEl.className = 'meal-interval';
+        const intervalEl = document.createElement('div');
+        intervalEl.className = 'meal-interval';
 
-          if (prevTs == null) {
-            intervalEl.textContent = t('interval.first');
-          } else {
-            const diff = meal.ts - prevTs;
-            intervalEl.textContent = t('interval.sincePrev').replace('{value}', formatInterval(diff));
-          }
+        if (prevTs == null) {
+          intervalEl.textContent = t('interval.first');
+        } else {
+          const diff = meal.ts - prevTs;
+          intervalEl.textContent = t('interval.sincePrev').replace('{value}', formatInterval(diff));
         }
 
         prevTs = meal.ts;
 
         row.appendChild(top);
         row.appendChild(noteEl);
-        if (intervalEl) row.appendChild(intervalEl);
+        row.appendChild(intervalEl);
 
         mealListEl.appendChild(row);
       }
