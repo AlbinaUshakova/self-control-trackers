@@ -1,20 +1,19 @@
 // EatLog — simple offline-first Service Worker
 // Note: Service Workers require HTTPS (or http://localhost)
 
-const CACHE_VERSION = 'eatlog-v7';
+const CACHE_VERSION = 'eatlog-v8';
 const CORE_ASSETS = [
-  './',
-  './index.html',
-  './app.html',
-  './manifest.json',
-  './service-worker.js',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-180.png',
-  './icons/icon-167.png',
-  './icons/icon-152.png',
-  './icons/icon-120.png',
-  './icons/favicon-32.png'
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/service-worker.js',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon-180.png',
+  '/icons/icon-167.png',
+  '/icons/icon-152.png',
+  '/icons/icon-120.png',
+  '/icons/favicon-32.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -49,14 +48,14 @@ self.addEventListener('fetch', (event) => {
           const copy = res.clone();
           caches.open(CACHE_VERSION).then((cache) => {
             cache.put(req, copy.clone());
-            cache.put('./app.html', copy);
+            cache.put('/', copy);
           });
           return res;
         })
         .catch(() =>
           caches.match(req)
-            .then((cached) => cached || caches.match('./app.html'))
-            .then((cached) => cached || caches.match('./index.html'))
+            .then((cached) => cached || caches.match('/'))
+            .then((cached) => cached || caches.match('/index.html'))
         )
     );
     return;
@@ -82,7 +81,7 @@ self.addEventListener('notificationclick', (event) => {
       for (const client of clients) {
         if ('focus' in client) return client.focus();
       }
-      if (self.clients.openWindow) return self.clients.openWindow('./');
+      if (self.clients.openWindow) return self.clients.openWindow('/');
       return undefined;
     })
   );
