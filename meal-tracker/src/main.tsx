@@ -5,7 +5,7 @@ import "./index.css";
 
 if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost")) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(() => undefined);
+    navigator.serviceWorker.register("/service-worker.js").catch(() => undefined);
   });
 }
 
