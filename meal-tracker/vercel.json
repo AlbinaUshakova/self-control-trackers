@@ -3,31 +3,6 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/dist",
-      "destination": "/",
-      "permanent": false
-    },
-    {
-      "source": "/dist/",
-      "destination": "/",
-      "permanent": false
-    },
-    {
-      "source": "/dist/index.html",
-      "destination": "/",
-      "permanent": false
-    },
-    {
-      "source": "/dist/app",
-      "destination": "/",
-      "permanent": false
-    },
-    {
-      "source": "/dist/app.html",
-      "destination": "/",
-      "permanent": false
-    },
-    {
       "source": "/app",
       "destination": "/",
       "permanent": false
