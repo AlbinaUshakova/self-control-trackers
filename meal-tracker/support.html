@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EatLog Support</title>
+  <meta name="description" content="Support page for EatLog." />
+  <meta name="theme-color" content="#020617" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-rounded, "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.12) 0, rgba(37, 99, 235, 0) 28%),
+        linear-gradient(180deg, #020617 0%, #030712 55%, #000 100%);
+      color: #e2e8f0;
+      padding: 24px 14px 40px;
+    }
+    .page {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px 16px 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(8, 15, 31, 0.98) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+    }
+    h1, h2 {
+      margin: 0 0 10px;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    h1 { font-size: 28px; }
+    h2 { margin-top: 18px; font-size: 18px; }
+    p, li {
+      color: #cbd5e1;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+    a { color: #93c5fd; }
+    .top-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin-top: 16px;
+    }
+    .top-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .note {
+      color: #8ea0b7;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>EatLog Support</h1>
+    <p>EatLog is a local-first meal tracker for logging meals, snacks, and time gaps between them. It works in the browser and can be installed as a PWA after the first online open.</p>
+    <p>EatLog — локальный трекер приемов пищи. Он помогает фиксировать приемы пищи, перекусы и интервалы между ними, а после первого онлайн-открытия может запускаться как PWA.</p>
+
+    <h2>Common issues</h2>
+    <ul>
+      <li>If the app looks outdated, close it and reopen it while online so the service worker can refresh cached files.</li>
+      <li>If exported data is empty, check that you logged meals on this device and in this browser profile.</li>
+      <li>If history disappeared, verify whether old entries were automatically pruned by the 21-day retention rule.</li>
+      <li>Если приложение не открывается офлайн, сначала откройте его один раз с интернетом, чтобы офлайн-оболочка сохранилась в кеше.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>Support email: <a href="mailto:madebyalbi@gmail.com">madebyalbi@gmail.com</a></p>
+    <p class="note">Include `EatLog` in the subject line so support requests are easy to spot.</p>
+
+    <div class="top-links">
+      <a href="./">Back to app</a>
+      <a href="./privacy.html">Privacy policy</a>
+    </div>
+  </main>
+</body>
+</html>

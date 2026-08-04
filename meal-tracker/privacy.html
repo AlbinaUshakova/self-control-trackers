@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EatLog Privacy</title>
+  <meta name="description" content="Privacy policy for EatLog." />
+  <meta name="theme-color" content="#020617" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-rounded, "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(34, 197, 94, 0.12) 0, rgba(34, 197, 94, 0) 28%),
+        linear-gradient(180deg, #020617 0%, #030712 55%, #000 100%);
+      color: #e2e8f0;
+      padding: 24px 14px 40px;
+    }
+    .page {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px 16px 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(8, 15, 31, 0.98) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+    }
+    h1, h2 {
+      margin: 0 0 10px;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    h1 { font-size: 28px; }
+    h2 { margin-top: 18px; font-size: 18px; }
+    p, li {
+      color: #cbd5e1;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+    a { color: #93c5fd; }
+    .top-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin-top: 16px;
+    }
+    .top-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>EatLog Privacy</h1>
+    <p>EatLog stores meal history, app settings, onboarding flags, and goals locally in your browser using `localStorage`. The current web app does not require an account.</p>
+    <p>EatLog хранит историю приемов пищи, цели и служебные настройки локально в браузере через `localStorage`. Аккаунт для использования приложения не нужен.</p>
+
+    <h2>What is stored</h2>
+    <ul>
+      <li>Meal entries: date, time, note, and whether the entry is a snack.</li>
+      <li>Daily goals and display preferences, including selected language.</li>
+      <li>Local UI flags such as whether welcome or update notices were already shown.</li>
+    </ul>
+
+    <h2>Where it is stored</h2>
+    <p>Data is stored on the current device and in the current browser profile. The app also caches static files through a service worker so the shell can open offline after an online visit.</p>
+
+    <h2>Server, sync, and retention</h2>
+    <ul>
+      <li>No account is required.</li>
+      <li>No built-in cross-device sync is implemented in this repository.</li>
+      <li>No application server is used for storing meal history.</li>
+      <li>Meal history is retained for 21 days.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>Privacy and support requests: <a href="mailto:madebyalbi@gmail.com">madebyalbi@gmail.com</a></p>
+
+    <div class="top-links">
+      <a href="./">Back to app</a>
+      <a href="./support.html">Support page</a>
+    </div>
+  </main>
+</body>
+</html>

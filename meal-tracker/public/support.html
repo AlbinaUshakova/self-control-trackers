@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EatLog Support</title>
+  <meta name="description" content="EatLog support: help with the meal tracker, offline mode, data export, and app behavior." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://eatlog-tracker.vercel.app/support.html" />
+  <meta name="theme-color" content="#020617" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-rounded, "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.12) 0, rgba(37, 99, 235, 0) 28%),
+        linear-gradient(180deg, #020617 0%, #030712 55%, #000 100%);
+      color: #e2e8f0;
+      padding: 24px 14px 40px;
+    }
+    .page {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px 16px 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(8, 15, 31, 0.98) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+    }
+    h1, h2 {
+      margin: 0 0 10px;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    h1 { font-size: 28px; }
+    h2 { margin-top: 18px; font-size: 18px; }
+    p, li {
+      color: #cbd5e1;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+    a { color: #93c5fd; }
+    .top-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin-top: 16px;
+    }
+    .top-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .note {
+      color: #8ea0b7;
+      font-size: 14px;
+    }
+    [data-lang] { display: none; }
+    html[data-current-lang="en"] [data-lang="en"] { display: block; }
+    html[data-current-lang="ru"] [data-lang="ru"] { display: block; }
+    html[data-current-lang="en"] [data-lang-inline="en"] { display: inline; }
+    html[data-current-lang="ru"] [data-lang-inline="ru"] { display: inline; }
+    [data-lang-inline] { display: none; }
+  </style>
+  <script>
+    (function () {
+      var storageKey = "eatlog_lang";
+      var stored = localStorage.getItem(storageKey);
+      var browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length
+        ? navigator.languages
+        : [navigator.language || "en"];
+      var lang = stored === "ru" || stored === "en"
+        ? stored
+        : browserLanguages.some(function (item) { return String(item).toLowerCase().indexOf("ru") === 0; }) ? "ru" : "en";
+      var meta = {
+        en: {
+          title: "EatLog Support",
+          description: "EatLog support: help with the meal tracker, offline mode, data export, and app behavior."
+        },
+        ru: {
+          title: "Поддержка EatLog",
+          description: "Поддержка EatLog: помощь по трекеру приемов пищи, офлайн-режиму, экспорту данных и работе приложения."
+        }
+      }[lang];
+      document.documentElement.lang = lang;
+      document.documentElement.setAttribute("data-current-lang", lang);
+      document.title = meta.title;
+      var description = document.querySelector('meta[name="description"]');
+      if (description) description.setAttribute("content", meta.description);
+    })();
+  </script>
+</head>
+<body>
+  <main class="page">
+    <h1 data-lang="en">EatLog Support</h1>
+    <h1 data-lang="ru">Поддержка EatLog</h1>
+
+    <p data-lang="en">EatLog is a local-first meal tracker for logging meals, snacks, and time gaps between them. It works in the browser and can be installed as a PWA after the first online open.</p>
+    <p data-lang="ru">EatLog — локальный трекер приемов пищи. Он помогает фиксировать приемы пищи, перекусы и интервалы между ними, а после первого онлайн-открытия может запускаться как PWA.</p>
+
+    <h2 data-lang="en">Common issues</h2>
+    <h2 data-lang="ru">Частые вопросы</h2>
+
+    <ul data-lang="en">
+      <li>If the app looks outdated, close it and reopen it while online so the service worker can refresh cached files.</li>
+      <li>If exported data is empty, check that you logged meals on this device and in this browser profile.</li>
+      <li>If history disappeared, verify whether old entries were automatically pruned by the 21-day retention rule.</li>
+      <li>If the app does not open offline, first open it once with an internet connection so the offline shell can be cached.</li>
+    </ul>
+
+    <ul data-lang="ru">
+      <li>Если приложение выглядит устаревшим, закройте его и откройте снова при наличии интернета, чтобы service worker обновил кеш.</li>
+      <li>Если экспорт пустой, проверьте, что вы добавляли записи именно на этом устройстве и в этом профиле браузера.</li>
+      <li>Если история пропала, проверьте, не были ли старые записи автоматически удалены по правилу хранения в 21 день.</li>
+      <li>Если приложение не открывается офлайн, сначала откройте его один раз с интернетом, чтобы офлайн-оболочка сохранилась в кеше.</li>
+    </ul>
+
+    <h2 data-lang="en">Contact</h2>
+    <h2 data-lang="ru">Контакты</h2>
+
+    <p data-lang="en">Support email: <a href="mailto:madebyalbi@gmail.com">madebyalbi@gmail.com</a></p>
+    <p data-lang="ru">Почта поддержки: <a href="mailto:madebyalbi@gmail.com">madebyalbi@gmail.com</a></p>
+
+    <p class="note" data-lang="en">Include <code>EatLog</code> in the subject line so support requests are easy to spot.</p>
+    <p class="note" data-lang="ru">Добавьте <code>EatLog</code> в тему письма, чтобы запрос было проще найти.</p>
+
+    <div class="top-links">
+      <a href="./">
+        <span data-lang-inline="en">Back to app</span>
+        <span data-lang-inline="ru">Назад в приложение</span>
+      </a>
+      <a href="./privacy.html">
+        <span data-lang-inline="en">Privacy policy</span>
+        <span data-lang-inline="ru">Политика конфиденциальности</span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>
