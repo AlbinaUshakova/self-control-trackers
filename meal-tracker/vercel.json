@@ -17,6 +17,11 @@
       "permanent": false
     },
     {
+      "source": "/dist/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/dist/",
       "destination": "/",
       "permanent": false
@@ -42,6 +47,11 @@
       "permanent": false
     },
     {
+      "source": "/app/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/app-preview",
       "destination": "/",
       "permanent": false
@@ -58,6 +68,11 @@
     },
     {
       "source": "/index.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/index",
       "destination": "/",
       "permanent": false
     }
