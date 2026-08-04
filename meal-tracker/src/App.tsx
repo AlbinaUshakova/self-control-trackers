@@ -67,6 +67,20 @@ function App() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
+  useEffect(() => {
+    try {
+      const redirectedFrom404 = sessionStorage.getItem("eatlog_last_404_path");
+      if (!redirectedFrom404) return;
+      sessionStorage.removeItem("eatlog_last_404_path");
+      setToast({
+        title: lang === "ru" ? "Открыто после резервного перехода" : "Opened after fallback redirect",
+        text: redirectedFrom404
+      });
+    } catch (error) {
+      void error;
+    }
+  }, [lang]);
+
   const todayMeals = useMemo(() => getTodayMeals(meals), [meals]);
   const allSorted = useMemo(() => getAllMealsSorted(meals), [meals]);
   const dailyStats = useMemo(() => computeDailyStats(meals), [meals]);
