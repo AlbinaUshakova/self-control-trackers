@@ -415,7 +415,7 @@ function App() {
             <div className="space-y-3">
               <section className="rounded-[22px] border border-white/10 bg-panel p-4 shadow-panel">
                 <h2 className="text-[20px] font-bold tracking-[-0.02em] text-text">{t(lang, "period.stats")}</h2>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3 grid grid-cols-2 gap-2 min-[390px]:grid-cols-4">
                   {(["today", "7", "14", "21"] as PeriodKey[]).map((item) => (
                     <button key={item} type="button" onClick={() => setPeriod(item)} className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${period === item ? "border-transparent bg-slate-100 text-slate-950" : "border-slate-700 bg-slate-950/50 text-slate-300"}`}>
                       {t(lang, `period.${item}` as never)}
