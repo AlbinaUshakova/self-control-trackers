@@ -1,27 +1,5 @@
 {
   "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/dist",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/dist/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/app",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/app/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/index",
-      "destination": "/index.html"
-    }
-  ],
   "redirects": [
     {
       "source": "/support",
@@ -31,6 +9,46 @@
     {
       "source": "/privacy",
       "destination": "/privacy.html",
+      "permanent": false
+    },
+    {
+      "source": "/dist",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/dist/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/dist/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/dist/index.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/dist/app",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/dist/app.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/app",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/app/:path*",
+      "destination": "/",
       "permanent": false
     },
     {
@@ -50,6 +68,11 @@
     },
     {
       "source": "/index.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/index",
       "destination": "/",
       "permanent": false
     }
