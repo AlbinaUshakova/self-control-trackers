@@ -1,7 +1,16 @@
 {
-  "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
+    {
+      "source": "/support",
+      "destination": "/support.html",
+      "permanent": false
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html",
+      "permanent": false
+    },
     {
       "source": "/dist",
       "destination": "/",
