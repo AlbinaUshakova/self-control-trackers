@@ -545,16 +545,6 @@ function App() {
           )}
         </main>
 
-        <section className="mt-6 rounded-[22px] border border-white/10 bg-slate-950/40 p-4 shadow-panel">
-          <h2 className="text-[18px] font-bold tracking-[-0.02em] text-text">{t(lang, "seo.title")}</h2>
-          <p className="mt-2 text-[13px] leading-6 text-muted">{t(lang, "seo.body")}</p>
-          <div className="mt-4 grid gap-2 text-xs text-slate-300">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2">{t(lang, "seo.point1")}</div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2">{t(lang, "seo.point2")}</div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2">{t(lang, "seo.point3")}</div>
-          </div>
-        </section>
-
         <footer className="mt-12 border-t border-white/10 pt-3 text-[10px] text-muted sm:mt-auto">
           <div>{t(lang, "footer.line1")}</div>
           <div className="mt-1">{t(lang, "footer.line2")}</div>
