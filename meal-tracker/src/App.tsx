@@ -386,37 +386,31 @@ function App() {
                       const prev = index === 0 ? allSorted[allSorted.findIndex((item) => item.id === meal.id) - 1] : todayMeals[index - 1];
                       return (
                         <article key={meal.id} className="border-b border-slate-800 pb-3 last:border-b-0 last:pb-0">
-                          <div className="min-w-0">
+                          <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className={`text-[15px] font-semibold ${meal.isSnack ? "text-amber-300" : "text-accent"}`}>{formatTimeHM(meal.ts, lang)}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => toggleSnack(meal.id)}
-                                  aria-label={t(lang, "meal.badgeSnack")}
-                                  className={`inline-flex min-h-6 items-center rounded-full border px-2.5 text-[11px] font-semibold transition ${
-                                    meal.isSnack
-                                      ? "border-amber-300/20 bg-amber-300/10 text-amber-200"
-                                      : "border-white/10 bg-slate-900/80 text-slate-300"
-                                  }`}
-                                >
-                                  {t(lang, "meal.badgeSnack")}
-                                </button>
+                                {meal.isSnack ? <span className="inline-flex min-h-6 items-center rounded-full border border-amber-300/20 bg-amber-300/10 px-2.5 text-[11px] font-semibold text-amber-200">{t(lang, "meal.badgeSnack")}</span> : null}
                               </div>
                               <p className="mt-2 text-sm leading-6 text-slate-100">{meal.note || t(lang, "no.description")}</p>
                               <p className="mt-2 text-xs text-muted">{prev ? t(lang, "interval.sincePrev", { value: formatInterval(meal.ts - prev.ts, lang) }) : t(lang, "interval.first")}</p>
                             </div>
+                            <div className="flex shrink-0 gap-2">
+                              <button type="button" onClick={() => toggleSnack(meal.id)} aria-label={t(lang, "meal.badgeSnack")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
+                                <Cookie size={17} />
+                              </button>
+                            </div>
                           </div>
                           <div className="mt-3 flex justify-end gap-2">
-                            <button type="button" onClick={() => editMealTime(meal.id)} aria-label="Edit time" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
-                              <Clock3 size={17} />
-                            </button>
-                            <button type="button" onClick={() => editMealNote(meal.id)} aria-label="Edit note" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
-                              <Pencil size={17} />
-                            </button>
-                            <button type="button" onClick={() => deleteMeal(meal.id)} aria-label={t(lang, "confirm.ok")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/20 bg-rose-400/10 text-rose-300">
-                              <Trash2 size={17} />
-                            </button>
+                              <button type="button" onClick={() => editMealTime(meal.id)} aria-label="Edit time" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
+                                <Clock3 size={17} />
+                              </button>
+                              <button type="button" onClick={() => editMealNote(meal.id)} aria-label="Edit note" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
+                                <Pencil size={17} />
+                              </button>
+                              <button type="button" onClick={() => deleteMeal(meal.id)} aria-label={t(lang, "confirm.ok")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/20 bg-rose-400/10 text-rose-300">
+                                <Trash2 size={17} />
+                              </button>
                           </div>
                         </article>
                       );

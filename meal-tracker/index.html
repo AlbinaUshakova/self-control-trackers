@@ -109,15 +109,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      (function () {
-        const isFile = window.location.protocol === "file:";
-        const isBuiltPage = /\/dist\/index\.html$/i.test(window.location.pathname);
-        if (isFile && !isBuiltPage) {
-          window.location.replace("./dist/index.html");
-        }
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
   </html>
