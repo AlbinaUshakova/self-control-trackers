@@ -529,6 +529,7 @@ function App() {
                   max={12}
                   step={0.5}
                   unit={t(lang, "unit.hours")}
+                  showUnitInValue={false}
                 />
                 <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
                   <div className="text-[15px] font-semibold text-text">{t(lang, "goals.sleepLabel")}</div>
@@ -537,7 +538,7 @@ function App() {
                 </div>
               </div>
 
-              <button type="button" disabled={!goalDirty} onClick={saveGoalChanges} className="sticky bottom-[max(8px,var(--safe-bottom))] mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-[18px] bg-[linear-gradient(180deg,#2ed184_0%,#25c97a_100%)] px-5 text-sm font-semibold text-[#03210f] shadow-[0_8px_24px_rgba(45,209,132,0.18)] disabled:cursor-not-allowed disabled:bg-[linear-gradient(180deg,rgba(45,209,132,0.35),rgba(37,201,122,0.28))] disabled:text-[#b9d7c8] disabled:shadow-none disabled:opacity-100">
+              <button type="button" disabled={!goalDirty} onClick={saveGoalChanges} className="mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-[18px] bg-[linear-gradient(180deg,#2ed184_0%,#25c97a_100%)] px-5 text-sm font-semibold text-[#03210f] shadow-[0_8px_24px_rgba(45,209,132,0.18)] disabled:cursor-not-allowed disabled:bg-[linear-gradient(180deg,rgba(45,209,132,0.35),rgba(37,201,122,0.28))] disabled:text-[#b9d7c8] disabled:shadow-none disabled:opacity-100">
                 {t(lang, "goals.save")}
               </button>
               <p className="mt-3 text-xs text-muted">{goalDirty ? t(lang, "goals.statusDirty") : t(lang, "goals.statusIdle")}</p>
@@ -628,6 +629,7 @@ function GoalRange(props: {
   max: number;
   step: number;
   unit?: string;
+  showUnitInValue?: boolean;
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
@@ -635,14 +637,17 @@ function GoalRange(props: {
       <div className="mt-3 grid gap-3 min-[390px]:grid-cols-2">
         <div>
           <div className="mb-1.5 text-[11px] font-semibold text-muted">{t(props.lang, "range.from")}</div>
-          <StepperValue value={props.from} suffix={props.unit} onStep={(delta) => props.onStep(props.fromKey, delta, props.min, props.max)} />
+          <StepperValue value={props.from} suffix={props.showUnitInValue === false ? undefined : props.unit} onStep={(delta) => props.onStep(props.fromKey, delta, props.min, props.max)} />
         </div>
         <div>
           <div className="mb-1.5 text-[11px] font-semibold text-muted">{t(props.lang, "range.to")}</div>
-          <StepperValue value={props.to} suffix={props.unit} onStep={(delta) => props.onStep(props.toKey, delta, props.min, props.max)} />
+          <StepperValue value={props.to} suffix={props.showUnitInValue === false ? undefined : props.unit} onStep={(delta) => props.onStep(props.toKey, delta, props.min, props.max)} />
         </div>
       </div>
-      <div className="mt-3 text-xs leading-5 text-muted">{props.hint}</div>
+      <div className="mt-3 text-xs leading-5 text-muted">
+        {props.hint}
+        {props.showUnitInValue === false && props.unit ? ` ${props.unit}.` : ""}
+      </div>
     </div>
   );
 }
