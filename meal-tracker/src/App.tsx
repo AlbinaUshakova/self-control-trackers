@@ -390,16 +390,24 @@ function App() {
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className={`text-[15px] font-semibold ${meal.isSnack ? "text-amber-300" : "text-accent"}`}>{formatTimeHM(meal.ts, lang)}</span>
-                                {meal.isSnack ? <span className="inline-flex min-h-6 items-center rounded-full border border-amber-300/20 bg-amber-300/10 px-2.5 text-[11px] font-semibold text-amber-200">{t(lang, "meal.badgeSnack")}</span> : null}
+                                <button
+                                  type="button"
+                                  onClick={() => toggleSnack(meal.id)}
+                                  aria-label={t(lang, "meal.badgeSnack")}
+                                  className={`inline-flex min-h-6 items-center rounded-full border px-2.5 text-[11px] font-semibold transition ${
+                                    meal.isSnack
+                                      ? "border-amber-300/20 bg-amber-300/10 text-amber-200"
+                                      : "border-white/10 bg-slate-900/80 text-slate-300"
+                                  }`}
+                                >
+                                  {t(lang, "meal.badgeSnack")}
+                                </button>
                               </div>
                               <p className="mt-2 text-sm leading-6 text-slate-100">{meal.note || t(lang, "no.description")}</p>
                               <p className="mt-2 text-xs text-muted">{prev ? t(lang, "interval.sincePrev", { value: formatInterval(meal.ts - prev.ts, lang) }) : t(lang, "interval.first")}</p>
                             </div>
                           </div>
                           <div className="mt-3 flex justify-end gap-2">
-                            <button type="button" onClick={() => toggleSnack(meal.id)} aria-label={t(lang, "meal.badgeSnack")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
-                              <Cookie size={17} />
-                            </button>
                             <button type="button" onClick={() => editMealTime(meal.id)} aria-label="Edit time" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
                               <Clock3 size={17} />
                             </button>
