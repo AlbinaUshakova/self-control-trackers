@@ -23,6 +23,27 @@ function normalizeNumberish(value: null | number | string) {
   return Number.isNaN(n) ? null : n;
 }
 
+function parseTimeInput(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  const separated = /^(\d{1,2})\s*[:.,\- ]\s*(\d{2})$/.exec(trimmed);
+  if (separated) {
+    return { hh: Number(separated[1]), mm: Number(separated[2]) };
+  }
+
+  const digitsOnly = trimmed.replace(/\D/g, "");
+  if (/^\d{3,4}$/.test(digitsOnly)) {
+    const normalized = digitsOnly.length === 3 ? `0${digitsOnly}` : digitsOnly;
+    return {
+      hh: Number(normalized.slice(0, 2)),
+      mm: Number(normalized.slice(2, 4))
+    };
+  }
+
+  return null;
+}
+
 function computeSleepRange(values: { minMeals: null | number; maxMeals: null | number; minDayIntHours: null | number; maxDayIntHours: null | number; }) {
   const minSleepHours = values.maxMeals != null && values.maxDayIntHours != null
     ? roundToHalfHour(24 - Math.max(0, values.maxMeals - 1) * values.maxDayIntHours)
@@ -177,15 +198,14 @@ function App() {
     const currentMeal = meals.find((meal) => meal.id === id);
     if (!currentMeal) return;
     const current = formatTimeHM(currentMeal.ts, "en").replace(/\s/g, "");
-    const input = window.prompt(t(lang, "alert.invalidTime"), current);
+    const input = window.prompt(`${t(lang, "alert.invalidTime")}`, current);
     if (!input) return;
-    const match = /^([0-9]{2}):([0-9]{2})$/.exec(input.trim());
-    if (!match) {
+    const parsed = parseTimeInput(input);
+    if (!parsed) {
       window.alert(t(lang, "alert.invalidTime"));
       return;
     }
-    const hh = Number(match[1]);
-    const mm = Number(match[2]);
+    const { hh, mm } = parsed;
     if (hh > 23 || mm > 59) {
       window.alert(t(lang, "alert.invalidTimeRange"));
       return;
@@ -338,9 +358,8 @@ function App() {
                   placeholder={t(lang, "textarea.placeholder")}
                   className={`min-h-[96px] w-full rounded-2xl border px-3 py-3 text-base text-text outline-none transition ${noteValid ? "border-slate-700 bg-slate-950/70 focus:border-accent focus:ring-4 focus:ring-accent/10" : "border-danger/70 bg-slate-950/70 ring-4 ring-danger/10"}`}
                 />
-                <div className="mb-3 mt-2 flex items-start justify-between gap-3">
+                <div className="mb-3 mt-2">
                   <p className={`text-[12px] leading-5 ${noteValid ? "text-muted" : "text-rose-300"}`}>{t(lang, noteValid ? "textarea.status" : "textarea.error")}</p>
-                  <span className="shrink-0 text-[12px] text-muted">{mealNote.length}/{MEAL_NOTE_MAX_LENGTH}</span>
                 </div>
                 <button
                   type="button"
@@ -367,7 +386,7 @@ function App() {
                       const prev = index === 0 ? allSorted[allSorted.findIndex((item) => item.id === meal.id) - 1] : todayMeals[index - 1];
                       return (
                         <article key={meal.id} className="border-b border-slate-800 pb-3 last:border-b-0 last:pb-0">
-                          <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className={`text-[15px] font-semibold ${meal.isSnack ? "text-amber-300" : "text-accent"}`}>{formatTimeHM(meal.ts, lang)}</span>
@@ -376,9 +395,6 @@ function App() {
                               <p className="mt-2 text-sm leading-6 text-slate-100">{meal.note || t(lang, "no.description")}</p>
                               <p className="mt-2 text-xs text-muted">{prev ? t(lang, "interval.sincePrev", { value: formatInterval(meal.ts - prev.ts, lang) }) : t(lang, "interval.first")}</p>
                             </div>
-                            <button type="button" onClick={() => deleteMeal(meal.id)} aria-label={t(lang, "confirm.ok")} className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-rose-400/20 bg-rose-400/10 text-rose-300">
-                              <Trash2 size={18} />
-                            </button>
                           </div>
                           <div className="mt-3 flex justify-end gap-2">
                             <button type="button" onClick={() => toggleSnack(meal.id)} aria-label={t(lang, "meal.badgeSnack")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
@@ -389,6 +405,9 @@ function App() {
                             </button>
                             <button type="button" onClick={() => editMealNote(meal.id)} aria-label="Edit note" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
                               <Pencil size={17} />
+                            </button>
+                            <button type="button" onClick={() => deleteMeal(meal.id)} aria-label={t(lang, "confirm.ok")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/20 bg-rose-400/10 text-rose-300">
+                              <Trash2 size={17} />
                             </button>
                           </div>
                         </article>
@@ -547,8 +566,6 @@ function App() {
         </main>
 
         <footer className="mt-12 border-t border-white/10 pt-3 text-[10px] text-muted sm:mt-auto">
-          <div>{t(lang, "footer.line1")}</div>
-          <div className="mt-1">{t(lang, "footer.line2")}</div>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-300">
             <a className="inline-flex min-h-11 items-center underline-offset-4 hover:underline" href="./support.html">Support</a>
             <span className="text-slate-600">·</span>
