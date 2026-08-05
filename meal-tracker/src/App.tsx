@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import {
   ArrowDownToLine,
   Clock3,
@@ -631,6 +632,7 @@ function App() {
           {toast.text ? <div className="mt-1 text-xs text-muted">{toast.text}</div> : null}
         </div>
       ) : null}
+      <Analytics />
     </div>
   );
 }
