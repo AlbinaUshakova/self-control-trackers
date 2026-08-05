@@ -75,7 +75,7 @@ textarea {
 }
 
 .mt-2.grid.grid-cols-4.gap-2.text-xs.text-muted > div > div:first-child {
-  min-height: 2.5rem;
+  min-height: 3.75rem;
   font-size: 0.6875rem;
   line-height: 1.25rem;
 }
