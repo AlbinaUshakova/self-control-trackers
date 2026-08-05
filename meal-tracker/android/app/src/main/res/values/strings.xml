@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">EatLog</string>
+    <string name="title_activity_main">EatLog</string>
+    <string name="package_name">com.albinaushakova.eatlog</string>
+    <string name="custom_url_scheme">com.albinaushakova.eatlog</string>
+</resources>
