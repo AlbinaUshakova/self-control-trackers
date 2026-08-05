@@ -91,7 +91,7 @@ export const translations = {
     "chatgpt.toastTitle": "Copied",
     "chatgpt.toastText": "Opening ChatGPT",
     "no.description": "(no description)",
-    "alert.invalidTime": "Enter time like 08:30, 8.30, 08 30, or 0830.",
+    "alert.invalidTime": "Enter time, for example 08:30.",
     "alert.invalidTimeRange": "Hours must be 0–23, minutes 0–59."
   },
   ru: {
@@ -184,7 +184,7 @@ export const translations = {
     "chatgpt.toastTitle": "Скопировано",
     "chatgpt.toastText": "Открываем ChatGPT",
     "no.description": "(без описания)",
-    "alert.invalidTime": "Введите время вроде 08:30, 8.30, 08 30 или 0830.",
+    "alert.invalidTime": "Введите время, например 08:30.",
     "alert.invalidTimeRange": "Часы должны быть 0–23, минуты 0–59."
   }
 } as const;
