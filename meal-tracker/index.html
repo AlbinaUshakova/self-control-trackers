@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="google-site-verification" content="VyPtpfBm0zbH5ZO_24hQ3i5zH4VDxhDNzDKkArHd_7s" />
     <title>EatLog — meal tracker, food diary, and snack log</title>
     <meta
@@ -81,29 +81,24 @@
             twitterDescription: "Track meals, snacks, meal intervals, and eating rhythm in a simple offline-first web app."
           },
           ru: {
-            title: "EatLog — трекер приемов пищи, дневник питания и контроль перекусов",
-            description: "EatLog — простой трекер приемов пищи, дневник питания и счетчик перекусов. Помогает отслеживать интервалы между едой, режим питания и ночной интервал без еды. Работает офлайн, без регистрации.",
+            title: "EatLog — дневник питания и трекер приёмов пищи",
+            description: "EatLog — простой дневник питания и трекер приёмов пищи. Отмечайте еду и перекусы, интервалы между приёмами пищи и ночные перерывы. Работает офлайн и без регистрации.",
             ogLocale: "ru_RU",
-            ogTitle: "EatLog — трекер приемов пищи и дневник питания",
-            ogDescription: "Локальный meal tracker для учета приемов пищи, перекусов и интервалов между едой. Работает офлайн и без регистрации.",
-            twitterTitle: "EatLog — трекер приемов пищи и дневник питания",
-            twitterDescription: "Meal tracker и дневник питания: приемы пищи, перекусы, интервалы между едой и офлайн-режим."
+            ogTitle: "EatLog — дневник питания и трекер еды",
+            ogDescription: "Локальный дневник питания для приёмов пищи, перекусов и интервалов. Работает офлайн и без регистрации.",
+            twitterTitle: "EatLog — дневник питания и трекер еды",
+            twitterDescription: "Отмечайте приёмы пищи, перекусы и интервалы в простом офлайн-дневнике питания."
           }
-        }[lang];
+        };
+        const selected = copy[lang];
         document.documentElement.lang = lang;
-        document.title = copy.title;
-        var description = document.querySelector('meta[name="description"]');
-        var ogLocale = document.querySelector('meta[property="og:locale"]');
-        var ogTitle = document.querySelector('meta[property="og:title"]');
-        var ogDescription = document.querySelector('meta[property="og:description"]');
-        var twitterTitle = document.querySelector('meta[name="twitter:title"]');
-        var twitterDescription = document.querySelector('meta[name="twitter:description"]');
-        if (description) description.setAttribute("content", copy.description);
-        if (ogLocale) ogLocale.setAttribute("content", copy.ogLocale);
-        if (ogTitle) ogTitle.setAttribute("content", copy.ogTitle);
-        if (ogDescription) ogDescription.setAttribute("content", copy.ogDescription);
-        if (twitterTitle) twitterTitle.setAttribute("content", copy.twitterTitle);
-        if (twitterDescription) twitterDescription.setAttribute("content", copy.twitterDescription);
+        document.title = selected.title;
+        document.querySelector('meta[name="description"]').setAttribute("content", selected.description);
+        document.querySelector('meta[property="og:locale"]').setAttribute("content", selected.ogLocale);
+        document.querySelector('meta[property="og:title"]').setAttribute("content", selected.ogTitle);
+        document.querySelector('meta[property="og:description"]').setAttribute("content", selected.ogDescription);
+        document.querySelector('meta[name="twitter:title"]').setAttribute("content", selected.twitterTitle);
+        document.querySelector('meta[name="twitter:description"]').setAttribute("content", selected.twitterDescription);
       })();
     </script>
   </head>
@@ -111,4 +106,4 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
-  </html>
+</html>
