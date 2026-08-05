@@ -6,14 +6,25 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cap:sync": "npm run build && cap sync",
+    "cap:add:android": "npm run build && cap add android",
+    "cap:add:ios": "npm run build && cap add ios",
+    "cap:open:android": "cap open android",
+    "cap:open:ios": "cap open ios",
+    "native:android": "npm run cap:sync && cap open android",
+    "native:ios": "npm run cap:sync && cap open ios"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/ios": "^8.4.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
