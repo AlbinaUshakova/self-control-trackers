@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Capacitor } from "@capacitor/core";
 import App from "./App";
+import GoalAutomation from "./GoalAutomation";
 import "./index.css";
 
 const isNativePlatform = Capacitor.isNativePlatform();
@@ -17,5 +18,6 @@ if (!isNativePlatform && "serviceWorker" in navigator && (window.location.protoc
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
+    <GoalAutomation />
   </React.StrictMode>
 );
