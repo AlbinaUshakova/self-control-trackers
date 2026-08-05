@@ -77,8 +77,7 @@ function App() {
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [showUpdateNotice, setShowUpdateNotice] = useState(() => shouldShowUpdateNotice(CURRENT_UPDATE_NOTICE_VERSION));
   const [goalDraft, setGoalDraft] = useState({
-    minMeals: goals.minMealsPerDay == null ? "" : String(goals.minMealsPerDay),
-    maxMeals: goals.maxMealsPerDay == null ? "" : String(goals.maxMealsPerDay),
+    meals: goals.mealsPerDay == null ? "" : String(goals.mealsPerDay),
     maxSnacks: goals.maxSnacksPerDay == null ? "" : String(goals.maxSnacksPerDay)
   });
 
@@ -111,8 +110,7 @@ function App() {
 
   const noteValid = mealNote.length <= MEAL_NOTE_MAX_LENGTH;
   const currentGoalValues = {
-    minMeals: normalizeNumberish(goalDraft.minMeals),
-    maxMeals: normalizeNumberish(goalDraft.maxMeals),
+    meals: normalizeNumberish(goalDraft.meals),
     maxSnacks: normalizeNumberish(goalDraft.maxSnacks)
   };
 
@@ -120,11 +118,10 @@ function App() {
 
   const goalDirty = useMemo(() => {
     return (
-      currentGoalValues.minMeals !== goals.minMealsPerDay ||
-      currentGoalValues.maxMeals !== goals.maxMealsPerDay ||
+      currentGoalValues.meals !== goals.mealsPerDay ||
       currentGoalValues.maxSnacks !== goals.maxSnacksPerDay
     );
-  }, [currentGoalValues.maxMeals, currentGoalValues.maxSnacks, currentGoalValues.minMeals, goals]);
+  }, [currentGoalValues.maxSnacks, currentGoalValues.meals, goals]);
 
   const periodSummary = useMemo(() => {
     const daysCount = filteredStats.length;
@@ -156,8 +153,7 @@ function App() {
     setGoals(next);
     saveGoals(next);
     setGoalDraft({
-      minMeals: next.minMealsPerDay == null ? "" : String(next.minMealsPerDay),
-      maxMeals: next.maxMealsPerDay == null ? "" : String(next.maxMealsPerDay),
+      meals: next.mealsPerDay == null ? "" : String(next.mealsPerDay),
       maxSnacks: next.maxSnacksPerDay == null ? "" : String(next.maxSnacksPerDay)
     });
   }
@@ -270,12 +266,8 @@ function App() {
 
   function saveGoalChanges() {
     if (!goalDirty) return;
-    if (currentGoalValues.minMeals != null && currentGoalValues.maxMeals != null && currentGoalValues.minMeals > currentGoalValues.maxMeals) return;
-    if (currentGoalValues.maxSnacks != null && currentGoalValues.maxMeals != null && currentGoalValues.maxSnacks > currentGoalValues.maxMeals) return;
-
     const next: GoalsState = {
-      minMealsPerDay: currentGoalValues.minMeals,
-      maxMealsPerDay: currentGoalValues.maxMeals,
+      mealsPerDay: currentGoalValues.meals,
       maxSnacksPerDay: currentGoalValues.maxSnacks
     };
     persistGoals(next);
@@ -470,10 +462,9 @@ function App() {
                 ) : (
                   <div className="mt-3 space-y-2">
                     {filteredStats.map((day) => {
-                      const mealsOk = goals.minMealsPerDay == null || day.count >= goals.minMealsPerDay;
-                      const mealsWithin = goals.maxMealsPerDay == null || day.count <= goals.maxMealsPerDay;
+                      const mealsOk = goals.mealsPerDay == null || day.count === goals.mealsPerDay;
                       const snacksWithin = goals.maxSnacksPerDay == null || day.snacksCount <= goals.maxSnacksPerDay;
-                      const goalHit = mealsOk && mealsWithin && snacksWithin;
+                      const goalHit = mealsOk && snacksWithin;
                       return (
                         <button key={day.key} type="button" onClick={() => setDetailDay(day)} className={`w-full rounded-2xl border px-3 py-3 text-left ${goalHit ? "border-accent/20 bg-accent/10" : "border-white/10 bg-slate-950/40"}`}>
                           <div className="flex items-center justify-between gap-3">
@@ -518,18 +509,12 @@ function App() {
               <p className="mt-2 text-[13px] leading-6 text-muted">{t(lang, "goals.desc")}</p>
 
               <div className="mt-5 space-y-4">
-                <GoalRange
+                <GoalSingle
                   lang={lang}
                   title={t(lang, "goals.mealsLabel")}
                   hint={t(lang, "goals.mealsHint")}
-                  from={goalDraft.minMeals}
-                  to={goalDraft.maxMeals}
-                  onStep={stepGoal}
-                  fromKey="minMeals"
-                  toKey="maxMeals"
-                  min={0}
-                  max={12}
-                  step={1}
+                  value={goalDraft.meals}
+                  onStep={(delta) => stepGoal("meals", delta, 0, 12)}
                 />
                 <GoalSingle
                   lang={lang}
@@ -639,42 +624,6 @@ function App() {
           {toast.text ? <div className="mt-1 text-xs text-muted">{toast.text}</div> : null}
         </div>
       ) : null}
-    </div>
-  );
-}
-
-function GoalRange(props: {
-  lang: Lang;
-  title: string;
-  hint: string;
-  from: string;
-  to: string;
-  fromKey: "minMeals";
-  toKey: "maxMeals";
-  onStep: (target: "minMeals" | "maxMeals" | "maxSnacks", delta: number, min: number, max: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  unit?: string;
-  showUnitInValue?: boolean;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-      <div className="text-[15px] font-semibold text-text">{props.title}</div>
-      <div className="mt-3 grid gap-3 min-[390px]:grid-cols-2">
-        <div>
-          <div className="mb-1.5 text-[11px] font-semibold text-muted">{t(props.lang, "range.from")}</div>
-          <StepperValue value={props.from} suffix={props.showUnitInValue === false ? undefined : props.unit} onStep={(delta) => props.onStep(props.fromKey, delta, props.min, props.max)} />
-        </div>
-        <div>
-          <div className="mb-1.5 text-[11px] font-semibold text-muted">{t(props.lang, "range.to")}</div>
-          <StepperValue value={props.to} suffix={props.showUnitInValue === false ? undefined : props.unit} onStep={(delta) => props.onStep(props.toKey, delta, props.min, props.max)} />
-        </div>
-      </div>
-      <div className="mt-3 text-xs leading-5 text-muted">
-        {props.hint}
-        {props.showUnitInValue === false && props.unit ? ` ${props.unit}.` : ""}
-      </div>
     </div>
   );
 }
