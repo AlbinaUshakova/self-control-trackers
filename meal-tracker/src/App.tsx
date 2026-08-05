@@ -44,14 +44,24 @@ function parseTimeInput(value: string) {
   return null;
 }
 
-function computeSleepRange(values: { minMeals: null | number; maxMeals: null | number; minDayIntHours: null | number; maxDayIntHours: null | number; }) {
-  const minSleepHours = values.maxMeals != null && values.maxDayIntHours != null
-    ? roundToHalfHour(24 - Math.max(0, values.maxMeals - 1) * values.maxDayIntHours)
-    : null;
-  const maxSleepHours = values.minMeals != null && values.minDayIntHours != null
-    ? roundToHalfHour(24 - Math.max(0, values.minMeals - 1) * values.minDayIntHours)
-    : null;
-  return { minSleepHours, maxSleepHours };
+function median(values: number[]) {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor((sorted.length - 1) / 2);
+  if (sorted.length % 2 === 1) return sorted[mid];
+  return (sorted[mid] + sorted[mid + 1]) / 2;
+}
+
+function getRoutineData(stats: DailyStats[]) {
+  const eligibleDays = stats.filter((day) => day.avgInterval != null && day.sleepInterval != null);
+  const recentDays = eligibleDays.slice(0, 7);
+  const sleepIntervals = recentDays.map((day) => day.sleepInterval!);
+  const dayIntervals = recentDays.map((day) => day.avgInterval!);
+  return {
+    days: recentDays.length,
+    medianSleepInterval: median(sleepIntervals),
+    medianDayInterval: median(dayIntervals)
+  };
 }
 
 function App() {
@@ -69,9 +79,7 @@ function App() {
   const [goalDraft, setGoalDraft] = useState({
     minMeals: goals.minMealsPerDay == null ? "" : String(goals.minMealsPerDay),
     maxMeals: goals.maxMealsPerDay == null ? "" : String(goals.maxMealsPerDay),
-    maxSnacks: goals.maxSnacksPerDay == null ? "" : String(goals.maxSnacksPerDay),
-    minDayIntHours: goals.minDayIntervalMinutes == null ? "" : String(goals.minDayIntervalMinutes / 60),
-    maxDayIntHours: goals.maxDayIntervalMinutes == null ? "" : String(goals.maxDayIntervalMinutes / 60)
+    maxSnacks: goals.maxSnacksPerDay == null ? "" : String(goals.maxSnacksPerDay)
   });
 
   useEffect(() => {
@@ -105,21 +113,18 @@ function App() {
   const currentGoalValues = {
     minMeals: normalizeNumberish(goalDraft.minMeals),
     maxMeals: normalizeNumberish(goalDraft.maxMeals),
-    maxSnacks: normalizeNumberish(goalDraft.maxSnacks),
-    minDayIntHours: normalizeNumberish(goalDraft.minDayIntHours),
-    maxDayIntHours: normalizeNumberish(goalDraft.maxDayIntHours)
+    maxSnacks: normalizeNumberish(goalDraft.maxSnacks)
   };
-  const sleepRange = computeSleepRange(currentGoalValues);
+
+  const routineData = useMemo(() => getRoutineData(dailyStats), [dailyStats]);
 
   const goalDirty = useMemo(() => {
     return (
       currentGoalValues.minMeals !== goals.minMealsPerDay ||
       currentGoalValues.maxMeals !== goals.maxMealsPerDay ||
-      currentGoalValues.maxSnacks !== goals.maxSnacksPerDay ||
-      (currentGoalValues.minDayIntHours == null ? null : currentGoalValues.minDayIntHours * 60) !== goals.minDayIntervalMinutes ||
-      (currentGoalValues.maxDayIntHours == null ? null : currentGoalValues.maxDayIntHours * 60) !== goals.maxDayIntervalMinutes
+      currentGoalValues.maxSnacks !== goals.maxSnacksPerDay
     );
-  }, [currentGoalValues.maxDayIntHours, currentGoalValues.maxMeals, currentGoalValues.maxSnacks, currentGoalValues.minDayIntHours, currentGoalValues.minMeals, goals]);
+  }, [currentGoalValues.maxMeals, currentGoalValues.maxSnacks, currentGoalValues.minMeals, goals]);
 
   const periodSummary = useMemo(() => {
     const daysCount = filteredStats.length;
@@ -153,9 +158,7 @@ function App() {
     setGoalDraft({
       minMeals: next.minMealsPerDay == null ? "" : String(next.minMealsPerDay),
       maxMeals: next.maxMealsPerDay == null ? "" : String(next.maxMealsPerDay),
-      maxSnacks: next.maxSnacksPerDay == null ? "" : String(next.maxSnacksPerDay),
-      minDayIntHours: next.minDayIntervalMinutes == null ? "" : String(next.minDayIntervalMinutes / 60),
-      maxDayIntHours: next.maxDayIntervalMinutes == null ? "" : String(next.maxDayIntervalMinutes / 60)
+      maxSnacks: next.maxSnacksPerDay == null ? "" : String(next.maxSnacksPerDay)
     });
   }
 
@@ -268,17 +271,12 @@ function App() {
   function saveGoalChanges() {
     if (!goalDirty) return;
     if (currentGoalValues.minMeals != null && currentGoalValues.maxMeals != null && currentGoalValues.minMeals > currentGoalValues.maxMeals) return;
-    if (currentGoalValues.minDayIntHours != null && currentGoalValues.maxDayIntHours != null && currentGoalValues.minDayIntHours > currentGoalValues.maxDayIntHours) return;
     if (currentGoalValues.maxSnacks != null && currentGoalValues.maxMeals != null && currentGoalValues.maxSnacks > currentGoalValues.maxMeals) return;
 
     const next: GoalsState = {
       minMealsPerDay: currentGoalValues.minMeals,
       maxMealsPerDay: currentGoalValues.maxMeals,
-      maxSnacksPerDay: currentGoalValues.maxSnacks,
-      minSleepHours: sleepRange.minSleepHours,
-      maxSleepHours: sleepRange.maxSleepHours,
-      minDayIntervalMinutes: currentGoalValues.minDayIntHours == null ? null : currentGoalValues.minDayIntHours * 60,
-      maxDayIntervalMinutes: currentGoalValues.maxDayIntHours == null ? null : currentGoalValues.maxDayIntHours * 60
+      maxSnacksPerDay: currentGoalValues.maxSnacks
     };
     persistGoals(next);
     setToast({ title: t(lang, "goals.saved") });
@@ -402,15 +400,15 @@ function App() {
                             </div>
                           </div>
                           <div className="mt-3 flex justify-end gap-2">
-                              <button type="button" onClick={() => editMealTime(meal.id)} aria-label="Edit time" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
-                                <Clock3 size={17} />
-                              </button>
-                              <button type="button" onClick={() => editMealNote(meal.id)} aria-label="Edit note" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
-                                <Pencil size={17} />
-                              </button>
-                              <button type="button" onClick={() => deleteMeal(meal.id)} aria-label={t(lang, "confirm.ok")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/20 bg-rose-400/10 text-rose-300">
-                                <Trash2 size={17} />
-                              </button>
+                            <button type="button" onClick={() => editMealTime(meal.id)} aria-label="Edit time" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
+                              <Clock3 size={17} />
+                            </button>
+                            <button type="button" onClick={() => editMealNote(meal.id)} aria-label="Edit note" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-slate-200">
+                              <Pencil size={17} />
+                            </button>
+                            <button type="button" onClick={() => deleteMeal(meal.id)} aria-label={t(lang, "confirm.ok")} className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/20 bg-rose-400/10 text-rose-300">
+                              <Trash2 size={17} />
+                            </button>
                           </div>
                         </article>
                       );
@@ -438,7 +436,7 @@ function App() {
                 <h2 className="text-[20px] font-bold tracking-[-0.02em] text-text">{t(lang, "period.stats")}</h2>
                 <div className="mt-3 grid grid-cols-2 gap-2 min-[390px]:grid-cols-4">
                   {(["today", "7", "14", "21"] as PeriodKey[]).map((item) => (
-                    <button key={item} type="button" onClick={() => setPeriod(item)} className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${period === item ? "border-transparent bg-slate-100 text-slate-950" : "border-slate-700 bg-slate-950/50 text-slate-300"}`}>
+                    <button key={item} type="button" onClick={() => setPeriod(item)} className={`min-h-11 rounded-full border px-4 text-sm font-semibold whitespace-nowrap ${period === item ? "border-transparent bg-slate-100 text-slate-950" : "border-slate-700 bg-slate-950/50 text-slate-300"}`}>
                       {t(lang, `period.${item}` as never)}
                     </button>
                   ))}
@@ -472,7 +470,10 @@ function App() {
                 ) : (
                   <div className="mt-3 space-y-2">
                     {filteredStats.map((day) => {
-                      const goalHit = goals.minMealsPerDay != null && day.count >= goals.minMealsPerDay;
+                      const mealsOk = goals.minMealsPerDay == null || day.count >= goals.minMealsPerDay;
+                      const mealsWithin = goals.maxMealsPerDay == null || day.count <= goals.maxMealsPerDay;
+                      const snacksWithin = goals.maxSnacksPerDay == null || day.snacksCount <= goals.maxSnacksPerDay;
+                      const goalHit = mealsOk && mealsWithin && snacksWithin;
                       return (
                         <button key={day.key} type="button" onClick={() => setDetailDay(day)} className={`w-full rounded-2xl border px-3 py-3 text-left ${goalHit ? "border-accent/20 bg-accent/10" : "border-white/10 bg-slate-950/40"}`}>
                           <div className="flex items-center justify-between gap-3">
@@ -537,25 +538,32 @@ function App() {
                   value={goalDraft.maxSnacks}
                   onStep={(delta) => stepGoal("maxSnacks", delta, 0, 12)}
                 />
-                <GoalRange
-                  lang={lang}
-                  title={t(lang, "goals.dayIntervalLabel")}
-                  hint={t(lang, "goals.dayIntervalHint")}
-                  from={goalDraft.minDayIntHours}
-                  to={goalDraft.maxDayIntHours}
-                  onStep={stepGoal}
-                  fromKey="minDayIntHours"
-                  toKey="maxDayIntHours"
-                  min={0}
-                  max={12}
-                  step={0.5}
-                  unit={t(lang, "unit.hours")}
-                  showUnitInValue={false}
-                />
                 <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                  <div className="text-[15px] font-semibold text-text">{t(lang, "goals.sleepLabel")}</div>
-                  <div className="mt-2 text-xs leading-5 text-muted">{t(lang, "goals.sleepAutoHint")}</div>
-                  <ReadOnlyMetric lang={lang} from={sleepRange.minSleepHours} to={sleepRange.maxSleepHours} unit={t(lang, "unit.hours")} />
+                  <div className="text-[15px] font-semibold text-text">{t(lang, "goals.routineTitle")}</div>
+                  {routineData.days >= 3 ? (
+                    <>
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+                          <div className="text-[11px] uppercase tracking-[0.08em] text-muted">{t(lang, "table.sleep")}</div>
+                          <div className="mt-2 text-[22px] font-semibold text-text">{formatInterval(routineData.medianSleepInterval, lang)}</div>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+                          <div className="text-[11px] uppercase tracking-[0.08em] text-muted">{t(lang, "stat.dayInterval")}</div>
+                          <div className="mt-2 text-[22px] font-semibold text-text">{formatInterval(routineData.medianDayInterval, lang)}</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs leading-5 text-muted">{t(lang, "goals.routineInfo")}</div>
+                      <div className="mt-2 rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-3 text-xs text-muted">{t(lang, "goals.routineSubtitle", { count: routineData.days })}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+                        <div className="text-sm font-semibold text-text">{t(lang, "goals.collectingTitle")}</div>
+                        <div className="mt-2 text-xs leading-5 text-muted">{t(lang, "goals.collectingHint")}</div>
+                        <div className="mt-3 rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-3 text-sm text-slate-100">{t(lang, "goals.collectingProgress", { count: routineData.days })}</div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -641,9 +649,9 @@ function GoalRange(props: {
   hint: string;
   from: string;
   to: string;
-  fromKey: "minMeals" | "minDayIntHours";
-  toKey: "maxMeals" | "maxDayIntHours";
-  onStep: (target: "minMeals" | "maxMeals" | "maxSnacks" | "minDayIntHours" | "maxDayIntHours", delta: number, min: number, max: number) => void;
+  fromKey: "minMeals";
+  toKey: "maxMeals";
+  onStep: (target: "minMeals" | "maxMeals" | "maxSnacks", delta: number, min: number, max: number) => void;
   min: number;
   max: number;
   step: number;
@@ -697,28 +705,6 @@ function StepperValue(props: { value: string; suffix?: string; onStep: (delta: n
         {props.value || "—"}{props.value && props.suffix ? ` ${props.suffix}` : ""}
       </div>
       <button type="button" onClick={() => props.onStep(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-lg font-semibold text-slate-200">+</button>
-    </div>
-  );
-}
-
-function ReadOnlyMetric(props: { lang: Lang; from: null | number; to: null | number; unit: string; }) {
-  const value = props.from != null && props.to != null
-    ? `${props.from}–${props.to} ${props.unit}`
-    : props.from != null
-      ? `${props.from} ${props.unit}`
-      : props.to != null
-        ? `${props.to} ${props.unit}`
-        : "—";
-
-  return (
-    <div className="mt-3 rounded-2xl border border-accent/15 bg-accent/10 px-4 py-4">
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
-        <MoonStar size={14} className="text-accent" />
-        {t(props.lang, "goals.sleepAutoBadge")}
-      </div>
-      <div className="mt-2 text-[22px] font-semibold tracking-[-0.02em] text-text">
-        {value}
-      </div>
     </div>
   );
 }
