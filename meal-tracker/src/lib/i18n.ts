@@ -20,7 +20,7 @@ export const translations = {
     "stat.sleep": "Night fasting interval",
     "stat.dayInterval": "Meal interval",
     "stats.retention": "History is kept for 21 days",
-    "stats.notEnoughData": "Not enough data",
+    "stats.notEnoughData": "No data",
     "stats.noPeriodData": "No data for this period",
     "period.stats": "Period",
     "period.today": "Today",
@@ -112,7 +112,7 @@ export const translations = {
     "stat.sleep": "Ночной интервал без еды",
     "stat.dayInterval": "Интервал между приёмами",
     "stats.retention": "История хранится 21 день",
-    "stats.notEnoughData": "Недостаточно данных",
+    "stats.notEnoughData": "Нет данных",
     "stats.noPeriodData": "Нет данных за этот период",
     "period.stats": "Период",
     "period.today": "Сегодня",
@@ -188,8 +188,8 @@ export const translations = {
 } as const;
 
 export function t(lang: Lang, key: keyof typeof translations.en | keyof typeof translations.ru, params?: Record<string, string | number>) {
-  const dict = translations[lang] as Record<string, string>;
-  let text = dict[key as string] ?? String(key);
+  const dict = translations[lang] as Record<string, string> | undefined;
+  let text = dict?.[key as string] ?? translations.en[key as string] ?? String(key);
   if (params) {
     for (const [paramKey, value] of Object.entries(params)) {
       text = text.replace(`{${paramKey}}`, String(value));

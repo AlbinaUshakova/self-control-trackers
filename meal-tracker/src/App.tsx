@@ -428,7 +428,7 @@ function App() {
                 <h2 className="text-[20px] font-bold tracking-[-0.02em] text-text">{t(lang, "period.stats")}</h2>
                 <div className="mt-3 grid grid-cols-2 gap-2 min-[390px]:grid-cols-4">
                   {(["today", "7", "14", "21"] as PeriodKey[]).map((item) => (
-                    <button key={item} type="button" onClick={() => setPeriod(item)} className={`min-h-11 rounded-full border px-4 text-sm font-semibold whitespace-nowrap ${period === item ? "border-transparent bg-slate-100 text-slate-950" : "border-slate-700 bg-slate-950/50 text-slate-300"}`}>
+                    <button key={item} type="button" onClick={() => setPeriod(item)} className={`inline-flex min-h-11 h-11 w-full items-center justify-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap ${period === item ? "border-transparent bg-slate-100 text-slate-950" : "border-slate-700 bg-slate-950/50 text-slate-300"}`}>
                       {t(lang, `period.${item}` as never)}
                     </button>
                   ))}
@@ -443,7 +443,7 @@ function App() {
                     const placeholder = item.value === t(lang, "stats.notEnoughData");
                     return (
                       <div key={item.label} className="min-h-[88px] rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-                        <div className="text-[10px] uppercase tracking-[0.08em] text-muted">{item.label}</div>
+                        <div className="min-h-[40px] text-[10px] uppercase tracking-[0.08em] text-muted">{item.label}</div>
                         <div className={`mt-2 font-semibold leading-tight ${placeholder ? "max-w-[11ch] text-[13px] text-slate-300" : "text-[22px] text-text"}`}>{item.value}</div>
                       </div>
                     );
@@ -460,26 +460,39 @@ function App() {
                     <div className="mt-1 text-xs text-muted">{t(lang, "list.emptyHint")}</div>
                   </div>
                 ) : (
-                  <div className="mt-3 space-y-2">
-                    {filteredStats.map((day) => {
-                      const mealsOk = goals.mealsPerDay == null || day.count === goals.mealsPerDay;
-                      const snacksWithin = goals.maxSnacksPerDay == null || day.snacksCount <= goals.maxSnacksPerDay;
-                      const goalHit = mealsOk && snacksWithin;
-                      return (
-                        <button key={day.key} type="button" onClick={() => setDetailDay(day)} className={`w-full rounded-2xl border px-3 py-3 text-left ${goalHit ? "border-accent/20 bg-accent/10" : "border-white/10 bg-slate-950/40"}`}>
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="text-sm font-semibold text-text">{formatDateDMY(day.ts, lang)}</div>
-                            <div className={`text-xs font-semibold ${goalHit ? "text-accent" : "text-muted"}`}>{goalHit ? "✓" : ""}</div>
-                          </div>
-                          <div className="mt-2 grid grid-cols-4 gap-2 text-xs text-muted">
-                            <div><div>{t(lang, "table.meals")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{day.count}</div></div>
-                            <div><div>{t(lang, "table.snacks")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{day.snacksCount}</div></div>
-                            <div><div>{t(lang, "table.sleep")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{day.sleepInterval ? formatInterval(day.sleepInterval, lang) : "–"}</div></div>
-                            <div><div>{t(lang, "table.dayInterval")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{formatMealIntervalStat(day.avgInterval, lang)}</div></div>
-                          </div>
-                        </button>
-                      );
-                    })}
+                  <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
+                    <div className="max-h-[320px] overflow-y-auto">
+                      <div className="sticky top-0 z-10 bg-slate-950/40">
+                        <div className="grid grid-cols-[auto_repeat(4,minmax(72px,1fr))] gap-2 border-b border-white/10 px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted">
+                          <div className="pl-2">{t(lang, "table.date")}</div>
+                          <div className="text-center">{t(lang, "table.meals")}</div>
+                          <div className="text-center">{t(lang, "table.snacks")}</div>
+                          <div className="text-center">{t(lang, "table.sleep")}</div>
+                          <div className="text-center">{t(lang, "table.dayInterval")}</div>
+                        </div>
+                      </div>
+                      {filteredStats.map((day, index) => {
+                        const mealsOk = goals.mealsPerDay == null || day.count === goals.mealsPerDay;
+                        const snacksWithin = goals.maxSnacksPerDay == null || day.snacksCount <= goals.maxSnacksPerDay;
+                        const goalHit = mealsOk && snacksWithin;
+                        return (
+                          <button
+                            key={day.key}
+                            type="button"
+                            onClick={() => setDetailDay(day)}
+                            className={`w-full border-b px-3 py-3 text-left transition-colors ${goalHit ? "bg-accent/10 border-accent/20" : "bg-transparent border-white/10 hover:bg-white/5"} ${index === filteredStats.length - 1 ? "border-b-0" : ""}`}
+                          >
+                            <div className="grid grid-cols-[auto_repeat(4,minmax(72px,1fr))] items-center gap-2 text-sm text-slate-100">
+                              <div className="pl-2 text-text">{formatDateDMY(day.ts, lang)}</div>
+                              <div className="text-center font-semibold">{day.count}</div>
+                              <div className="text-center font-semibold">{day.snacksCount}</div>
+                              <div className="text-center font-semibold">{day.sleepInterval ? formatInterval(day.sleepInterval, lang) : "–"}</div>
+                              <div className="text-center font-semibold">{formatMealIntervalStat(day.avgInterval, lang)}</div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
                 <div className="mt-4 border-t border-slate-800 pt-4">
@@ -651,7 +664,7 @@ function StepperValue(props: { value: string; suffix?: string; onStep: (delta: n
     <div className="grid grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2">
       <button type="button" onClick={() => props.onStep(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-lg font-semibold text-slate-200">−</button>
       <div className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-slate-950/70 px-3 text-center text-sm font-semibold text-text">
-        {props.value || "—"}{props.value && props.suffix ? ` ${props.suffix}` : ""}
+        {props.value === "" ? "—" : props.value}{props.value && props.suffix ? ` ${props.suffix}` : ""}
       </div>
       <button type="button" onClick={() => props.onStep(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-900/80 text-lg font-semibold text-slate-200">+</button>
     </div>
