@@ -1,9 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Capacitor } from "@capacitor/core";
 import App from "./App";
 import "./index.css";
 
-if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost")) {
+const isNativePlatform = Capacitor.isNativePlatform();
+
+document.documentElement.dataset.platform = isNativePlatform ? Capacitor.getPlatform() : "web";
+
+if (!isNativePlatform && "serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost")) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/service-worker.js").catch(() => undefined);
   });

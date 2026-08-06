@@ -10,11 +10,6 @@ export const RETENTION_DAYS = 21;
 export const MEAL_NOTE_MAX_LENGTH = 220;
 
 export const DEFAULT_GOALS: GoalsState = {
-  minMealsPerDay: 2,
-  maxMealsPerDay: 3,
-  maxSnacksPerDay: 1,
-  minSleepHours: 14,
-  maxSleepHours: 16,
-  minDayIntervalMinutes: 240,
-  maxDayIntervalMinutes: 300
+  mealsPerDay: 3,
+  maxSnacksPerDay: 1
 };
