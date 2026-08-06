@@ -187,9 +187,11 @@ export const translations = {
   }
 } as const;
 
-export function t(lang: Lang, key: keyof typeof translations.en | keyof typeof translations.ru, params?: Record<string, string | number>) {
-  const dict = translations[lang] as Record<string, string> | undefined;
-  let text = dict?.[key as string] ?? translations.en[key as string] ?? String(key);
+type TranslationKey = keyof typeof translations.en;
+
+export function t(lang: Lang, key: TranslationKey, params?: Record<string, string | number>) {
+  const dict = translations[lang];
+  let text = String(dict[key] ?? translations.en[key] ?? String(key));
   if (params) {
     for (const [paramKey, value] of Object.entries(params)) {
       text = text.replace(`{${paramKey}}`, String(value));
