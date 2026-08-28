@@ -301,8 +301,8 @@ function App() {
     }
 
     const instruction = lang === "ru"
-      ? "Рассчитай примерные КБЖУ за день по списку ниже. Ответь кратко: калории, белки, жиры, углеводы. Если недостающие данные заметно влияют на точность, добавь до 3 коротких советов, что уточнять при вводе (вес/порция, сырой или готовый вес, жирность, масло/соусы, состав блюда). Не повторяй список, не расписывай КБЖУ каждого продукта и не давай общих советов по питанию."
-      : "Estimate daily calories and macros from the log below. Reply briefly: calories, protein, fat, carbs. If missing information materially affects accuracy, add up to 3 short tips on what to specify when logging (weight/portion, raw vs cooked, fat %, oil/sauces, dish ingredients). Don't repeat the log, list macros for each food, or give general nutrition advice.";
+      ? "Рассчитай примерные КБЖУ за день. Ответь кратко: Калории, Белки, Жиры, Углеводы. Если данных не хватает и это заметно влияет на точность, добавь «Что уточнить» — до 3 понятных пунктов. Пиши, что именно указать: вес/порцию, сырой/готовый вес, жирность, масло/соус, состав; для мяса — часть (грудка/бедро). Не повторяй список, не делай разбивку по продуктам и не давай общих советов."
+      : "Estimate daily calories and macros. Reply briefly: Calories, Protein, Fat, Carbs. If missing information materially affects accuracy, add 'What to clarify' with up to 3 clear points. Say exactly what to specify: weight/portion, raw/cooked weight, fat %, oil/sauce, ingredients; for meat, the cut (for example breast/thigh). Don't repeat the log, break macros down by food, or give general nutrition advice.";
 
     const prompt = `${instruction}\n\nFOOD LOG:\n${foodLog}`;
     navigator.clipboard?.writeText(prompt).then(() => {
@@ -506,7 +506,7 @@ function App() {
                 )}
                 <div className="mt-4 border-t border-slate-800 pt-4">
                   <div className="mb-2 text-[11px] uppercase tracking-[0.12em] text-muted">{t(lang, "data.storage")}</div>
-                  <button type="button" onClick={exportMeals} className="grid min-h-14 w-full grid-cols-[24px_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-sky-400/15 bg-slate-950/60 px-4 text-left text-slate-100">
+                  <button type="button" onClick={exportMeals} className="grid min-h-14 w-full grid-cols-[24px_minmax(0,1fr)_] items-center gap-3 rounded-2xl border border-sky-400/15 bg-slate-950/60 px-4 text-left text-slate-100">
                     <ArrowDownToLine size={18} className="text-sky-300" />
                     <div>
                       <div className="text-sm font-semibold">{t(lang, "export.btn")}</div>
