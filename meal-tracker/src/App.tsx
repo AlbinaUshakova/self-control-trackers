@@ -54,15 +54,6 @@ function computeSleepRange(values: { minMeals: null | number; maxMeals: null | n
   return { minSleepHours, maxSleepHours };
 }
 
-function buildNutritionPrompt(lang: Lang, foodLog: string) {
-  const instruction = lang === "ru"
-    ? "Оцени примерные калории и КБЖУ за день по дневнику питания. Ответь на языке дневника. Формат ответа:\nКалории: ~X ккал\nБелки: ~X г\nЖиры: ~X г\nУглеводы: ~X г\n\nЕсли отсутствие данных существенно влияет на расчёт, добавь раздел:\nЧто уточнять при внесении:\n1. ...\n2. ...\n3. ...\nИспользуй не более 3 пунктов. Указывай только то, что действительно влияет на точность: вес или порцию, сырой или готовый продукт, жирность, масло, соусы, состав блюда; для мяса - часть. Не повторяй дневник, не задавай вопросов, не считай КБЖУ по каждому продукту отдельно и не давай общих советов."
-    : "Estimate approximate daily calories and macros from the food log. Reply in the same language as the log. Use this format:\nCalories: ~X kcal\nProtein: ~X g\nFat: ~X g\nCarbs: ~X g\n\nOnly if missing information materially affects the estimate, add:\nWhat to clarify when logging:\n1. ...\n2. ...\n3. ...\nUse no more than 3 points. Mention only what materially affects accuracy: weight or portion, raw or cooked product, fat %, oil, sauces, dish ingredients; for meat, the cut. Don't repeat the log, ask follow-up questions, break macros down by item, or give general nutrition advice.";
-
-  const logLabel = lang === "ru" ? "Дневник питания" : "Food log";
-  return `${instruction}\n\n${logLabel}:\n${foodLog}`;
-}
-
 function App() {
   const [lang, setLang] = useState<Lang>(() => loadLang());
   const [meals, setMeals] = useState<MealEntry[]>(() => pruneOldMeals(loadMeals()));
@@ -309,7 +300,11 @@ function App() {
       return;
     }
 
-    const prompt = buildNutritionPrompt(lang, foodLog);
+    const instruction = lang === "ru"
+      ? "Рассчитай примерные КБЖУ за день. Ответь кратко: Калории, Белки, Жиры, Углеводы. Если данных не хватает и это заметно влияет на точность, добавь «Что уточнить» — до 3 понятных пунктов. Пиши, что именно указать: вес/порцию, сырой/готовый вес, жирность, масло/соус, состав; для мяса — часть (грудка/бедро). Не повторяй список, не делай разбивку по продуктам и не давай общих советов."
+      : "Estimate daily calories and macros. Reply briefly: Calories, Protein, Fat, Carbs. If missing information materially affects accuracy, add 'What to clarify' with up to 3 clear points. Say exactly what to specify: weight/portion, raw/cooked weight, fat %, oil/sauce, ingredients; for meat, the cut (for example breast/thigh). Don't repeat the log, break macros down by food, or give general nutrition advice.";
+
+    const prompt = `${instruction}\n\nFOOD LOG:\n${foodLog}`;
     navigator.clipboard?.writeText(prompt).then(() => {
       setToast({ title: t(lang, "chatgpt.toastTitle"), text: t(lang, "chatgpt.toastText") });
       window.open("https://chatgpt.com/", "_blank", "noopener");
