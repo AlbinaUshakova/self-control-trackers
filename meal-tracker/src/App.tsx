@@ -72,7 +72,7 @@ function buildNutritionPrompt(lang: Lang, foodLog: string) {
   return `${instruction}\n\n${foodLog}`;
 }
 
-const statsBreakdownGridClass = "grid-cols-[minmax(88px,1.3fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1fr)]";
+const statsBreakdownGridClass = "grid-cols-[minmax(64px,0.92fr)_minmax(0,0.86fr)_minmax(0,0.96fr)_minmax(0,1.18fr)_minmax(0,1.08fr)]";
 
 function App() {
   const [lang, setLang] = useState<Lang>(() => loadLang());
