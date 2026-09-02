@@ -489,20 +489,35 @@ function App() {
                     <div className="mt-1 text-xs text-muted">{t(lang, "list.emptyHint")}</div>
                   </div>
                 ) : (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
                     {filteredStats.map((day) => {
                       const goalHit = goals.minMealsPerDay != null && day.count >= goals.minMealsPerDay;
+                      const rowCells = [
+                        { label: t(lang, "table.meals"), value: day.count },
+                        { label: t(lang, "table.snacks"), value: day.snacksCount },
+                        { label: t(lang, "table.sleep"), value: day.sleepInterval ? formatInterval(day.sleepInterval, lang) : "–" },
+                        { label: t(lang, "table.dayInterval"), value: formatMealIntervalStat(day.avgInterval, lang) }
+                      ];
                       return (
-                        <button key={day.key} type="button" onClick={() => setDetailDay(day)} className={`w-full rounded-2xl border px-3 py-3 text-left ${goalHit ? "border-accent/20 bg-accent/10" : "border-white/10 bg-slate-950/40"}`}>
+                        <button
+                          key={day.key}
+                          type="button"
+                          onClick={() => setDetailDay(day)}
+                          className={`w-full border-b border-white/10 px-3 py-3 text-left last:border-b-0 ${goalHit ? "bg-accent/10" : "bg-transparent"}`}
+                        >
                           <div className="flex items-center justify-between gap-3">
                             <div className="text-sm font-semibold text-text">{formatDateDMY(day.ts, lang)}</div>
                             <div className={`text-xs font-semibold ${goalHit ? "text-accent" : "text-muted"}`}>{goalHit ? "✓" : ""}</div>
                           </div>
-                          <div className="mt-2 grid grid-cols-4 gap-2 text-xs text-muted">
-                            <div><div>{t(lang, "table.meals")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{day.count}</div></div>
-                            <div><div>{t(lang, "table.snacks")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{day.snacksCount}</div></div>
-                            <div><div>{t(lang, "table.sleep")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{day.sleepInterval ? formatInterval(day.sleepInterval, lang) : "–"}</div></div>
-                            <div><div>{t(lang, "table.dayInterval")}</div><div className="mt-1 text-sm font-semibold text-slate-100">{formatMealIntervalStat(day.avgInterval, lang)}</div></div>
+                          <div className="mt-2 overflow-hidden rounded-xl border border-white/10 bg-white/[0.03]">
+                            <div className="grid grid-cols-4">
+                              {rowCells.map((cell) => (
+                                <div key={cell.label} className="min-w-0 border-l border-white/10 px-2.5 py-2 first:border-l-0">
+                                  <div className="text-[11px] leading-4 text-muted">{cell.label}</div>
+                                  <div className="mt-1 text-sm font-semibold leading-5 text-slate-100">{cell.value}</div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </button>
                       );
