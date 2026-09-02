@@ -10,13 +10,8 @@ export type MealEntry = {
 };
 
 export type GoalsState = {
-  minMealsPerDay: null | number;
-  maxMealsPerDay: null | number;
+  mealsPerDay: null | number;
   maxSnacksPerDay: null | number;
-  minSleepHours: null | number;
-  maxSleepHours: null | number;
-  minDayIntervalMinutes: null | number;
-  maxDayIntervalMinutes: null | number;
 };
 
 export type DailyStats = {

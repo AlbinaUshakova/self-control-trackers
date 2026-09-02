@@ -19,15 +19,20 @@ export function saveMeals(meals: MealEntry[]) {
 }
 
 export function loadGoals() {
-  const raw = safeParse<Partial<GoalsState>>(localStorage.getItem(STORAGE_KEY_GOALS), DEFAULT_GOALS);
+  const raw = safeParse<Record<string, unknown>>(localStorage.getItem(STORAGE_KEY_GOALS), {});
+  const mealsPerDay = typeof raw.mealsPerDay === "number"
+    ? raw.mealsPerDay
+    : (typeof raw.minMealsPerDay === "number" && raw.minMealsPerDay === raw.maxMealsPerDay)
+      ? raw.minMealsPerDay
+      : typeof raw.maxMealsPerDay === "number"
+        ? raw.maxMealsPerDay
+        : typeof raw.minMealsPerDay === "number"
+          ? raw.minMealsPerDay
+          : DEFAULT_GOALS.mealsPerDay;
+
   return {
-    minMealsPerDay: raw.minMealsPerDay ?? DEFAULT_GOALS.minMealsPerDay,
-    maxMealsPerDay: raw.maxMealsPerDay ?? DEFAULT_GOALS.maxMealsPerDay,
-    maxSnacksPerDay: raw.maxSnacksPerDay ?? DEFAULT_GOALS.maxSnacksPerDay,
-    minSleepHours: raw.minSleepHours ?? DEFAULT_GOALS.minSleepHours,
-    maxSleepHours: raw.maxSleepHours ?? DEFAULT_GOALS.maxSleepHours,
-    minDayIntervalMinutes: raw.minDayIntervalMinutes ?? DEFAULT_GOALS.minDayIntervalMinutes,
-    maxDayIntervalMinutes: raw.maxDayIntervalMinutes ?? DEFAULT_GOALS.maxDayIntervalMinutes
+    mealsPerDay,
+    maxSnacksPerDay: typeof raw.maxSnacksPerDay === "number" ? raw.maxSnacksPerDay : DEFAULT_GOALS.maxSnacksPerDay
   };
 }
 
