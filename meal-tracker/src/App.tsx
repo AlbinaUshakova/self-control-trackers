@@ -64,6 +64,14 @@ function getRoutineData(stats: DailyStats[]) {
   };
 }
 
+function buildNutritionPrompt(lang: Lang, foodLog: string) {
+  const instruction = lang === "ru"
+    ? "Рассчитай примерные калории и КБЖУ за день по этому списку продуктов. Ответь кратко в формате: Калории, Белки, Жиры, Углеводы. Если для точности критично не хватает данных, добавь до 3 коротких пунктов, что стоит указывать точнее при внесении. Не повторяй список продуктов, не разбивай расчёт по каждому продукту и не давай общих советов."
+    : "Estimate approximate daily calories and macros from this food list. Reply briefly in this format: Calories, Protein, Fat, Carbs. If key details are missing for accuracy, add up to 3 short points about what should be logged more precisely. Don't repeat the food list, don't break the estimate down by item, and don't give general nutrition advice.";
+
+  return `${instruction}\n\n${foodLog}`;
+}
+
 function App() {
   const [lang, setLang] = useState<Lang>(() => loadLang());
   const [meals, setMeals] = useState<MealEntry[]>(() => pruneOldMeals(loadMeals()));
@@ -279,8 +287,15 @@ function App() {
       window.alert(t(lang, "chatgpt.noData"));
       return;
     }
-    const lines = todayMeals.map((meal, index) => `${index + 1}. ${formatTimeHM(meal.ts, lang)} | ${meal.isSnack ? t(lang, "meal.badgeSnack") : "Meal"} | ${meal.note || t(lang, "no.description")}`);
-    const prompt = lines.join("\n");
+    const foodLog = todayMeals
+      .map((meal) => meal.note.trim())
+      .filter(Boolean)
+      .join("\n");
+    if (!foodLog) {
+      window.alert(t(lang, "chatgpt.noData"));
+      return;
+    }
+    const prompt = buildNutritionPrompt(lang, foodLog);
     navigator.clipboard?.writeText(prompt).then(() => {
       setToast({ title: t(lang, "chatgpt.toastTitle"), text: t(lang, "chatgpt.toastText") });
       window.open("https://chatgpt.com/", "_blank", "noopener");
