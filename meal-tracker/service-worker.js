@@ -1,7 +1,7 @@
 // EatLog — simple offline-first Service Worker
 // Note: Service Workers require HTTPS (or http://localhost)
 
-const CACHE_VERSION = 'eatlog-v11';
+const CACHE_VERSION = 'eatlog-v12';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -30,6 +30,12 @@ self.addEventListener('activate', (event) => {
     )
   );
   self.clients.claim();
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Cache-first for static assets, network-first for navigations
