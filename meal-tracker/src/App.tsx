@@ -289,22 +289,8 @@ function App() {
       window.alert(t(lang, "chatgpt.noData"));
       return;
     }
-
-    const foodLog = todayMeals
-      .map((meal) => meal.note.trim())
-      .filter(Boolean)
-      .join("\n");
-
-    if (!foodLog) {
-      window.alert(t(lang, "chatgpt.noData"));
-      return;
-    }
-
-    const instruction = lang === "ru"
-      ? "Рассчитай примерные КБЖУ за день по списку ниже. Ответь кратко: калории, белки, жиры, углеводы. Если недостающие данные заметно влияют на точность, добавь до 3 коротких советов, что уточнять при вводе (вес/порция, сырой или готовый вес, жирность, масло/соусы, состав блюда). Не повторяй список, не расписывай КБЖУ каждого продукта и не давай общих советов по питанию."
-      : "Estimate daily calories and macros from the log below. Reply briefly: calories, protein, fat, carbs. If missing information materially affects accuracy, add up to 3 short tips on what to specify when logging (weight/portion, raw vs cooked, fat %, oil/sauces, dish ingredients). Don't repeat the log, list macros for each food, or give general nutrition advice.";
-
-    const prompt = `${instruction}\n\nFOOD LOG:\n${foodLog}`;
+    const lines = todayMeals.map((meal, index) => `${index + 1}. ${formatTimeHM(meal.ts, lang)} | ${meal.isSnack ? t(lang, "meal.badgeSnack") : "Meal"} | ${meal.note || t(lang, "no.description")}`);
+    const prompt = lines.join("\n");
     navigator.clipboard?.writeText(prompt).then(() => {
       setToast({ title: t(lang, "chatgpt.toastTitle"), text: t(lang, "chatgpt.toastText") });
       window.open("https://chatgpt.com/", "_blank", "noopener");
@@ -595,7 +581,7 @@ function App() {
       {detailDay ? (
         <Overlay onClose={() => setDetailDay(null)} title={formatDateDMY(detailDay.ts, lang)}>
           {allSorted.filter((meal) => getDayKey(meal.ts) === detailDay.key).map((meal, index, list) => (
-            <article key={meal.id} className="border-b border-slate-800 py-3 last:border-b-0 last:pb-0">
+            <article key={meal.id} className="border-b border-slate-800 py-3 last:border-b-0">
               <div className="flex items-center gap-2">
                 <span className={`text-sm font-semibold ${meal.isSnack ? "text-amber-300" : "text-accent"}`}>{formatTimeHM(meal.ts, lang)}</span>
                 {meal.isSnack ? <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[11px] font-semibold text-amber-200">{t(lang, "meal.badgeSnack")}</span> : null}
