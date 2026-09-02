@@ -48,7 +48,7 @@ export function formatInterval(ms: null | number, lang: Lang) {
 }
 
 export function formatMealIntervalStat(ms: null | number, lang: Lang) {
-  if (ms == null || !Number.isFinite(ms) || ms < 60000) return "–";
+  if (ms == null || !Number.isFinite(ms)) return "–";
   return formatInterval(ms, lang);
 }
 
