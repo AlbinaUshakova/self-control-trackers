@@ -491,11 +491,11 @@ function App() {
                             <span className="hidden sm:inline">{t(lang, "table.snacks")}</span>
                           </div>
                           <div className="min-w-0 text-center leading-tight">
-                            <span className="sm:hidden whitespace-nowrap">{t(lang, "table.sleepShort")}</span>
+                            <span className="sm:hidden whitespace-pre-line">{t(lang, "table.sleepShort")}</span>
                             <span className="hidden sm:inline">{t(lang, "table.sleep")}</span>
                           </div>
                           <div className="min-w-0 text-center leading-tight">
-                            <span className="sm:hidden whitespace-nowrap">{t(lang, "table.dayIntervalShort")}</span>
+                            <span className="sm:hidden whitespace-pre-line">{t(lang, "table.dayIntervalShort")}</span>
                             <span className="hidden sm:inline">{t(lang, "table.dayInterval")}</span>
                           </div>
                         </div>
