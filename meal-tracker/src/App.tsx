@@ -72,6 +72,8 @@ function buildNutritionPrompt(lang: Lang, foodLog: string) {
   return `${instruction}\n\n${foodLog}`;
 }
 
+const statsBreakdownGridClass = "grid-cols-[minmax(88px,1.3fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1fr)]";
+
 function App() {
   const [lang, setLang] = useState<Lang>(() => loadLang());
   const [meals, setMeals] = useState<MealEntry[]>(() => pruneOldMeals(loadMeals()));
@@ -478,12 +480,12 @@ function App() {
                   <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
                     <div className="max-h-[320px] overflow-y-auto">
                       <div className="sticky top-0 z-10 bg-slate-950/40">
-                        <div className="grid grid-cols-[auto_repeat(4,minmax(72px,1fr))] gap-2 border-b border-white/10 px-3 py-3 text-xs uppercase tracking-[0.12em] text-muted">
+                        <div className={`grid ${statsBreakdownGridClass} gap-2 border-b border-white/10 px-3 py-3 text-[11px] uppercase tracking-[0.12em] text-muted`}>
                           <div className="pl-2">{t(lang, "table.date")}</div>
-                          <div className="text-center">{t(lang, "table.meals")}</div>
-                          <div className="text-center">{t(lang, "table.snacks")}</div>
-                          <div className="text-center">{t(lang, "table.sleep")}</div>
-                          <div className="text-center">{t(lang, "table.dayInterval")}</div>
+                          <div className="min-w-0 text-center">{t(lang, "table.meals")}</div>
+                          <div className="min-w-0 text-center">{t(lang, "table.snacks")}</div>
+                          <div className="min-w-0 text-center">{t(lang, "table.sleep")}</div>
+                          <div className="min-w-0 text-center">{t(lang, "table.dayInterval")}</div>
                         </div>
                       </div>
                       {filteredStats.map((day, index) => {
@@ -497,12 +499,12 @@ function App() {
                             onClick={() => setDetailDay(day)}
                             className={`w-full border-b px-3 py-3 text-left transition-colors ${goalHit ? "bg-accent/10 border-accent/20" : "bg-transparent border-white/10 hover:bg-white/5"} ${index === filteredStats.length - 1 ? "border-b-0" : ""}`}
                           >
-                            <div className="grid grid-cols-[auto_repeat(4,minmax(72px,1fr))] items-center gap-2 text-sm text-slate-100">
+                            <div className={`grid ${statsBreakdownGridClass} items-center gap-2 text-xs text-slate-100 sm:text-sm`}>
                               <div className="pl-2 text-text">{formatDateDMY(day.ts, lang)}</div>
-                              <div className="text-center font-semibold">{day.count}</div>
-                              <div className="text-center font-semibold">{day.snacksCount}</div>
-                              <div className="text-center font-semibold">{day.sleepInterval ? formatInterval(day.sleepInterval, lang) : "–"}</div>
-                              <div className="text-center font-semibold">{formatMealIntervalStat(day.avgInterval, lang)}</div>
+                              <div className="min-w-0 text-center font-semibold">{day.count}</div>
+                              <div className="min-w-0 text-center font-semibold">{day.snacksCount}</div>
+                              <div className="min-w-0 text-center font-semibold leading-tight">{day.sleepInterval ? formatInterval(day.sleepInterval, lang) : "–"}</div>
+                              <div className="min-w-0 text-center font-semibold leading-tight">{formatMealIntervalStat(day.avgInterval, lang)}</div>
                             </div>
                           </button>
                         );
