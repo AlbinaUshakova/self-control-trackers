@@ -14,9 +14,10 @@ export function getDayKey(dateOrTs: Date | number) {
 }
 
 export function formatTimeHM(ts: number, lang: Lang) {
-  return new Date(ts).toLocaleTimeString(lang === "ru" ? "ru-RU" : "en-US", {
+  return new Date(ts).toLocaleTimeString(lang === "ru" ? "ru-RU" : "en-GB", {
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    hour12: false
   });
 }
 

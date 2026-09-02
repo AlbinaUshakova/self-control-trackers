@@ -35,3 +35,51 @@ textarea {
 textarea {
   resize: vertical;
 }
+
+/* Compact statistics period selector on narrow mobile screens. */
+.mt-3.grid.grid-cols-2.gap-2 {
+  grid-template-columns: 1.35fr repeat(3, minmax(0, 1fr));
+}
+
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(n + 2) {
+  font-size: 0;
+}
+
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(2)::after,
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(3)::after,
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(4)::after {
+  font-size: 0.875rem;
+}
+
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(2)::after {
+  content: "7";
+}
+
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(3)::after {
+  content: "14";
+}
+
+.mt-3.grid.grid-cols-2.gap-2 > button:nth-child(4)::after {
+  content: "21";
+}
+
+/* Keep daily breakdown labels and values aligned across all four columns. */
+.mt-2.grid.grid-cols-4.gap-2.text-xs.text-muted {
+  grid-template-columns: 0.8fr 0.8fr 1fr 1.35fr;
+}
+
+.mt-2.grid.grid-cols-4.gap-2.text-xs.text-muted > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.mt-2.grid.grid-cols-4.gap-2.text-xs.text-muted > div > div:first-child {
+  min-height: 3.75rem;
+  font-size: 0.6875rem;
+  line-height: 1.25rem;
+}
+
+.mt-2.grid.grid-cols-4.gap-2.text-xs.text-muted > div > div:nth-child(2) {
+  margin-top: 0.25rem;
+}
