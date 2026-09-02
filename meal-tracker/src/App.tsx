@@ -66,8 +66,8 @@ function getRoutineData(stats: DailyStats[]) {
 
 function buildNutritionPrompt(lang: Lang, foodLog: string) {
   const instruction = lang === "ru"
-    ? "Рассчитай примерные калории и КБЖУ за день по этому списку продуктов. Ответь кратко в формате: Калории, Белки, Жиры, Углеводы. Если для точности критично не хватает данных, добавь до 3 коротких пунктов, что стоит указывать точнее при внесении. Не повторяй список продуктов, не разбивай расчёт по каждому продукту и не давай общих советов."
-    : "Estimate approximate daily calories and macros from this food list. Reply briefly in this format: Calories, Protein, Fat, Carbs. If key details are missing for accuracy, add up to 3 short points about what should be logged more precisely. Don't repeat the food list, don't break the estimate down by item, and don't give general nutrition advice.";
+    ? "Оцени примерные калории и КБЖУ за день. Формат: Калории, Белки, Жиры, Углеводы. Если данных мало для точности, добавь до 3 пунктов: что уточнять. Не повторяй список, не считай по продуктам, не давай общих советов."
+    : "Estimate daily calories and macros. Format: Calories, Protein, Fat, Carbs. If details are missing, add up to 3 points: what to clarify. Don't repeat the list, don't break it down by item, and don't give general nutrition advice.";
 
   return `${instruction}\n\n${foodLog}`;
 }
