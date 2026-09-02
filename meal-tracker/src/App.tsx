@@ -480,22 +480,22 @@ function App() {
                   <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
                     <div className="max-h-[320px] overflow-y-auto">
                       <div className="sticky top-0 z-10 bg-slate-950/40">
-                        <div className={`grid ${statsBreakdownGridClass} gap-2 border-b border-white/10 px-3 py-3 text-[9px] uppercase tracking-[0.06em] text-muted sm:text-[11px] sm:tracking-[0.12em]`}>
+                        <div className={`grid ${statsBreakdownGridClass} gap-2 border-b border-white/10 px-3 py-3 text-muted ${lang === "ru" ? "text-[8px] tracking-normal" : "text-[9px] uppercase tracking-[0.06em]"} sm:text-[11px] sm:uppercase sm:tracking-[0.12em]`}>
                           <div className="pl-2">{t(lang, "table.date")}</div>
                           <div className="min-w-0 text-center leading-tight">
-                            <span className="sm:hidden">{t(lang, "table.mealsShort")}</span>
+                            <span className="sm:hidden whitespace-nowrap">{t(lang, "table.mealsShort")}</span>
                             <span className="hidden sm:inline">{t(lang, "table.meals")}</span>
                           </div>
                           <div className="min-w-0 text-center leading-tight">
-                            <span className="sm:hidden">{t(lang, "table.snacksShort")}</span>
+                            <span className="sm:hidden whitespace-nowrap">{t(lang, "table.snacksShort")}</span>
                             <span className="hidden sm:inline">{t(lang, "table.snacks")}</span>
                           </div>
                           <div className="min-w-0 text-center leading-tight">
-                            <span className="sm:hidden">{t(lang, "table.sleepShort")}</span>
+                            <span className="sm:hidden whitespace-nowrap">{t(lang, "table.sleepShort")}</span>
                             <span className="hidden sm:inline">{t(lang, "table.sleep")}</span>
                           </div>
                           <div className="min-w-0 text-center leading-tight">
-                            <span className="sm:hidden">{t(lang, "table.dayIntervalShort")}</span>
+                            <span className="sm:hidden whitespace-nowrap">{t(lang, "table.dayIntervalShort")}</span>
                             <span className="hidden sm:inline">{t(lang, "table.dayInterval")}</span>
                           </div>
                         </div>
