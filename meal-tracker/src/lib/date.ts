@@ -48,7 +48,7 @@ export function formatInterval(ms: null | number, lang: Lang) {
 }
 
 export function formatMealIntervalStat(ms: null | number, lang: Lang) {
-  if (ms == null || !Number.isFinite(ms) || ms < 60000) return lang === "ru" ? "Недостаточно данных" : "Not enough data";
+  if (ms == null || !Number.isFinite(ms) || ms < 60000) return "";
   return formatInterval(ms, lang);
 }
 
